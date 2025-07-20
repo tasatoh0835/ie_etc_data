@@ -207,6 +207,8 @@ def getTotalTech(targetStatus, specialMoveList, playerStatus, trainingPosition, 
     # 秘伝書枠に空きが存在する場合、FWとして有用な技を習得する
     # ・ブロック技習得判定
     #   ブロック技習得フラグがTrueかつ、自力習得ブロック技が0個かつ、秘伝書枠に空きがある場合、属性とTPに見合った最強ブロック技を習得
+    # ・ドリブル技習得判定
+    #   ドリブル技習得フラグがTrueかつ、自力習得ドリブル技が0個かつ、秘伝書枠に空きがある場合、属性とTPに見合った最強ドリブル技を習得
     # ・チーム強化スキル習得判定(SHP)
     #   FWかつSHP未習得かつ秘伝書枠に空きがある場合、SHPを習得
     # ・デバフスキル習得判定
@@ -310,6 +312,12 @@ def getTotalTech(targetStatus, specialMoveList, playerStatus, trainingPosition, 
            sub.Const._MOVE_CNT_ > len(specialMoveList):
             # 属性とTPに見合った最強ブロック技を習得
             specialMoveList.append(sub.MoveInfo.getStrongestBlock(element, gender, maxTP, flgBGMV, flgECO))
+        # ・ドリブル技習得判定
+        #   ドリブル技習得フラグがTrueかつ、自力習得ドリブル技が0個かつ、秘伝書枠に空きがある場合、属性とTPに見合った最強ドリブル技を習得
+        if sub.Const._USE_HIDEN_DRIBBLE_ and not sub.MoveInfo.srchMoveType(specialMoveList, sub.Const._MV_DR_) and \
+           sub.Const._MOVE_CNT_ > len(specialMoveList):
+            # 属性とTPに見合った最強ブロック技を習得
+            specialMoveList.append(sub.MoveInfo.getStrongestDribble(element, maxTP, flgBGMV, flgECO))
         # ・チーム強化スキル習得判定(SHP)
         #   FWかつSHP未習得かつ秘伝書枠に空きがある場合、SHPを習得
         if position in [sub.Const._POS_FW_] and not sub.MoveInfo.srchMoveName(specialMoveList, sub.Const._SKL_NM_SHP_) and \
@@ -331,7 +339,7 @@ def getTotalTech(targetStatus, specialMoveList, playerStatus, trainingPosition, 
     #----------------------------------------------------------------------------------------------
     # MFの習得優先順は以下の通り
     # 1.秘伝書枠に空きがある場合、以下を行う
-    #   1-1.ドリブル技未習得の場合、条件に合致する最強ドリブル技を習得する
+    #   1-1.ドリブル技未習得の場合、または習得するドリブル技がジャッジスルー系のみの場合、条件に合致する最強ドリブル技を習得する
     # 2.秘伝書枠に空きがある場合、以下を行う
     #   2-1.ブロック技未習得の場合、条件に合致する最強ブロック技を習得する
     # 3.秘伝書枠に空きがある場合、以下を行う
@@ -342,8 +350,9 @@ def getTotalTech(targetStatus, specialMoveList, playerStatus, trainingPosition, 
     if trainingPosition in [sub.Const._POS_MF_]:
         # 習得枠に空きがある場合
         if sub.Const._MOVE_CNT_ > len(specialMoveList):
-            # 習得技にドリブル技が存在しない場合、
-            if not sub.MoveInfo.srchMoveType(specialMoveList, sub.Const._MV_DR_):
+            # 習得技にドリブル技が存在しない場合、またはジャッジスルー系の技のみ習得している場合
+            if not sub.MoveInfo.srchMoveType(specialMoveList, sub.Const._MV_DR_) or \
+               not sub.MoveInfo.srchJudgeThrough(specialMoveList):
                 # 条件に合致する最強ドリブル技を秘伝書枠に追加
                 specialMoveList.append(sub.MoveInfo.getStrongestDribble(element, maxTP, flgBGMV, flgECO))
         # 習得枠に空きがある場合
@@ -369,13 +378,28 @@ def getTotalTech(targetStatus, specialMoveList, playerStatus, trainingPosition, 
     # DFの習得優先順は以下の通り
     # 1.秘伝書枠に空きがある場合、以下を行う
     #   1-1.デバフスキルを付与した場合と条件に合致する最強シュートブロックを習得させた場合のトータルテクニックを比較し、期待値が高くなる方を習得する
-    # 2.秘伝書枠に空きがある場合、以下を行う
-    #   2-1.クリティカル！未習得の場合
-    #       クリティカル！を付与した場合と条件に合致する最強キャッチを習得させた場合のトータルテクニックを比較し、最強キャッチの方が上回る場合、最強キャッチを習得する
+    # 2.秘伝書枠に空きがあり、デバフスキルを未習得の場合、以下を行う
+    #   2-1.デバフスキルを付与した場合と条件に合致する最強シュートブロックを習得させた場合のトータルテクニックを比較し、期待値が高くなる方を習得する
     #----------------------------------------------------------------------------------------------
     if trainingPosition in [sub.Const._POS_DF_]:
         # 秘伝書枠に空きが存在する場合
         if sub.Const._MOVE_CNT_ > len(specialMoveList):
+            # 条件に合致する最強シュートブロックを取得
+            strongestMove = sub.MoveInfo.getStrongestShotBlock(element, playerStatus[sub.Const._PLY_NNM_], maxTP, flgBGMV, flgECO)
+            # デバフスキルを取得
+            if not sub.MoveInfo.srchMoveName(specialMoveList, sub.Const._SKL_NM_CHRM_) and gender in [sub.Const._GND_FEMALE_]:
+                # 女性選手の場合、お色気ＵＰ！を習得
+                debuffSkill = sub.MoveInfo.getSkillData(sub.Const._SKL_NM_CHRM_)
+            else:
+                # イケメンＵＰ！を習得
+                debuffSkill = sub.MoveInfo.getSkillData(sub.Const._SKL_NM_COOL_)
+            
+            # 最強シュートブロックとデバフスキルのシュートブロック期待値が高くなる方を秘伝書枠に追加
+            specialMoveList.append(sub.TotalTechCalc.compTotalTechEx(targetStatus, trainingPosition, sub.Const._CMD_SP_BLBL_, specialMoveList, \
+                                                                     debuffSkill, strongestMove))
+        # 秘伝書枠に空きが存在し、デバフスキルを未習得の場合
+        if sub.Const._MOVE_CNT_ > len(specialMoveList) and \
+           not (sub.MoveInfo.srchMoveName(specialMoveList, sub.Const._SKL_NM_CHRM_) or sub.MoveInfo.srchMoveName(specialMoveList, sub.Const._SKL_NM_COOL_)):
             # 条件に合致する最強シュートブロックを取得
             strongestMove = sub.MoveInfo.getStrongestShotBlock(element, playerStatus[sub.Const._PLY_NNM_], maxTP, flgBGMV, flgECO)
             # デバフスキルを取得
@@ -395,8 +419,13 @@ def getTotalTech(targetStatus, specialMoveList, playerStatus, trainingPosition, 
     # 1.秘伝書枠に空きがある場合、以下を行う
     #   1-1.GKP未習得かつ、正規ポジションがGKの場合
     #       GKPを付与した場合と条件に合致する最強キャッチを習得させた場合のトータルテクニックを比較し、期待値が高くなる方を習得する
+    #   1-2.上記以外の場合
+    #       クリティカル！を付与した場合と条件に合致する最強キャッチを習得させた場合のトータルテクニックを比較し、期待値が高くなる方を習得する
     # 2.秘伝書枠に空きがある場合、以下を行う
-    #   2-1.クリティカル！を付与した場合と条件に合致する最強キャッチを習得させた場合のトータルテクニックを比較し、最強キャッチの方が上回る場合、最強キャッチを習得する
+    #   2-1.GKP未習得かつ、正規ポジションがGKの場合
+    #       GKPを付与した場合と条件に合致する最強キャッチを習得させた場合のトータルテクニックを比較し、期待値が高くなる方を習得する
+    #   2-2.上記以外の場合
+    #       クリティカル！を付与した場合と条件に合致する最強キャッチを習得させた場合のトータルテクニックを比較し、期待値が高くなる方を習得する
     #----------------------------------------------------------------------------------------------
     if trainingPosition in [sub.Const._POS_GK_]:
         # スキルで自力習得技を強化すべきか、必殺技を習得するべきかの判定
@@ -409,15 +438,29 @@ def getTotalTech(targetStatus, specialMoveList, playerStatus, trainingPosition, 
                 # 最強キャッチとGKPのキャッチの期待値が高くなる方を秘伝書枠に追加
                 specialMoveList.append(sub.TotalTechCalc.compTotalTechEx(targetStatus, trainingPosition, sub.Const._CMD_SP_CTCH_, specialMoveList, \
                                                                          sub.MoveInfo.getSkillData(sub.Const._SKL_NM_GKP_), strongestMove))
+            # 上記以外の場合
+            else:
+                # 条件に合致する最強キャッチを取得
+                strongestMove = sub.MoveInfo.getStrongestCatch(element, maxTP, flgBGMV, flgECO)
+                # 最強キャッチとクリティカル！のキャッチの期待値が高くなる方を秘伝書枠に追加
+                specialMoveList.append(sub.TotalTechCalc.compTotalTechEx(targetStatus, trainingPosition, sub.Const._CMD_SP_CTCH_, specialMoveList, \
+                                                                         sub.MoveInfo.getSkillData(sub.Const._SKL_NM_CRTC_), strongestMove))
         # 秘伝書枠に空きが存在する場合
         if sub.Const._MOVE_CNT_ > len(specialMoveList):
-            # 条件に合致する最強キャッチを取得
-            strongestMove = sub.MoveInfo.getStrongestCatch(element, maxTP, flgBGMV, flgECO)
-            # 最強キャッチとクリティカル！のどちらを与えた方がキャッチの期待値が高くなるか確認し、最強キャッチの方が高くなる場合
-            if strongestMove == sub.TotalTechCalc.compTotalTechEx(targetStatus, trainingPosition, sub.Const._CMD_SP_CTCH_, specialMoveList, \
-                                                                  sub.MoveInfo.getSkillData(sub.Const._SKL_NM_CRTC_), strongestMove):
-                # 最強キャッチを取得
-                specialMoveList.append(strongestMove)
+            # 正規ポジションがGKかつ、GKP未習得の場合
+            if position in [sub.Const._POS_GK_] and not sub.MoveInfo.srchMoveName(specialMoveList, sub.Const._SKL_NM_GKP_):
+                # 条件に合致する最強キャッチを取得
+                strongestMove = sub.MoveInfo.getStrongestCatch(element, maxTP, flgBGMV, flgECO)
+                # 最強キャッチとGKPのキャッチの期待値が高くなる方を秘伝書枠に追加
+                specialMoveList.append(sub.TotalTechCalc.compTotalTechEx(targetStatus, trainingPosition, sub.Const._CMD_SP_CTCH_, specialMoveList, \
+                                                                         sub.MoveInfo.getSkillData(sub.Const._SKL_NM_GKP_), strongestMove))
+            # 上記以外の場合
+            elif position not in [sub.Const._POS_GK_]:
+                # 条件に合致する最強キャッチを取得
+                strongestMove = sub.MoveInfo.getStrongestCatch(element, maxTP, flgBGMV, flgECO)
+                # 最強キャッチとクリティカル！のキャッチの期待値が高くなる方を秘伝書枠に追加
+                specialMoveList.append(sub.TotalTechCalc.compTotalTechEx(targetStatus, trainingPosition, sub.Const._CMD_SP_CTCH_, specialMoveList, \
+                                                                         sub.MoveInfo.getSkillData(sub.Const._SKL_NM_CRTC_), strongestMove))
     
     #-共通処理-------------------------------------------------------------------------------------
     # 1.クリティカル！未習得かつ、秘伝書枠に空きがある場合、クリティカル！を追加
@@ -484,8 +527,10 @@ def getTotalTech(targetStatus, specialMoveList, playerStatus, trainingPosition, 
                 retData[calcData[1]] = calcForm
                 # 育成タイプがFW、MF、GKかつ、格納先が重要コマンドの場合、
                 # または、育成タイプがMFの場合のみ、ドリブル技の場合に消費TPを更新
-                if ( trainingPosition in [sub.Const._POS_FW_,sub.Const._POS_DF_,sub.Const._POS_GK_] and sub.Const._RET_SHOT_ == calcData[1] ) or \
-                   ( trainingPosition in [sub.Const._POS_MF_] and sub.Const._RET_CTCH_ == calcData[1] ):
+                if ( trainingPosition in [sub.Const._POS_FW_] and sub.Const._RET_SHOT_ == calcData[1] ) or \
+                   ( trainingPosition in [sub.Const._POS_MF_] and sub.Const._RET_DRBL_ == calcData[1] ) or \
+                   ( trainingPosition in [sub.Const._POS_DF_] and sub.Const._RET_BLCK_ == calcData[1] ) or \
+                   ( trainingPosition in [sub.Const._POS_GK_] and sub.Const._RET_CTCH_ == calcData[1] ):
                     retData[sub.Const._RET_COST_] = int(int(moveData[sub.Const._MOVE_CST_] * sub.Const._SKL_BGMV_COST_ / 100) * \
                                                            ((sub.Const._SKL_ECO_ if flgECO else 100) / 100 ) )
     # 戻り値を返す
@@ -638,6 +683,7 @@ with open(sub.Const._OutputFilePathFW_, "w", encoding="shift_jis", newline="") a
     headerList[0] = [s.replace('キーマン', keyman) for s in headerList[0]]
     headerList[1] = [s.replace('育成タイプ1', 'バランス型FW') for s in headerList[1]]
     headerList[1] = [s.replace('育成タイプ2', '競り合い型FW') for s in headerList[1]]
+    headerList[1] = [s.replace('育成タイプ3', 'シュート特化FW') for s in headerList[1]]
     headerList[2] = [s.replace('最重要コマンド', 'シュート') for s in headerList[2]]
     # ヘッダ部書き込み
     for cnt, header in enumerate(headerList):
@@ -671,7 +717,10 @@ with open(sub.Const._OutputFilePathMF_, "w", encoding="shift_jis", newline="") a
     headerList[0] = [s.replace('キーマン', keyman) for s in headerList[0]]
     headerList[1] = [s.replace('育成タイプ1', 'バランス型MF') for s in headerList[1]]
     headerList[1] = [s.replace('育成タイプ2', 'Bカテ特化型MF') for s in headerList[1]]
+    headerList[1] = [s.replace('育成タイプ3', 'ドリブル特化型MF') for s in headerList[1]]
     headerList[2] = [s.replace('最重要コマンド', 'シュート') for s in headerList[2]]
+    headerList[2] = [s.replace('シュート消費TP量', 'ドリブル消費TP量') for s in headerList[2]]
+    
     # ヘッダ部書き込み
     for cnt, header in enumerate(headerList):
         writer.writerow(header)
@@ -704,6 +753,7 @@ with open(sub.Const._OutputFilePathDF_, "w", encoding="shift_jis", newline="") a
     headerList[0] = [s.replace('キーマン', keyman) for s in headerList[0]]
     headerList[1] = [s.replace('育成タイプ1', 'バランス型DF') for s in headerList[1]]
     headerList[1] = [s.replace('育成タイプ2', 'Bカテ特化型DF') for s in headerList[1]]
+    headerList[1] = [s.replace('育成タイプ3', 'シュートブロック特化型DF') for s in headerList[1]]
     headerList[2] = [s.replace('最重要コマンド', 'シュートブロック') for s in headerList[2]]
     # ヘッダ部書き込み
     for cnt, header in enumerate(headerList):
@@ -737,6 +787,7 @@ with open(sub.Const._OutputFilePathGK_, "w", encoding="shift_jis", newline="") a
     headerList[0] = [s.replace('キーマン', keyman) for s in headerList[0]]
     headerList[1] = [s.replace('育成タイプ1', 'バランス型GK') for s in headerList[1]]
     headerList[1] = [s.replace('育成タイプ2', 'Bカテ特化型GK') for s in headerList[1]]
+    headerList[1] = [s.replace('育成タイプ3', 'キャッチ特化型GK') for s in headerList[1]]
     headerList[2] = [s.replace('最重要コマンド', 'キャッチ') for s in headerList[2]]
     # ヘッダ部書き込み
     for cnt, header in enumerate(headerList):
