@@ -1,0 +1,923 @@
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>ウルトラ怪獣モンスターファーム 相性を合わせやすいウルトラ怪獣割り出しツール</title>
+		<script type="text/javascript">
+		
+		// 派生種一覧
+		const subKaijuList = 
+		{
+			"ゴモラ": ["派生種族を選択", "ゴモラ","ゴモラ(R1)","エレキング ゴモラ","エレキング ゴモラ(R1)","ゼットン ゴモラ","ゼットン ゴモラ(R1)","レッドキング ゴモラ","レッドキング ゴモラ(R1)","ガンQ ゴモラ","ガンQ ゴモラ(R1)","バルタン ゴモラ","バルタン ゴモラ(R1)","カネゴン ゴモラ","カネゴン ゴモラ(R1)","ゴルザ ゴモラ","ゴルザ ゴモラ(R1)","ウインダム ゴモラ","ウインダム ゴモラ(R1)","ノーバ ゴモラ","ノーバ ゴモラ(R1)","メルバ ゴモラ","メルバ ゴモラ(R1)","ライガー ゴモラ","ライガー ゴモラ(R1)" ],
+			"レッドキング": ["派生種族を選択", "レッドキング","レッドキング(R1)","ゴモラ レッドキング","ゴモラ レッドキング(R1)","エレキング レッドキング","エレキング レッドキング(R1)","ゼットン レッドキング","ゼットン レッドキング(R1)","バルタン レッドキング","バルタン レッドキング(R1)","ゴルザ レッドキング","ゴルザ レッドキング(R1)","ネロンガ レッドキング","ネロンガ レッドキング(R1)","ベムスター レッドキング","ベムスター レッドキング(R1)","ウインダム レッドキング","ウインダム レッドキング(R1)","サンタ レッドキング","サンタ レッドキング(R1)" ],
+			"テレスドン": ["派生種族を選択", "テレスドン","テレスドン(R1)","エレキング テレスドン","エレキング テレスドン(R1)","レッドキング テレスドン","レッドキング テレスドン(R1)","レイキュバス テレスドン","レイキュバス テレスドン(R1)","エースキラー テレスドン","エースキラー テレスドン(R1)","ディノ テレスドン","ディノ テレスドン(R1)" ],
+			"バルタン星人": ["派生種族を選択", "バルタン星人","バルタン星人(R1)","ゴモラ バルタン星人","ゴモラ バルタン星人(R1)","キングジョー バルタン星人","キングジョー バルタン星人(R1)","ガンQ バルタン星人","ガンQ バルタン星人(R1)","メトロン バルタン星人","メトロン バルタン星人(R1)","ダダ バルタン星人","ダダ バルタン星人(R1)","ミクラス バルタン星人","ミクラス バルタン星人(R1)","レイキュバス バルタン星人","レイキュバス バルタン星人(R1)","バードン バルタン星人","バードン バルタン星人(R1)","ブンシン？ バルタン星人","ブンシン？ バルタン星人(R1)" ],
+			"ダダ": ["派生種族を選択", "ダダ","ダダ(R1)","ゴモラ ダダ","ゴモラ ダダ(R1)","ゼットン ダダ","ゼットン ダダ(R1)","レッドキング ダダ","レッドキング ダダ(R1)","ネロンガ ダダ","ネロンガ ダダ(R1)","レイキュバス ダダ","レイキュバス ダダ(R1)","ベムスター ダダ","ベムスター ダダ(R1)","セブンガー ダダ","セブンガー ダダ(R1)","ラッキー ダダ","ラッキー ダダ(R1)" ],
+			"エレキング": ["派生種族を選択", "エレキング","エレキング(R1)","ゴモラ エレキング","ゴモラ エレキング(R1)","ゼットン エレキング","ゼットン エレキング(R1)","キングジョー エレキング","キングジョー エレキング(R1)","ダダ エレキング","ダダ エレキング(R1)","カネゴン エレキング","カネゴン エレキング(R1)","ゴルザ エレキング","ゴルザ エレキング(R1)","レイキュバス エレキング","レイキュバス エレキング(R1)","ガンQ エレキング","ガンQ エレキング(R1)","ウインダム エレキング","ウインダム エレキング(R1)","キンダー エレキング","キンダー エレキング(R1)" ],
+			"ミクラス": ["派生種族を選択", "ミクラス","ミクラス(R1)","エレキング ミクラス","エレキング ミクラス(R1)","バードン ミクラス","バードン ミクラス(R1)","ウインダム ミクラス","ウインダム ミクラス(R1)","ノーバ ミクラス","ノーバ ミクラス(R1)","超コッヴ ミクラス","超コッヴ ミクラス(R1)","プラント ミクラス","プラント ミクラス(R1)" ],
+			"メトロン星人": ["派生種族を選択", "メトロン星人","メトロン星人(R1)","ゴモラ メトロン星人","ゴモラ メトロン星人(R1)","ゼットン メトロン星人","ゼットン メトロン星人(R1)","バルタン メトロン星人","バルタン メトロン星人(R1)","ダダ メトロン星人","ダダ メトロン星人(R1)","ベムスター メトロン星人","ベムスター メトロン星人(R1)","セブンガー メトロン星人","セブンガー メトロン星人(R1)","エースキラー メトロン星人","エースキラー メトロン星人(R1)","ユウヤケ メトロン星人","ユウヤケ メトロン星人(R1)" ],
+			"ベムスター": ["派生種族を選択", "ベムスター","ベムスター(R1)","エレキング ベムスター","エレキング ベムスター(R1)","キングジョー ベムスター","キングジョー ベムスター(R1)","ガンQ ベムスター","ガンQ ベムスター(R1)","ノーバ ベムスター","ノーバ ベムスター(R1)","セブンガー ベムスター","セブンガー ベムスター(R1)","スプリング ベムスター","スプリング ベムスター(R1)" ],
+			"セブンガー": ["派生種族を選択", "セブンガー","セブンガー(R1)","キングジョー セブンガー","キングジョー セブンガー(R1)","ガンQ セブンガー","ガンQ セブンガー(R1)","バルタン セブンガー","バルタン セブンガー(R1)","メトロン セブンガー","メトロン セブンガー(R1)","ダダ セブンガー","ダダ セブンガー(R1)","ベムスター セブンガー","ベムスター セブンガー(R1)","ノーバ セブンガー","ノーバ セブンガー(R1)","エースキラー セブンガー","エースキラー セブンガー(R1)","モッチー セブンガー","モッチー セブンガー(R1)","セブンガー 光の巨人ペイント" ],
+			"ノーバ": ["派生種族を選択", "ノーバ","ノーバ(R1)","ガンQ ノーバ","ガンQ ノーバ(R1)","ダダ ノーバ","ダダ ノーバ(R1)","カネゴン ノーバ","カネゴン ノーバ(R1)","ミクラス ノーバ","ミクラス ノーバ(R1)","ベムスター ノーバ","ベムスター ノーバ(R1)","セブンガー ノーバ","セブンガー ノーバ(R1)","テレスドン ノーバ","テレスドン ノーバ(R1)","ガリ ノーバ","ガリ ノーバ(R1)" ],
+			"ゴルザ": ["派生種族を選択", "ゴルザ","ゴルザ(R1)","ゴモラ ゴルザ","ゴモラ ゴルザ(R1)","エレキング ゴルザ","エレキング ゴルザ(R1)","レッドキング ゴルザ","レッドキング ゴルザ(R1)","ガンQ ゴルザ","ガンQ ゴルザ(R1)","レイキュバス ゴルザ","レイキュバス ゴルザ(R1)","メルバ ゴルザ","メルバ ゴルザ(R1)","ウィンター ゴルザ","ウィンター ゴルザ(R1)" ],
+			"レイキュバス": ["派生種族を選択", "レイキュバス","レイキュバス(R1)","ゼットン レイキュバス","ゼットン レイキュバス(R1)","キングジョー レイキュバス","キングジョー レイキュバス(R1)","バルタン レイキュバス","バルタン レイキュバス(R1)","ダダ レイキュバス","ダダ レイキュバス(R1)","ゴルザ レイキュバス","ゴルザ レイキュバス(R1)","セブンガー レイキュバス","セブンガー レイキュバス(R1)","ハクセン レイキュバス","ハクセン レイキュバス(R1)" ],
+			"ガンQ": ["派生種族を選択", "ガンQ","ガンQ(R1)","レッドキング ガンQ","レッドキング ガンQ(R1)","ダダ ガンQ","ダダ ガンQ(R1)","ベムスター ガンQ","ベムスター ガンQ(R1)","セブンガー ガンQ","セブンガー ガンQ(R1)","スエゾー ガンQ","スエゾー ガンQ(R1)" ],
+			"ガラモン": ["派生種族を選択", "ガラモン","ガラモン(R1)","レッドキング ガラモン","レッドキング ガラモン(R1)","バルタン ガラモン","バルタン ガラモン(R1)","ネロンガ ガラモン","ネロンガ ガラモン(R1)","超コッヴ ガラモン","超コッヴ ガラモン(R1)","モノクロ ガラモン","モノクロ ガラモン(R1)" ],
+			"カネゴン": ["派生種族を選択", "カネゴン","カネゴン(R1)","エレキング カネゴン","エレキング カネゴン(R1)","ゼットン カネゴン","ゼットン カネゴン(R1)","バルタン カネゴン","バルタン カネゴン(R1)","メトロン カネゴン","メトロン カネゴン(R1)","ベムスター カネゴン","ベムスター カネゴン(R1)","セブンガー カネゴン","セブンガー カネゴン(R1)","ガンダー カネゴン","ガンダー カネゴン(R1)","ベリアル カネゴン","ベリアル カネゴン(R1)","巨大カネゾー","巨大カネゾー(R1)" ],
+			"ネロンガ": ["派生種族を選択", "ネロンガ","ネロンガ(R1)","エレキング ネロンガ","エレキング ネロンガ(R1)","ガンQ ネロンガ","ガンQ ネロンガ(R1)","ガラモン ネロンガ","ガラモン ネロンガ(R1)","ゴルザ ネロンガ","ゴルザ ネロンガ(R1)","レイキュバス ネロンガ","レイキュバス ネロンガ(R1)","ガル ネロンガ","ガル ネロンガ(R1)" ],
+			"ゼットン": ["派生種族を選択", "ゼットン","ゼットン(R1)","キングジョー ゼットン","キングジョー ゼットン(R1)","バルタン ゼットン","バルタン ゼットン(R1)","メトロン ゼットン","メトロン ゼットン(R1)","ダダ ゼットン","ダダ ゼットン(R1)","カネゴン ゼットン","カネゴン ゼットン(R1)","レイキュバス ゼットン","レイキュバス ゼットン(R1)","ベムスター ゼットン","ベムスター ゼットン(R1)","セブンガー ゼットン","セブンガー ゼットン(R1)","サマー ゼットン","サマー ゼットン(R1)" ],
+			"ウインダム": ["派生種族を選択", "ウインダム","ウインダム(R1)","ゼットン ウインダム","ゼットン ウインダム(R1)","ダダ ウインダム","ダダ ウインダム(R1)","ミクラス ウインダム","ミクラス ウインダム(R1)","メルバ ウインダム","メルバ ウインダム(R1)","エースキラー ウインダム","エースキラー ウインダム(R1)","ピロロ ウインダム","ピロロ ウインダム(R1)","ウインダム 光の巨人ペイント" ],
+			"キングジョー": ["派生種族を選択", "キングジョー","キングジョー(R1)","ゴモラ キングジョー","ゴモラ キングジョー(R1)","ゼットン キングジョー","ゼットン キングジョー(R1)","バルタン キングジョー","バルタン キングジョー(R1)","ダダ キングジョー","ダダ キングジョー(R1)","ウインダム キングジョー","ウインダム キングジョー(R1)","ノーバ キングジョー","ノーバ キングジョー(R1)","エースキラー キングジョー","エースキラー キングジョー(R1)","ゴーレム キングジョー","ゴーレム キングジョー(R1)" ],
+			"ガンダー": ["派生種族を選択", "ガンダー","ガンダー(R1)","エレキング ガンダー","エレキング ガンダー(R1)","メトロン ガンダー","メトロン ガンダー(R1)","カネゴン ガンダー","カネゴン ガンダー(R1)","ナーガ ガンダー","ナーガ ガンダー(R1)" ],
+			"エースキラー": ["派生種族を選択", "エースキラー","エースキラー(R1)","ゼットン エースキラー","ゼットン エースキラー(R1)","ダダ エースキラー","ダダ エースキラー(R1)","ウインダム エースキラー","ウインダム エースキラー(R1)","アントラン エースキラー","アントラン エースキラー(R1)" ],
+			"バードン": ["派生種族を選択", "バードン","バードン(R1)","ミクラス バードン","ミクラス バードン(R1)","メルバ バードン","メルバ バードン(R1)","超コッヴ バードン","超コッヴ バードン(R1)","ダックン バードン","ダックン バードン(R1)" ],
+			"メルバ": ["派生種族を選択", "メルバ","メルバ(R1)","キングジョー メルバ","キングジョー メルバ(R1)","ダダ メルバ","ダダ メルバ(R1)","バードン メルバ","バードン メルバ(R1)","ベムスター メルバ","ベムスター メルバ(R1)","超コッヴ メルバ","超コッヴ メルバ(R1)","ムー メルバ","ムー メルバ(R1)" ],
+			"超コッヴ": ["派生種族を選択", "超コッヴ","超コッヴ(R1)","ガンQ 超コッヴ","ガンQ 超コッヴ(R1)","メトロン 超コッヴ","メトロン 超コッヴ(R1)","メルバ 超コッヴ","メルバ 超コッヴ(R1)","ジョーカー 超コッヴ","ジョーカー 超コッヴ(R1)","ゼットン 超コッヴ","ゼットン 超コッヴ(R1)" ],
+			"タイラント": ["派生種族を選択", "タイラント","タイラント(R1)","オータム タイラント","オータム タイラント(R1)" ],
+			"ファイブキング": ["派生種族を選択", "ファイブキング","ファイブキング(R1)","ファイブキング(R2)","ファイブキング(R3)","ファイブキング(R4)","ファイブキング(R5)","ファイブキング(R6)","ムジカ ファイブキング","ムジカ ファイブキング(R1)" ],
+			"スカルゴモラ": ["派生種族を選択", "スカルゴモラ","スカルゴモラ(R1)" ],
+			"サンダーキラー": ["派生種族を選択", "サンダーキラー","サンダーキラー(R1)" ],
+			"ペダニウムゼットン": ["派生種族を選択", "ペダニウムゼットン","ペダニウムゼットン(R1)" ],
+			"モッチー": ["派生種族を選択", "モッチー","モッチー(R1)","エレキング モッチー","エレキング モッチー(R1)","メトロン モッチー","メトロン モッチー(R1)","カネゴン モッチー","カネゴン モッチー(R1)","科特隊 モッチー","モッチー 光の巨人スタイル","モッチー 光の巨人スタイル(R1)" ],
+			"スエゾー": ["派生種族を選択", "スエゾー","スエゾー(R1)","ガンQ スエゾー","ガンQ スエゾー(R1)","ダダ スエゾー","ダダ スエゾー(R1)","ウインダム スエゾー","ウインダム スエゾー(R1)","科特隊 スエゾー","科特隊 スエゾー(R1)","流星 スエゾー" ]
+		};
+		
+		// 相性コメント
+		var combinationComment = ["一致なし","1つ一致","2つ一致","3つ一致","4つ一致","5つ一致","完全一致"];
+		
+		window.addEventListener('DOMContentLoaded',function(){
+			const mainKaijuSelect = document.getElementById('mainKaijuOptions');
+			const mainKaijuOptions = mainKaijuSelect.options;
+			mainKaijuSelect.addEventListener('change',selectMainKaiju,false);
+
+			const selectSubKaiju = document.getElementById('subKaijuOptions');
+			subKaijuOptions.disabled = false;
+
+			const kaijuNameOptions = document.getElementById('subKaijuOptions');
+			kaijuNameOptions.addEventListener('change',selectKaijuName,false);
+
+			const lifTxt = document.getElementById('BreeLif');
+			lifTxt.addEventListener('input', selectKaijuName,false);
+			const powTxt = document.getElementById('BreePow');
+			powTxt.addEventListener('input', selectKaijuName,false);
+			const intTxt = document.getElementById('BreeInt');
+			intTxt.addEventListener('input', selectKaijuName,false);
+			const skiTxt = document.getElementById('BreeSki');
+			skiTxt.addEventListener('input', selectKaijuName,false);
+			const speTxt = document.getElementById('BreeSpe');
+			speTxt.addEventListener('input', selectKaijuName,false);
+			const defTxt = document.getElementById('BreeDef');
+			defTxt.addEventListener('input', selectKaijuName,false);
+
+			const searchExecButton = document.getElementById('searchButton');
+			searchExecButton.addEventListener('click', searchStart,false);
+
+			// 怪獣名リスト作成
+			function selectMainKaiju(){
+				// 怪獣名リスト消去
+				for(let i = selectSubKaiju.length - 1; i >= 0 ; i--) {
+					selectSubKaiju.remove(i);
+				}
+				document.getElementsByName( 'RankData' )[0].value = ""
+				;
+				// 怪獣名リスト設定
+				for(let i = 0; i< mainKaijuOptions.length; i++) {
+					if(mainKaijuOptions[i].selected){
+						subKaijuList[mainKaijuOptions[i].value].forEach((menu, index) => {
+							const option = document.createElement('option');
+							option.value = index;
+							option.innerHTML = menu;
+							selectSubKaiju.appendChild(option);
+						});
+					}
+				}
+			}
+			
+			// 怪獣名選択
+			function selectKaijuName(){
+
+				// 選択怪獣取得
+				const num = document.calcForm.subKaijuOptions.selectedIndex;
+				const searchKaijuName = document.calcForm.subKaijuOptions[num].text
+				
+				if("派生種族を選択" == searchKaijuName) {
+					document.getElementsByName( 'BaseLif' )[0].value = "";
+					document.getElementsByName( 'BasePow' )[0].value = "";
+					document.getElementsByName( 'BaseInt' )[0].value = "";
+					document.getElementsByName( 'BaseSki' )[0].value = "";
+					document.getElementsByName( 'BaseSpe' )[0].value = "";
+					document.getElementsByName( 'BaseDef' )[0].value = "";
+
+					return;
+				}
+
+				let tbl = document.getElementById('UltraKaijuDataTable');
+				for (i = 0 ; i < tbl.rows.length ; i++) {
+					// 名称一致怪獣の適性を取得
+					if(searchKaijuName == tbl.rows[i].cells[3].firstChild.data) {
+
+						document.getElementsByName( 'BaseLif' )[0].value = tbl.rows[i].cells[10].firstChild.data;
+						document.getElementsByName( 'BasePow' )[0].value = tbl.rows[i].cells[11].firstChild.data;
+						document.getElementsByName( 'BaseInt' )[0].value = tbl.rows[i].cells[12].firstChild.data;
+						document.getElementsByName( 'BaseSki' )[0].value = tbl.rows[i].cells[13].firstChild.data;
+						document.getElementsByName( 'BaseSpe' )[0].value = tbl.rows[i].cells[14].firstChild.data;
+						document.getElementsByName( 'BaseDef' )[0].value = tbl.rows[i].cells[15].firstChild.data;
+
+						let statusRank = [];
+						let lifVal = (document.getElementsByName( 'BreeLif' )[0].value * Number(15 - parseInt(document.getElementsByName( 'BaseLif' )[0].value, 16))
+										 + (15 - parseInt(document.getElementsByName( 'BaseLif' )[0].value, 16)) / 10
+										 + tbl.rows[i].cells[4].firstChild.data / 100000
+										 + 1 / 10000).toFixed(4);
+						let powVal = (document.getElementsByName( 'BreePow' )[0].value * Number(15 - parseInt(document.getElementsByName( 'BasePow' )[0].value, 16))
+										 + (15 - parseInt(document.getElementsByName( 'BasePow' )[0].value, 16)) / 10
+										 + tbl.rows[i].cells[5].firstChild.data / 100000
+										 + 2 / 10000).toFixed(4);
+						let intVal = (document.getElementsByName( 'BreeInt' )[0].value * Number(15 - parseInt(document.getElementsByName( 'BaseInt' )[0].value, 16))
+										 + (15 - parseInt(document.getElementsByName( 'BaseInt' )[0].value, 16)) / 10 
+										 + tbl.rows[i].cells[6].firstChild.data / 100000
+										 + 3 / 10000).toFixed(4);
+						let skiVal = (document.getElementsByName( 'BreeSki' )[0].value * Number(15 - parseInt(document.getElementsByName( 'BaseSki' )[0].value, 16))
+										 + (15 - parseInt(document.getElementsByName( 'BaseSki' )[0].value, 16)) / 10 
+										 + tbl.rows[i].cells[7].firstChild.data / 100000
+										 + 4 / 10000).toFixed(4);
+						let speVal = (document.getElementsByName( 'BreeSpe' )[0].value * Number(15 - parseInt(document.getElementsByName( 'BaseSpe' )[0].value, 16))
+										 + (15 - parseInt(document.getElementsByName( 'BaseSpe' )[0].value, 16)) / 10 
+										 + tbl.rows[i].cells[8].firstChild.data / 100000
+										 + 5 / 10000).toFixed(4);
+						let defVal = (document.getElementsByName( 'BreeDef' )[0].value * Number(15 - parseInt(document.getElementsByName( 'BaseDef' )[0].value, 16))
+										 + (15 - parseInt(document.getElementsByName( 'BaseDef' )[0].value, 16)) / 10 
+										 + tbl.rows[i].cells[9].firstChild.data / 100000
+										 + 6 / 10000).toFixed(4);
+
+						statusRank.push([ lifVal, "ラ"]);
+						statusRank.push([ powVal, "力"]);
+						statusRank.push([ intVal, "賢"]);
+						statusRank.push([ skiVal, "命"]);
+						statusRank.push([ speVal, "回"]);
+						statusRank.push([ defVal, "丈"]);
+
+						// ソート
+						statusRank.sort(function(a,b){return(b[0] - a[0]);});
+
+						// ソート結果出力
+						let statusRankStr = statusRank[0][1] + ">" + statusRank[1][1] + ">" + statusRank[2][1] + ">" + statusRank[3][1] + ">" + statusRank[4][1] + ">" + statusRank[5][1];
+						statusRankStr = statusRankStr.replace("ラ","ライフ");
+						//statusRankStr = statusRankStr.replace("力","力");
+						statusRankStr = statusRankStr.replace("賢","賢さ");
+						statusRankStr = statusRankStr.replace("命","命中");
+						statusRankStr = statusRankStr.replace("回","回避");
+						statusRankStr = statusRankStr.replace("丈","丈夫さ");
+						document.getElementsByName( 'RankData' )[0].value = statusRankStr;
+
+						return;
+					}
+				}
+			}
+			
+			function searchStart() {
+			
+				// ソート結果取得
+				let searchStr = document.getElementsByName( 'RankData' )[0].value;
+				
+				if("" == searchStr) {
+					document.getElementsByName( 'resultArea' )[0].value = "先に育成した怪獣のデータを入力してください";
+					return;
+				}
+				
+				searchStr = searchStr.replace("ライフ","ラ");
+				//searchStr = searchStr.replace("力","力");
+				searchStr = searchStr.replace("賢さ","賢");
+				searchStr = searchStr.replace("命中","命");
+				searchStr = searchStr.replace("回避","回");
+				searchStr = searchStr.replace("丈夫さ","丈");
+				searchStr = searchStr.replace(/>/g,"");
+				
+				let baseRank = [];
+				baseRank.push(searchStr.substr(0,1));
+				baseRank.push(searchStr.substr(1,1));
+				baseRank.push(searchStr.substr(2,1));
+				baseRank.push(searchStr.substr(3,1));
+				baseRank.push(searchStr.substr(4,1));
+				baseRank.push(searchStr.substr(5,1));
+				
+				// 検索対象外のステータスを正規表現化
+				if(false ==  document.getElementById('chkLif').checked) {
+					searchStr = searchStr.replace("ラ",".");
+				}
+				if(false == document.getElementById('chkPow').checked) {
+					searchStr = searchStr.replace("力",".");
+				}
+				if(false == document.getElementById('chkInt').checked) {
+					searchStr = searchStr.replace("賢",".");
+				}
+				if(false == document.getElementById('chkSki').checked) {
+					searchStr = searchStr.replace("命",".");
+				}
+				if(false == document.getElementById('chkSpe').checked) {
+					searchStr = searchStr.replace("回",".");
+				}
+				if(false == document.getElementById('chkDef').checked) {
+					searchStr = searchStr.replace("丈",".");
+				}
+				
+				let searchRank = [];
+				searchRank.push(searchStr.substr(0,1));
+				searchRank.push(searchStr.substr(1,1));
+				searchRank.push(searchStr.substr(2,1));
+				searchRank.push(searchStr.substr(3,1));
+				searchRank.push(searchStr.substr(4,1));
+				searchRank.push(searchStr.substr(5,1));
+								
+				let tbl = document.getElementById('UltraKaijuDataTable');
+
+				document.getElementsByName( 'resultArea' )[0].value = document.getElementsByName( 'resultArea' )[0].value = "";
+
+				// 出力
+				document.getElementsByName( 'resultArea' )[0].value = document.getElementsByName( 'resultArea' )[0].value
+						+ tbl.rows[0].cells[3].firstChild.data + ","
+						+ tbl.rows[0].cells[10].firstChild.data + "," + tbl.rows[0].cells[11].firstChild.data + ","
+						+ tbl.rows[0].cells[12].firstChild.data + "," + tbl.rows[0].cells[13].firstChild.data + ","
+						+ tbl.rows[0].cells[14].firstChild.data + "," + tbl.rows[0].cells[15].firstChild.data + ","
+						+ "相性順位,相性コメント\n";
+
+				// 選択怪獣取得
+				const num = document.calcForm.subKaijuOptions.selectedIndex;
+				const searchKaijuName = document.calcForm.subKaijuOptions[num].text
+				
+				for (i = 1 ; i < tbl.rows.length ; i++) {
+				
+					if(searchKaijuName == tbl.rows[i].cells[3].firstChild.data) {
+						continue;
+					}
+				
+					let statusRank = [];
+					let lifVal = (Number(15 - parseInt(tbl.rows[i].cells[10].firstChild.data, 16)) + 
+									(15 - parseInt(tbl.rows[i].cells[10].firstChild.data, 16)) / 10
+									 + tbl.rows[i].cells[4].firstChild.data / 100000
+									 + 1 / 10000).toFixed(4);
+					let powVal = (Number(15 - parseInt(tbl.rows[i].cells[11].firstChild.data, 16))
+									 + (15 - parseInt(tbl.rows[i].cells[11].firstChild.data, 16)) / 10
+									 + tbl.rows[i].cells[5].firstChild.data / 100000
+									 + 2 / 10000).toFixed(4);
+					let intVal = (Number(15 - parseInt(tbl.rows[i].cells[12].firstChild.data, 16))
+									 + (15 - parseInt(tbl.rows[i].cells[12].firstChild.data, 16)) / 10 
+									 + tbl.rows[i].cells[6].firstChild.data / 100000
+									 + 3 / 10000).toFixed(4);
+					let skiVal = (Number(15 - parseInt(tbl.rows[i].cells[13].firstChild.data, 16))
+									 + (15 - parseInt(tbl.rows[i].cells[13].firstChild.data, 16)) / 10 
+									 + tbl.rows[i].cells[7].firstChild.data / 100000
+									 + 4 / 10000).toFixed(4);
+					let speVal = (Number(15 - parseInt(tbl.rows[i].cells[14].firstChild.data, 16))
+									 + (15 - parseInt(tbl.rows[i].cells[14].firstChild.data, 16)) / 10 
+									 + tbl.rows[i].cells[8].firstChild.data / 100000
+									 + 5 / 10000).toFixed(4);
+					let defVal = (Number(15 - parseInt(tbl.rows[i].cells[15].firstChild.data, 16))
+									 + (15 - parseInt(tbl.rows[i].cells[15].firstChild.data, 16)) / 10 
+									 + (tbl.rows[i].cells[9].firstChild.data / 100000)
+									 + 6 / 10000).toFixed(4);
+
+					statusRank.push([ lifVal, "ラ"]);
+					statusRank.push([ powVal, "力"]);
+					statusRank.push([ intVal, "賢"]);
+					statusRank.push([ skiVal, "命"]);
+					statusRank.push([ speVal, "回"]);
+					statusRank.push([ defVal, "丈"]);
+
+					// ソート
+					statusRank.sort(function(a,b){return(b[0] - a[0]);});
+
+					let chkStt = statusRank[0][1] + statusRank[1][1] + statusRank[2][1] + statusRank[3][1] + statusRank[4][1] + statusRank[5][1];
+
+					// 育成怪獣の相性とソート結果が一致する場合
+					if(chkStt.match(searchStr)) {
+
+						// 該当怪獣の相性順位出力
+						let addStr = statusRank[0][1] + ">" + statusRank[1][1] + ">" + statusRank[2][1] + ">" + statusRank[3][1] + ">" + statusRank[4][1] + ">" + statusRank[5][1];
+						addStr = addStr.replace("ラ","ライフ");
+						//addStr = addStr.replace("力","力");
+						addStr = addStr.replace("賢","賢さ");
+						addStr = addStr.replace("命","命中");
+						addStr = addStr.replace("回","回避");
+						addStr = addStr.replace("丈","丈夫さ");
+						
+						// 一致項目数カウント
+						let matchCount = 0
+						let matchStr = "";
+						for (j = 0 ; j < 6 ; j++) {
+							if(statusRank[j][1] == baseRank[j]) {
+								matchCount++;
+							}
+						}
+						
+						// 出力
+						document.getElementsByName( 'resultArea' )[0].value = document.getElementsByName( 'resultArea' )[0].value
+								+ tbl.rows[i].cells[3].firstChild.data + ","
+								+ tbl.rows[i].cells[10].firstChild.data + "," + tbl.rows[i].cells[11].firstChild.data + ","
+								+ tbl.rows[i].cells[12].firstChild.data + "," + tbl.rows[i].cells[13].firstChild.data + ","
+								+ tbl.rows[i].cells[14].firstChild.data + "," + tbl.rows[i].cells[15].firstChild.data + ","
+								+ addStr + "," + combinationComment[matchCount] + "\n";
+					}
+				}
+			}
+		});
+		
+		</script>
+	</head>
+	<body bgcolor="#FFFFEE">
+		<form name="calcForm">
+			<table border="1" width="700" cellspacing="0" style="color:#FFFFEE" bgcolor="#F0E0D6" bordercolor="#333333">
+					<tr bgcolor="#E04000">
+						<th colspan="4">育成したウルトラ怪獣</th>
+					</tr>
+					<tr>
+						<th align="left" colspan="2" style="color:#800000;">メイン種族</th>
+						<td colspan="2">
+							<select name="mainKaijuOptions" id="mainKaijuOptions" tabindex="1">
+								<option disabled selected>メイン種族を選択</option>
+								<option value="ウインダム">ウインダム</option>
+								<option value="エースキラー">エースキラー</option>
+								<option value="エレキング">エレキング</option>
+								<option value="カネゴン">カネゴン</option>
+								<option value="ガラモン">ガラモン</option>
+								<option value="ガンQ">ガンQ</option>
+								<option value="ガンダー">ガンダー</option>
+								<option value="キングジョー">キングジョー</option>
+								<option value="ゴモラ">ゴモラ</option>
+								<option value="ゴルザ">ゴルザ</option>
+								<option value="サンダーキラー">サンダーキラー</option>
+								<option value="スエゾー">スエゾー</option>
+								<option value="スカルゴモラ">スカルゴモラ</option>
+								<option value="ゼットン">ゼットン</option>
+								<option value="セブンガー">セブンガー</option>
+								<option value="タイラント">タイラント</option>
+								<option value="ダダ">ダダ</option>
+								<option value="テレスドン">テレスドン</option>
+								<option value="ネロンガ">ネロンガ</option>
+								<option value="ノーバ">ノーバ</option>
+								<option value="バードン">バードン</option>
+								<option value="バルタン星人">バルタン星人</option>
+								<option value="ファイブキング">ファイブキング</option>
+								<option value="ペダニウムゼットン">ペダニウムゼットン</option>
+								<option value="ベムスター">ベムスター</option>
+								<option value="ミクラス">ミクラス</option>
+								<option value="メトロン星人">メトロン星人</option>
+								<option value="メルバ">メルバ</option>
+								<option value="モッチー">モッチー</option>
+								<option value="レイキュバス">レイキュバス</option>
+								<option value="レッドキング">レッドキング</option>
+								<option value="超コッヴ">超コッヴ</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<th align="left" colspan="2" style="color:#800000;">ウルトラ怪獣名</th>
+						<td colspan="2">
+							<select name="subKaijuOptions" id="subKaijuOptions" tabindex="2" disabled>
+								<option value="">派生種族を選択</option>
+							</select>
+						</td>
+					</tr>
+					<tr bgcolor="#E04000">
+						<th colspan="2">ステータス</th>
+						<th colspan="2">成長適性</th>
+					</tr>
+					<tr>
+						<th align="left" style="color:#800000;">ライフ</th>
+						<td><input type="number" min="1" max="12000" style="width:70px;" name="BreeLif" id="BreeLif" value="1000" tabindex="3"></td>
+						<th align="left" style="color:#800000;">ライフ適性</th>
+						<td><input type="text" style="width:70px;" name="BaseLif" value="C" tabindex="-1"  disabled></td>
+					</tr>
+					<tr>
+						<th align="left" style="color:#800000;">力</th>
+						<td><input type="number" min="1" max="12000" style="width:70px;" name="BreePow" id="BreePow" value="1000" tabindex="4"></td>
+						<th align="left" style="color:#800000;">力適性</th>
+						<td><input type="text" style="width:70px;" name="BasePow" value="C" tabindex="-1"  disabled></td>
+					</tr>
+					<tr>
+						<th align="left" style="color:#800000;">賢さ</th>
+						<td><input type="number" min="1" max="12000" style="width:70px;" name="BreeInt" id="BreeInt" value="1000" tabindex="5"></td>
+						<th align="left" style="color:#800000;">賢さ適性</th>
+						<td><input type="text" style="width:70px;" name="BaseInt" value="C" tabindex="-1"  disabled></td>
+					</tr>
+					<tr>
+						<th align="left" style="color:#800000;">命中</th>
+						<td><input type="number" min="1" max="12000" style="width:70px;" name="BreeSki" id="BreeSki" value="1000" tabindex="6"></td>
+						<th align="left" style="color:#800000;">命中適性</th>
+						<td><input type="text" style="width:70px;" name="BaseSki" value="C" tabindex="-1"  disabled></td>
+					</tr>
+					<tr>
+						<th align="left" style="color:#800000;">回避</th>
+						<td><input type="number" min="1" max="12000" style="width:70px;" name="BreeSpe" id="BreeSpe" value="1000" tabindex="7"></td>
+						<th align="left" style="color:#800000;">回避適性</th>
+						<td><input type="text" style="width:70px;" name="BaseSpe" value="C" tabindex="-1"  disabled></td>
+					</tr>
+					<tr>
+						<th align="left" style="color:#800000;">丈夫さ</th>
+						<td><input type="number" min="1" max="12000" style="width:70px;" name="BreeDef" id="BreeDef" value="1000" tabindex="8"></td>
+						<th align="left" style="color:#800000;">丈夫さ適性</th>
+						<td><input type="text" style="width:70px;" name="BaseDef" value="C" tabindex="-1"  disabled></td>
+					</tr>
+					<tr bgcolor="#E04000">
+						<th colspan="4">相性を一致させたいステータス</th>
+					</tr>
+					<tr>
+						<th colspan="4">
+						<label style="color:#800000;">ライフ<input type="checkbox" id="chkLif" tabindex="9" checked></label>
+						<label style="color:#800000;">　力<input type="checkbox" id="chkPow" tabindex="10" checked></label>
+						<label style="color:#800000;">　賢さ<input type="checkbox" id="chkInt" tabindex="11" checked></label>
+						<label style="color:#800000;">　命中<input type="checkbox" id="chkSki" tabindex="12" checked></label>
+						<label style="color:#800000;">　回避<input type="checkbox" id="chkSpe" tabindex="13" checked></label>
+						<label style="color:#800000;">　丈夫さ<input type="checkbox" id="chkDef" tabindex="14" checked></label>
+						</th>
+					</tr>
+					<tr bgcolor="#E04000">
+						<th colspan="3">育成したウルトラ怪獣の相性順位</th>
+						<th colspan="1">良相性怪獣検索</th>
+					</tr>
+					<tr>
+						<td colspan="3" style="text-align: center;"><input type="text" style="width:300px;" name="RankData" value="" readonly="readonly"tabindex="16"></td>
+						<td colspan="1" style="text-align: center;"><input type="button" id="searchButton" name="searchButton" value="検索開始" tabindex="17"></td>
+					</tr>
+					<tr bgcolor="#E04000">
+						<th colspan="4">相性順位を一致させやすいウルトラ怪獣の検索結果</th>
+					</tr>
+					<tr>
+						<td colspan="4">
+							<textarea name="resultArea" rows="10" cols="95" style="overflow:scroll;resize:none;" tabindex="18"></textarea><br>
+						</td>
+					</tr>
+			</table>
+			<br>
+
+<table border="1" width="850" cellspacing="0" style="color:#800000" bgcolor="#F0E0D6" bordercolor="#333333">
+<tr style="color:#FFFFEE;" bgcolor="#E04000">
+<th>補足</th>
+</tr>
+<tr>
+<td>
+■除外対象<br>
+　同じ怪獣は除外するようにしています。<br>
+　合成確率が激高になるパターンはステータスの継承量が極端に低くなるため、基本的に合成には不向きです。<br>
+<br>
+■怪獣名の末尾の(R1)や(R2)について<br>
+　外見は通常種と同じながら、中身がひと味違う特殊な個体です。<br>
+　移動速度、ガッツ回復速度と同様に成長適性も異なるので合成相性計算時には注意が必要です。<br>
+<br>
+■完全一致を目指しているのに検索結果が0件の場合<br>
+　全ての適性がオールCのバルタン ゴモラ、ダダ レイキュバスを再生して調整すると楽です。<br>
+<br>
+■部分一致の使い道<br>
+・ひとまず1つ合わせて合成によるステータス上昇量を実感してみたいときの候補探しに。<br>
+・能力合計値が制限されている大会用。不要なステータスをあえて継承させず、切り捨てやすくできます。<br>
+</td>
+</tr>
+</table>
+<br>
+<b style="color:#800000;">■ウルトラ怪獣リスト</b><br>
+<table border="1" id="UltraKaijuDataTable" style="color:#800000;" bgcolor="#F0E0D6"><tbody>
+<tr style="color:#FFFFEE;" bgcolor="#E04000"><th>ID</th><th>メイン種族</th><th>派生種</th><th>怪獣名</th><th>ライフ</th><th>力</th><th>賢さ</th><th>命中</th><th>回避</th><th>丈夫さ</th><th>ライフ適性</th><th>力適性</th><th>賢さ適性</th><th>命中適性</th><th>回避適性</th><th>丈夫さ適性</th></tr>
+<tr><th>1</th><th align="left">ゴモラ</th><th align="left">ゴモラ</th><th align="left">ゴモラ</th><th>1600</th><th>1500</th><th>800</th><th>900</th><th>700</th><th>1200</th><th>A</th><th>B</th><th>D</th><th>D</th><th>D</th><th>C</th></tr>
+<tr><th>2</th><th align="left">ゴモラ</th><th align="left">ゴモラ</th><th align="left">ゴモラ(R1)</th><th>1420</th><th>1470</th><th>880</th><th>1020</th><th>680</th><th>1300</th><th>B</th><th>B</th><th>D</th><th>C</th><th>D</th><th>C</th></tr>
+<tr><th>3</th><th align="left">ゴモラ</th><th align="left">エレキング</th><th align="left">エレキング ゴモラ</th><th>1400</th><th>1400</th><th>900</th><th>1100</th><th>700</th><th>1000</th><th>B</th><th>B</th><th>D</th><th>C</th><th>D</th><th>C</th></tr>
+<tr><th>4</th><th align="left">ゴモラ</th><th align="left">エレキング</th><th align="left">エレキング ゴモラ(R1)</th><th>1380</th><th>1360</th><th>1020</th><th>1250</th><th>780</th><th>890</th><th>B</th><th>B</th><th>C</th><th>B</th><th>D</th><th>D</th></tr>
+<tr><th>5</th><th align="left">ゴモラ</th><th align="left">ゼットン</th><th align="left">ゼットン ゴモラ</th><th>1500</th><th>1600</th><th>1000</th><th>1000</th><th>900</th><th>1200</th><th>B</th><th>B</th><th>C</th><th>D</th><th>D</th><th>C</th></tr>
+<tr><th>6</th><th align="left">ゴモラ</th><th align="left">ゼットン</th><th align="left">ゼットン ゴモラ(R1)</th><th>1330</th><th>1660</th><th>1130</th><th>990</th><th>1020</th><th>1110</th><th>C</th><th>B</th><th>B</th><th>D</th><th>C</th><th>C</th></tr>
+<tr><th>7</th><th align="left">ゴモラ</th><th align="left">レッドキング</th><th align="left">レッドキング ゴモラ</th><th>1600</th><th>1600</th><th>700</th><th>900</th><th>700</th><th>1300</th><th>A</th><th>B</th><th>D</th><th>D</th><th>D</th><th>C</th></tr>
+<tr><th>8</th><th align="left">ゴモラ</th><th align="left">レッドキング</th><th align="left">レッドキング ゴモラ(R1)</th><th>1550</th><th>1810</th><th>620</th><th>1000</th><th>660</th><th>1470</th><th>A</th><th>A</th><th>E</th><th>D</th><th>D</th><th>B</th></tr>
+<tr><th>9</th><th align="left">ゴモラ</th><th align="left">ガンQ</th><th align="left">ガンQ ゴモラ</th><th>1400</th><th>1100</th><th>1100</th><th>1200</th><th>700</th><th>1000</th><th>B</th><th>C</th><th>C</th><th>C</th><th>D</th><th>C</th></tr>
+<tr><th>10</th><th align="left">ゴモラ</th><th align="left">ガンQ</th><th align="left">ガンQ ゴモラ(R1)</th><th>1100</th><th>1060</th><th>1250</th><th>1540</th><th>680</th><th>1100</th><th>D</th><th>C</th><th>B</th><th>A</th><th>D</th><th>C</th></tr>
+<tr><th>11</th><th align="left">ゴモラ</th><th align="left">バルタン</th><th align="left">バルタン ゴモラ</th><th>1200</th><th>1200</th><th>1200</th><th>1000</th><th>1100</th><th>1000</th><th>C</th><th>C</th><th>C</th><th>C</th><th>C</th><th>C</th></tr>
+<tr><th>12</th><th align="left">ゴモラ</th><th align="left">バルタン</th><th align="left">バルタン ゴモラ(R1)</th><th>1120</th><th>1170</th><th>1540</th><th>1100</th><th>1250</th><th>790</th><th>C</th><th>C</th><th>A</th><th>C</th><th>B</th><th>E</th></tr>
+<tr><th>13</th><th align="left">ゴモラ</th><th align="left">カネゴン</th><th align="left">カネゴン ゴモラ</th><th>1100</th><th>1100</th><th>1000</th><th>1000</th><th>1100</th><th>900</th><th>C</th><th>C</th><th>D</th><th>D</th><th>C</th><th>D</th></tr>
+<tr><th>14</th><th align="left">ゴモラ</th><th align="left">カネゴン</th><th align="left">カネゴン ゴモラ(R1)</th><th>980</th><th>1090</th><th>1080</th><th>1130</th><th>1410</th><th>840</th><th>D</th><th>C</th><th>D</th><th>C</th><th>A</th><th>D</th></tr>
+<tr><th>15</th><th align="left">ゴモラ</th><th align="left">ゴルザ</th><th align="left">ゴルザ ゴモラ</th><th>1600</th><th>1500</th><th>800</th><th>900</th><th>700</th><th>1200</th><th>A</th><th>B</th><th>D</th><th>D</th><th>D</th><th>C</th></tr>
+<tr><th>16</th><th align="left">ゴモラ</th><th align="left">ゴルザ</th><th align="left">ゴルザ ゴモラ(R1)</th><th>1420</th><th>1700</th><th>790</th><th>1000</th><th>660</th><th>1360</th><th>B</th><th>A</th><th>D</th><th>D</th><th>D</th><th>B</th></tr>
+<tr><th>17</th><th align="left">ゴモラ</th><th align="left">ウインダム</th><th align="left">ウインダム ゴモラ</th><th>1500</th><th>1400</th><th>800</th><th>900</th><th>900</th><th>1100</th><th>B</th><th>B</th><th>D</th><th>D</th><th>D</th><th>C</th></tr>
+<tr><th>18</th><th align="left">ゴモラ</th><th align="left">ウインダム</th><th align="left">ウインダム ゴモラ(R1)</th><th>1330</th><th>1310</th><th>910</th><th>990</th><th>880</th><th>1250</th><th>C</th><th>B</th><th>C</th><th>D</th><th>D</th><th>B</th></tr>
+<tr><th>19</th><th align="left">ゴモラ</th><th align="left">ノーバ</th><th align="left">ノーバ ゴモラ</th><th>1200</th><th>1400</th><th>800</th><th>1100</th><th>1000</th><th>900</th><th>B</th><th>B</th><th>D</th><th>C</th><th>C</th><th>D</th></tr>
+<tr><th>20</th><th align="left">ゴモラ</th><th align="left">ノーバ</th><th align="left">ノーバ ゴモラ(R1)</th><th>1070</th><th>1330</th><th>890</th><th>1250</th><th>1130</th><th>800</th><th>C</th><th>B</th><th>D</th><th>B</th><th>B</th><th>E</th></tr>
+<tr><th>21</th><th align="left">ゴモラ</th><th align="left">メルバ</th><th align="left">メルバ ゴモラ</th><th>1200</th><th>1400</th><th>800</th><th>1000</th><th>1200</th><th>1100</th><th>C</th><th>B</th><th>D</th><th>D</th><th>C</th><th>C</th></tr>
+<tr><th>22</th><th align="left">ゴモラ</th><th align="left">メルバ</th><th align="left">メルバ ゴモラ(R1)</th><th>1190</th><th>1240</th><th>910</th><th>1070</th><th>1540</th><th>980</th><th>C</th><th>C</th><th>C</th><th>D</th><th>A</th><th>D</th></tr>
+<tr><th>23</th><th align="left">ゴモラ</th><th align="left">特殊</th><th align="left">ライガー ゴモラ</th><th>870</th><th>920</th><th>1340</th><th>1660</th><th>1460</th><th>770</th><th>C</th><th>D</th><th>B</th><th>A</th><th>C</th><th>E</th></tr>
+<tr><th>24</th><th align="left">ゴモラ</th><th align="left">特殊</th><th align="left">ライガー ゴモラ(R1)</th><th>770</th><th>1040</th><th>1310</th><th>1470</th><th>1540</th><th>880</th><th>D</th><th>C</th><th>B</th><th>B</th><th>C</th><th>D</th></tr>
+<tr><th>25</th><th align="left">レッドキング</th><th align="left">レッドキング</th><th align="left">レッドキング</th><th>1500</th><th>1900</th><th>400</th><th>700</th><th>500</th><th>1500</th><th>B</th><th>A</th><th>E</th><th>D</th><th>D</th><th>B</th></tr>
+<tr><th>26</th><th align="left">レッドキング</th><th align="left">レッドキング</th><th align="left">レッドキング(R1)</th><th>1330</th><th>2000</th><th>460</th><th>800</th><th>470</th><th>1460</th><th>C</th><th>A</th><th>D</th><th>C</th><th>D</th><th>B</th></tr>
+<tr><th>27</th><th align="left">レッドキング</th><th align="left">ゴモラ</th><th align="left">ゴモラ レッドキング</th><th>1500</th><th>1800</th><th>500</th><th>700</th><th>500</th><th>1400</th><th>B</th><th>A</th><th>E</th><th>D</th><th>D</th><th>B</th></tr>
+<tr><th>28</th><th align="left">レッドキング</th><th align="left">ゴモラ</th><th align="left">ゴモラ レッドキング(R1)</th><th>1700</th><th>1600</th><th>460</th><th>640</th><th>570</th><th>1500</th><th>A</th><th>B</th><th>E</th><th>D</th><th>C</th><th>B</th></tr>
+<tr><th>29</th><th align="left">レッドキング</th><th align="left">エレキング</th><th align="left">エレキング レッドキング</th><th>1300</th><th>1700</th><th>600</th><th>1000</th><th>600</th><th>1200</th><th>B</th><th>B</th><th>D</th><th>C</th><th>D</th><th>C</th></tr>
+<tr><th>30</th><th align="left">レッドキング</th><th align="left">エレキング</th><th align="left">エレキング レッドキング(R1)</th><th>1160</th><th>1640</th><th>680</th><th>1280</th><th>670</th><th>1070</th><th>C</th><th>B</th><th>C</th><th>A</th><th>D</th><th>D</th></tr>
+<tr><th>31</th><th align="left">レッドキング</th><th align="left">ゼットン</th><th align="left">ゼットン レッドキング</th><th>1400</th><th>1900</th><th>800</th><th>900</th><th>700</th><th>1500</th><th>B</th><th>A</th><th>D</th><th>D</th><th>D</th><th>B</th></tr>
+<tr><th>32</th><th align="left">レッドキング</th><th align="left">ゼットン</th><th align="left">ゼットン レッドキング(R1)</th><th>1240</th><th>1980</th><th>910</th><th>840</th><th>800</th><th>1460</th><th>C</th><th>A</th><th>C</th><th>D</th><th>C</th><th>B</th></tr>
+<tr><th>33</th><th align="left">レッドキング</th><th align="left">バルタン</th><th align="left">バルタン レッドキング</th><th>1100</th><th>1500</th><th>1000</th><th>900</th><th>1000</th><th>1200</th><th>C</th><th>B</th><th>C</th><th>C</th><th>C</th><th>C</th></tr>
+<tr><th>34</th><th align="left">レッドキング</th><th align="left">バルタン</th><th align="left">バルタン レッドキング(R1)</th><th>1050</th><th>1470</th><th>1060</th><th>1020</th><th>1280</th><th>940</th><th>C</th><th>B</th><th>C</th><th>B</th><th>A</th><th>E</th></tr>
+<tr><th>35</th><th align="left">レッドキング</th><th align="left">ゴルザ</th><th align="left">ゴルザ レッドキング</th><th>1500</th><th>1800</th><th>400</th><th>700</th><th>600</th><th>1500</th><th>B</th><th>A</th><th>E</th><th>D</th><th>D</th><th>B</th></tr>
+<tr><th>36</th><th align="left">レッドキング</th><th align="left">ゴルザ</th><th align="left">ゴルザ レッドキング(R1)</th><th>1460</th><th>1600</th><th>480</th><th>800</th><th>580</th><th>1700</th><th>B</th><th>B</th><th>E</th><th>C</th><th>D</th><th>A</th></tr>
+<tr><th>37</th><th align="left">レッドキング</th><th align="left">ネロンガ</th><th align="left">ネロンガ レッドキング</th><th>1500</th><th>1600</th><th>500</th><th>900</th><th>500</th><th>1300</th><th>B</th><th>B</th><th>E</th><th>D</th><th>D</th><th>C</th></tr>
+<tr><th>38</th><th align="left">レッドキング</th><th align="left">ネロンガ</th><th align="left">ネロンガ レッドキング(R1)</th><th>1560</th><th>1420</th><th>640</th><th>870</th><th>480</th><th>1470</th><th>B</th><th>C</th><th>C</th><th>D</th><th>D</th><th>B</th></tr>
+<tr><th>39</th><th align="left">レッドキング</th><th align="left">ベムスター</th><th align="left">ベムスター レッドキング</th><th>1200</th><th>1700</th><th>400</th><th>900</th><th>900</th><th>1200</th><th>C</th><th>B</th><th>E</th><th>C</th><th>C</th><th>C</th></tr>
+<tr><th>40</th><th align="left">レッドキング</th><th align="left">ベムスター</th><th align="left">ベムスター レッドキング(R1)</th><th>1070</th><th>1660</th><th>480</th><th>1020</th><th>1020</th><th>1170</th><th>D</th><th>B</th><th>E</th><th>B</th><th>B</th><th>C</th></tr>
+<tr><th>41</th><th align="left">レッドキング</th><th align="left">ウインダム</th><th align="left">ウインダム レッドキング</th><th>1400</th><th>1600</th><th>600</th><th>700</th><th>800</th><th>1300</th><th>B</th><th>B</th><th>E</th><th>D</th><th>D</th><th>B</th></tr>
+<tr><th>42</th><th align="left">レッドキング</th><th align="left">ウインダム</th><th align="left">ウインダム レッドキング(R1)</th><th>1310</th><th>1810</th><th>680</th><th>770</th><th>710</th><th>1240</th><th>B</th><th>A</th><th>D</th><th>B</th><th>E</th><th>B</th></tr>
+<tr><th>43</th><th align="left">レッドキング</th><th align="left">特殊</th><th align="left">サンタ レッドキング</th><th>960</th><th>1170</th><th>1410</th><th>910</th><th>1225</th><th>840</th><th>C</th><th>C</th><th>B</th><th>D</th><th>B</th><th>D</th></tr>
+<tr><th>44</th><th align="left">レッドキング</th><th align="left">特殊</th><th align="left">サンタ レッドキング(R1)</th><th>760</th><th>1330</th><th>1250</th><th>1030</th><th>1390</th><th>950</th><th>E</th><th>B</th><th>C</th><th>C</th><th>A</th><th>C</th></tr>
+<tr><th>45</th><th align="left">テレスドン</th><th align="left">テレスドン</th><th align="left">テレスドン</th><th>1400</th><th>1400</th><th>1100</th><th>700</th><th>800</th><th>1300</th><th>C</th><th>C</th><th>C</th><th>D</th><th>D</th><th>C</th></tr>
+<tr><th>46</th><th align="left">テレスドン</th><th align="left">テレスドン</th><th align="left">テレスドン(R1)</th><th>1240</th><th>1590</th><th>1090</th><th>800</th><th>780</th><th>1330</th><th>D</th><th>B</th><th>C</th><th>C</th><th>D</th><th>C</th></tr>
+<tr><th>47</th><th align="left">テレスドン</th><th align="left">エレキング</th><th align="left">エレキング テレスドン</th><th>1300</th><th>1400</th><th>1100</th><th>1000</th><th>800</th><th>1100</th><th>C</th><th>C</th><th>C</th><th>C</th><th>D</th><th>C</th></tr>
+<tr><th>48</th><th align="left">テレスドン</th><th align="left">エレキング</th><th align="left">エレキング テレスドン(R1)</th><th>1160</th><th>1370</th><th>1140</th><th>1280</th><th>910</th><th>980</th><th>D</th><th>C</th><th>C</th><th>A</th><th>C</th><th>D</th></tr>
+<tr><th>49</th><th align="left">テレスドン</th><th align="left">レッドキング</th><th align="left">レッドキング テレスドン</th><th>1400</th><th>1600</th><th>900</th><th>700</th><th>700</th><th>1300</th><th>C</th><th>B</th><th>D</th><th>D</th><th>D</th><th>C</th></tr>
+<tr><th>50</th><th align="left">テレスドン</th><th align="left">レッドキング</th><th align="left">レッドキング テレスドン(R1)</th><th>1450</th><th>1810</th><th>800</th><th>660</th><th>800</th><th>1340</th><th>C</th><th>A</th><th>E</th><th>D</th><th>C</th><th>C</th></tr>
+<tr><th>51</th><th align="left">テレスドン</th><th align="left">レイキュバス</th><th align="left">レイキュバス テレスドン</th><th>1400</th><th>1400</th><th>900</th><th>700</th><th>600</th><th>1500</th><th>C</th><th>C</th><th>C</th><th>D</th><th>D</th><th>B</th></tr>
+<tr><th>52</th><th align="left">テレスドン</th><th align="left">レイキュバス</th><th align="left">レイキュバス テレスドン(R1)</th><th>1590</th><th>1590</th><th>800</th><th>670</th><th>540</th><th>1700</th><th>B</th><th>B</th><th>D</th><th>D</th><th>E</th><th>A</th></tr>
+<tr><th>53</th><th align="left">テレスドン</th><th align="left">エースキラー</th><th align="left">エースキラー テレスドン</th><th>1300</th><th>1500</th><th>1200</th><th>1200</th><th>600</th><th>1400</th><th>C</th><th>B</th><th>C</th><th>C</th><th>D</th><th>C</th></tr>
+<tr><th>54</th><th align="left">テレスドン</th><th align="left">エースキラー</th><th align="left">エースキラー テレスドン(R1)</th><th>1270</th><th>1700</th><th>1360</th><th>1280</th><th>540</th><th>1360</th><th>C</th><th>A</th><th>B</th><th>C</th><th>E</th><th>C</th></tr>
+<tr><th>55</th><th align="left">テレスドン</th><th align="left">特殊</th><th align="left">ディノ テレスドン</th><th>1140</th><th>1470</th><th>1180</th><th>1260</th><th>720</th><th>930</th><th>D</th><th>B</th><th>C</th><th>B</th><th>D</th><th>D</th></tr>
+<tr><th>56</th><th align="left">テレスドン</th><th align="left">特殊</th><th align="left">ディノ テレスドン(R1)</th><th>1290</th><th>1440</th><th>1050</th><th>1340</th><th>920</th><th>830</th><th>C</th><th>B</th><th>D</th><th>B</th><th>B</th><th>E</th></tr>
+<tr><th>57</th><th align="left">バルタン星人</th><th align="left">バルタン星人</th><th align="left">バルタン星人</th><th>400</th><th>700</th><th>2000</th><th>1300</th><th>1800</th><th>700</th><th>E</th><th>D</th><th>A</th><th>B</th><th>A</th><th>D</th></tr>
+<tr><th>58</th><th align="left">バルタン星人</th><th align="left">バルタン星人</th><th align="left">バルタン星人(R1)</th><th>460</th><th>800</th><th>1990</th><th>1260</th><th>1410</th><th>800</th><th>D</th><th>C</th><th>A</th><th>B</th><th>C</th><th>C</th></tr>
+<tr><th>59</th><th align="left">バルタン星人</th><th align="left">ゴモラ</th><th align="left">ゴモラ バルタン星人</th><th>800</th><th>1000</th><th>1600</th><th>1200</th><th>1400</th><th>900</th><th>C</th><th>C</th><th>B</th><th>C</th><th>B</th><th>D</th></tr>
+<tr><th>60</th><th align="left">バルタン星人</th><th align="left">ゴモラ</th><th align="left">ゴモラ バルタン星人(R1)</th><th>1030</th><th>1100</th><th>1540</th><th>1070</th><th>1240</th><th>1020</th><th>A</th><th>C</th><th>B</th><th>D</th><th>C</th><th>C</th></tr>
+<tr><th>61</th><th align="left">バルタン星人</th><th align="left">キングジョー</th><th align="left">キングジョー バルタン星人</th><th>800</th><th>1200</th><th>1800</th><th>1200</th><th>1200</th><th>1200</th><th>D</th><th>C</th><th>B</th><th>B</th><th>C</th><th>C</th></tr>
+<tr><th>62</th><th align="left">バルタン星人</th><th align="left">キングジョー</th><th align="left">キングジョー バルタン星人(R1)</th><th>880</th><th>1540</th><th>1760</th><th>1070</th><th>940</th><th>1540</th><th>D</th><th>A</th><th>B</th><th>C</th><th>E</th><th>A</th></tr>
+<tr><th>63</th><th align="left">バルタン星人</th><th align="left">ガンQ</th><th align="left">ガンQ バルタン星人</th><th>600</th><th>700</th><th>1900</th><th>1500</th><th>1500</th><th>700</th><th>E</th><th>D</th><th>A</th><th>B</th><th>B</th><th>D</th></tr>
+<tr><th>64</th><th align="left">バルタン星人</th><th align="left">ガンQ</th><th align="left">ガンQ バルタン星人(R1)</th><th>680</th><th>620</th><th>1880</th><th>1700</th><th>1440</th><th>800</th><th>D</th><th>E</th><th>A</th><th>A</th><th>B</th><th>D</th></tr>
+<tr><th>65</th><th align="left">バルタン星人</th><th align="left">メトロン</th><th align="left">メトロン バルタン星人</th><th>700</th><th>700</th><th>2000</th><th>1400</th><th>1400</th><th>600</th><th>D</th><th>D</th><th>A</th><th>B</th><th>B</th><th>D</th></tr>
+<tr><th>66</th><th align="left">バルタン星人</th><th align="left">メトロン</th><th align="left">メトロン バルタン星人(R1)</th><th>770</th><th>690</th><th>1770</th><th>1590</th><th>1590</th><th>540</th><th>D</th><th>D</th><th>B</th><th>A</th><th>A</th><th>E</th></tr>
+<tr><th>67</th><th align="left">バルタン星人</th><th align="left">ダダ</th><th align="left">ダダ バルタン星人</th><th>500</th><th>700</th><th>1900</th><th>1300</th><th>1800</th><th>600</th><th>E</th><th>D</th><th>A</th><th>B</th><th>A</th><th>D</th></tr>
+<tr><th>68</th><th align="left">バルタン星人</th><th align="left">ダダ</th><th align="left">ダダ バルタン星人(R1)</th><th>570</th><th>640</th><th>1860</th><th>1470</th><th>1600</th><th>700</th><th>D</th><th>D</th><th>A</th><th>A</th><th>B</th><th>D</th></tr>
+<tr><th>69</th><th align="left">バルタン星人</th><th align="left">ミクラス</th><th align="left">ミクラス バルタン星人</th><th>900</th><th>1000</th><th>1500</th><th>1000</th><th>1400</th><th>900</th><th>C</th><th>C</th><th>B</th><th>C</th><th>B</th><th>C</th></tr>
+<tr><th>70</th><th align="left">バルタン星人</th><th align="left">ミクラス</th><th align="left">ミクラス バルタン星人(R1)</th><th>1020</th><th>1130</th><th>1180</th><th>930</th><th>1310</th><th>1000</th><th>B</th><th>B</th><th>D</th><th>C</th><th>B</th><th>C</th></tr>
+<tr><th>71</th><th align="left">バルタン星人</th><th align="left">レイキュバス</th><th align="left">レイキュバス バルタン星人</th><th>800</th><th>1000</th><th>1400</th><th>1100</th><th>1200</th><th>1100</th><th>D</th><th>C</th><th>B</th><th>C</th><th>C</th><th>C</th></tr>
+<tr><th>72</th><th align="left">バルタン星人</th><th align="left">レイキュバス</th><th align="left">レイキュバス バルタン星人(R1)</th><th>880</th><th>1130</th><th>1370</th><th>1040</th><th>1070</th><th>1250</th><th>D</th><th>B</th><th>B</th><th>C</th><th>D</th><th>B</th></tr>
+<tr><th>73</th><th align="left">バルタン星人</th><th align="left">バードン</th><th align="left">バードン バルタン星人</th><th>600</th><th>1100</th><th>1700</th><th>1300</th><th>1800</th><th>900</th><th>D</th><th>C</th><th>B</th><th>B</th><th>A</th><th>D</th></tr>
+<tr><th>74</th><th align="left">バルタン星人</th><th align="left">バードン</th><th align="left">バードン バルタン星人(R1)</th><th>770</th><th>1200</th><th>1510</th><th>1270</th><th>1600</th><th>940</th><th>B</th><th>C</th><th>C</th><th>B</th><th>B</th><th>D</th></tr>
+<tr><th>75</th><th align="left">バルタン星人</th><th align="left">特殊</th><th align="left">ブンシン？ バルタン星人</th><th>690</th><th>660</th><th>1990</th><th>1580</th><th>1700</th><th>440</th><th>D</th><th>D</th><th>A</th><th>A</th><th>B</th><th>E</th></tr>
+<tr><th>76</th><th align="left">バルタン星人</th><th align="left">特殊</th><th align="left">ブンシン？ バルタン星人(R1)</th><th>780</th><th>750</th><th>1770</th><th>1400</th><th>1930</th><th>400</th><th>C</th><th>C</th><th>B</th><th>B</th><th>A</th><th>E</th></tr>
+<tr><th>77</th><th align="left">ダダ</th><th align="left">ダダ</th><th align="left">ダダ</th><th>700</th><th>700</th><th>1700</th><th>1500</th><th>1700</th><th>400</th><th>E</th><th>D</th><th>A</th><th>B</th><th>A</th><th>E</th></tr>
+<tr><th>78</th><th align="left">ダダ</th><th align="left">ダダ</th><th align="left">ダダ(R1)</th><th>770</th><th>670</th><th>1720</th><th>1440</th><th>1510</th><th>520</th><th>E</th><th>D</th><th>A</th><th>B</th><th>B</th><th>C</th></tr>
+<tr><th>79</th><th align="left">ダダ</th><th align="left">ゴモラ</th><th align="left">ゴモラ ダダ</th><th>1000</th><th>1000</th><th>1400</th><th>1300</th><th>1300</th><th>700</th><th>C</th><th>C</th><th>B</th><th>C</th><th>B</th><th>D</th></tr>
+<tr><th>80</th><th align="left">ダダ</th><th align="left">ゴモラ</th><th align="left">ゴモラ ダダ(R1)</th><th>1130</th><th>1070</th><th>1240</th><th>1330</th><th>1240</th><th>800</th><th>B</th><th>C</th><th>C</th><th>C</th><th>B</th><th>C</th></tr>
+<tr><th>81</th><th align="left">ダダ</th><th align="left">ゼットン</th><th align="left">ゼットン ダダ</th><th>900</th><th>1100</th><th>1700</th><th>1500</th><th>1500</th><th>800</th><th>D</th><th>C</th><th>A</th><th>B</th><th>B</th><th>D</th></tr>
+<tr><th>82</th><th align="left">ダダ</th><th align="left">ゼットン</th><th align="left">ゼットン ダダ(R1)</th><th>960</th><th>1250</th><th>1760</th><th>1330</th><th>1430</th><th>740</th><th>D</th><th>B</th><th>A</th><th>C</th><th>B</th><th>D</th></tr>
+<tr><th>83</th><th align="left">ダダ</th><th align="left">レッドキング</th><th align="left">レッドキング ダダ</th><th>1000</th><th>1100</th><th>1200</th><th>1200</th><th>1300</th><th>800</th><th>D</th><th>C</th><th>C</th><th>C</th><th>B</th><th>D</th></tr>
+<tr><th>84</th><th align="left">ダダ</th><th align="left">レッドキング</th><th align="left">レッドキング ダダ(R1)</th><th>1100</th><th>1410</th><th>1070</th><th>1130</th><th>1210</th><th>910</th><th>D</th><th>A</th><th>D</th><th>C</th><th>B</th><th>C</th></tr>
+<tr><th>85</th><th align="left">ダダ</th><th align="left">ネロンガ</th><th align="left">ネロンガ ダダ</th><th>1100</th><th>800</th><th>1400</th><th>1500</th><th>1300</th><th>600</th><th>D</th><th>D</th><th>B</th><th>B</th><th>C</th><th>E</th></tr>
+<tr><th>86</th><th align="left">ダダ</th><th align="left">ネロンガ</th><th align="left">ネロンガ ダダ(R1)</th><th>1410</th><th>770</th><th>1340</th><th>1560</th><th>1160</th><th>700</th><th>B</th><th>D</th><th>B</th><th>B</th><th>D</th><th>E</th></tr>
+<tr><th>87</th><th align="left">ダダ</th><th align="left">レイキュバス</th><th align="left">レイキュバス ダダ</th><th>900</th><th>1000</th><th>1300</th><th>1300</th><th>1200</th><th>900</th><th>D</th><th>C</th><th>B</th><th>C</th><th>C</th><th>C</th></tr>
+<tr><th>88</th><th align="left">ダダ</th><th align="left">レイキュバス</th><th align="left">レイキュバス ダダ(R1)</th><th>990</th><th>1130</th><th>1330</th><th>1260</th><th>1070</th><th>1020</th><th>D</th><th>B</th><th>B</th><th>C</th><th>D</th><th>B</th></tr>
+<tr><th>89</th><th align="left">ダダ</th><th align="left">ベムスター</th><th align="left">ベムスター ダダ</th><th>700</th><th>900</th><th>1300</th><th>1500</th><th>1700</th><th>400</th><th>E</th><th>D</th><th>B</th><th>B</th><th>A</th><th>E</th></tr>
+<tr><th>90</th><th align="left">ダダ</th><th align="left">ベムスター</th><th align="left">ベムスター ダダ(R1)</th><th>800</th><th>960</th><th>1160</th><th>1700</th><th>1660</th><th>480</th><th>D</th><th>D</th><th>C</th><th>A</th><th>A</th><th>E</th></tr>
+<tr><th>91</th><th align="left">ダダ</th><th align="left">セブンガー</th><th align="left">セブンガー ダダ</th><th>700</th><th>1100</th><th>1500</th><th>1400</th><th>1500</th><th>700</th><th>E</th><th>C</th><th>B</th><th>B</th><th>B</th><th>D</th></tr>
+<tr><th>92</th><th align="left">ダダ</th><th align="left">セブンガー</th><th align="left">セブンガー ダダ(R1)</th><th>800</th><th>1250</th><th>1410</th><th>1240</th><th>1450</th><th>800</th><th>D</th><th>B</th><th>B</th><th>C</th><th>B</th><th>D</th></tr>
+<tr><th>93</th><th align="left">ダダ</th><th align="left">特殊</th><th align="left">ラッキー ダダ</th><th>930</th><th>540</th><th>1650</th><th>1220</th><th>1890</th><th>370</th><th>D</th><th>D</th><th>A</th><th>C</th><th>A</th><th>E</th></tr>
+<tr><th>94</th><th align="left">ダダ</th><th align="left">特殊</th><th align="left">ラッキー ダダ(R1)</th><th>880</th><th>630</th><th>1470</th><th>1380</th><th>1880</th><th>420</th><th>D</th><th>D</th><th>B</th><th>B</th><th>A</th><th>D</th></tr>
+<tr><th>95</th><th align="left">エレキング</th><th align="left">エレキング</th><th align="left">エレキング</th><th>1000</th><th>1200</th><th>1100</th><th>1600</th><th>900</th><th>700</th><th>C</th><th>C</th><th>C</th><th>B</th><th>D</th><th>D</th></tr>
+<tr><th>96</th><th align="left">エレキング</th><th align="left">エレキング</th><th align="left">エレキング(R1)</th><th>1130</th><th>1170</th><th>1170</th><th>1580</th><th>1020</th><th>620</th><th>B</th><th>C</th><th>C</th><th>B</th><th>C</th><th>E</th></tr>
+<tr><th>97</th><th align="left">エレキング</th><th align="left">ゴモラ</th><th align="left">ゴモラ エレキング</th><th>1200</th><th>1300</th><th>1000</th><th>1400</th><th>900</th><th>900</th><th>B</th><th>C</th><th>C</th><th>C</th><th>D</th><th>D</th></tr>
+<tr><th>98</th><th align="left">エレキング</th><th align="left">ゴモラ</th><th align="left">ゴモラ エレキング(R1)</th><th>1260</th><th>1390</th><th>990</th><th>1240</th><th>880</th><th>1150</th><th>B</th><th>C</th><th>C</th><th>D</th><th>D</th><th>B</th></tr>
+<tr><th>99</th><th align="left">エレキング</th><th align="left">ゼットン</th><th align="left">ゼットン エレキング</th><th>1000</th><th>1400</th><th>1200</th><th>1500</th><th>1000</th><th>900</th><th>C</th><th>B</th><th>C</th><th>B</th><th>D</th><th>D</th></tr>
+<tr><th>100</th><th align="left">エレキング</th><th align="left">ゼットン</th><th align="left">ゼットン エレキング(R1)</th><th>890</th><th>1590</th><th>1270</th><th>1490</th><th>1130</th><th>940</th><th>D</th><th>A</th><th>C</th><th>B</th><th>C</th><th>D</th></tr>
+<tr><th>101</th><th align="left">エレキング</th><th align="left">キングジョー</th><th align="left">キングジョー エレキング</th><th>1100</th><th>1500</th><th>1100</th><th>1400</th><th>700</th><th>1200</th><th>C</th><th>B</th><th>C</th><th>B</th><th>D</th><th>C</th></tr>
+<tr><th>102</th><th align="left">エレキング</th><th align="left">キングジョー</th><th align="left">キングジョー エレキング(R1)</th><th>1090</th><th>1600</th><th>1160</th><th>1350</th><th>560</th><th>1540</th><th>C</th><th>B</th><th>C</th><th>B</th><th>E</th><th>A</th></tr>
+<tr><th>103</th><th align="left">エレキング</th><th align="left">ダダ</th><th align="left">ダダ エレキング</th><th>900</th><th>1000</th><th>1300</th><th>1600</th><th>1200</th><th>600</th><th>D</th><th>C</th><th>B</th><th>B</th><th>C</th><th>D</th></tr>
+<tr><th>104</th><th align="left">エレキング</th><th align="left">ダダ</th><th align="left">ダダ エレキング(R1)</th><th>880</th><th>1080</th><th>1470</th><th>1560</th><th>1360</th><th>540</th><th>D</th><th>C</th><th>A</th><th>B</th><th>B</th><th>E</th></tr>
+<tr><th>105</th><th align="left">エレキング</th><th align="left">カネゴン</th><th align="left">カネゴン エレキング</th><th>800</th><th>900</th><th>1200</th><th>1500</th><th>1300</th><th>600</th><th>D</th><th>D</th><th>C</th><th>B</th><th>C</th><th>D</th></tr>
+<tr><th>106</th><th align="left">エレキング</th><th align="left">カネゴン</th><th align="left">カネゴン エレキング(R1)</th><th>770</th><th>800</th><th>1360</th><th>1470</th><th>1660</th><th>690</th><th>D</th><th>E</th><th>B</th><th>B</th><th>A</th><th>D</th></tr>
+<tr><th>107</th><th align="left">エレキング</th><th align="left">ゴルザ</th><th align="left">ゴルザ エレキング</th><th>1200</th><th>1300</th><th>900</th><th>1300</th><th>900</th><th>900</th><th>C</th><th>C</th><th>C</th><th>C</th><th>D</th><th>C</th></tr>
+<tr><th>108</th><th align="left">エレキング</th><th align="left">ゴルザ</th><th align="left">ゴルザ エレキング(R1)</th><th>1360</th><th>1470</th><th>800</th><th>1270</th><th>880</th><th>1000</th><th>A</th><th>B</th><th>D</th><th>C</th><th>D</th><th>C</th></tr>
+<tr><th>109</th><th align="left">エレキング</th><th align="left">レイキュバス</th><th align="left">レイキュバス エレキング</th><th>1100</th><th>1300</th><th>900</th><th>1300</th><th>700</th><th>1100</th><th>C</th><th>C</th><th>C</th><th>C</th><th>D</th><th>C</th></tr>
+<tr><th>110</th><th align="left">エレキング</th><th align="left">レイキュバス</th><th align="left">レイキュバス エレキング(R1)</th><th>1080</th><th>1470</th><th>980</th><th>1160</th><th>660</th><th>1250</th><th>C</th><th>B</th><th>C</th><th>D</th><th>D</th><th>B</th></tr>
+<tr><th>111</th><th align="left">エレキング</th><th align="left">ガンQ</th><th align="left">ガンQ エレキング</th><th>1000</th><th>1000</th><th>1300</th><th>1600</th><th>900</th><th>700</th><th>C</th><th>D</th><th>C</th><th>B</th><th>D</th><th>D</th></tr>
+<tr><th>112</th><th align="left">エレキング</th><th align="left">ガンQ</th><th align="left">ガンQ エレキング(R1)</th><th>890</th><th>970</th><th>1470</th><th>1810</th><th>890</th><th>800</th><th>D</th><th>D</th><th>B</th><th>A</th><th>D</th><th>C</th></tr>
+<tr><th>113</th><th align="left">エレキング</th><th align="left">ウインダム</th><th align="left">ウインダム エレキング</th><th>1000</th><th>1200</th><th>1100</th><th>1300</th><th>1100</th><th>700</th><th>C</th><th>C</th><th>C</th><th>C</th><th>D</th><th>D</th></tr>
+<tr><th>114</th><th align="left">エレキング</th><th align="left">ウインダム</th><th align="left">ウインダム エレキング(R1)</th><th>990</th><th>1070</th><th>1060</th><th>1470</th><th>1250</th><th>800</th><th>C</th><th>D</th><th>C</th><th>B</th><th>C</th><th>C</th></tr>
+<tr><th>115</th><th align="left">エレキング</th><th align="left">特殊</th><th align="left">キンダー エレキング</th><th>770</th><th>1220</th><th>1490</th><th>1080</th><th>1110</th><th>1340</th><th>E</th><th>C</th><th>A</th><th>E</th><th>C</th><th>B</th></tr>
+<tr><th>116</th><th align="left">エレキング</th><th align="left">特殊</th><th align="left">キンダー エレキング(R1)</th><th>880</th><th>1380</th><th>1320</th><th>1380</th><th>1210</th><th>1320</th><th>D</th><th>B</th><th>B</th><th>C</th><th>C</th><th>B</th></tr>
+<tr><th>117</th><th align="left">ミクラス</th><th align="left">ミクラス</th><th align="left">ミクラス</th><th>1800</th><th>1600</th><th>700</th><th>500</th><th>600</th><th>1400</th><th>A</th><th>B</th><th>D</th><th>E</th><th>D</th><th>B</th></tr>
+<tr><th>118</th><th align="left">ミクラス</th><th align="left">ミクラス</th><th align="left">ミクラス(R1)</th><th>1870</th><th>1630</th><th>670</th><th>640</th><th>560</th><th>1240</th><th>A</th><th>B</th><th>D</th><th>C</th><th>D</th><th>C</th></tr>
+<tr><th>119</th><th align="left">ミクラス</th><th align="left">エレキング</th><th align="left">エレキング ミクラス</th><th>1500</th><th>1500</th><th>800</th><th>900</th><th>700</th><th>1200</th><th>B</th><th>B</th><th>D</th><th>D</th><th>D</th><th>C</th></tr>
+<tr><th>120</th><th align="left">ミクラス</th><th align="left">エレキング</th><th align="left">エレキング ミクラス(R1)</th><th>1330</th><th>1330</th><th>1030</th><th>1150</th><th>770</th><th>1070</th><th>C</th><th>C</th><th>B</th><th>B</th><th>D</th><th>D</th></tr>
+<tr><th>121</th><th align="left">ミクラス</th><th align="left">バードン</th><th align="left">バードン ミクラス</th><th>1600</th><th>1600</th><th>900</th><th>800</th><th>1000</th><th>1400</th><th>B</th><th>B</th><th>D</th><th>D</th><th>C</th><th>B</th></tr>
+<tr><th>122</th><th align="left">ミクラス</th><th align="left">バードン</th><th align="left">バードン ミクラス(R1)</th><th>1420</th><th>1810</th><th>880</th><th>710</th><th>1130</th><th>1450</th><th>C</th><th>A</th><th>D</th><th>E</th><th>B</th><th>B</th></tr>
+<tr><th>123</th><th align="left">ミクラス</th><th align="left">ウインダム</th><th align="left">ウインダム ミクラス</th><th>1600</th><th>1400</th><th>800</th><th>600</th><th>900</th><th>1200</th><th>B</th><th>B</th><th>D</th><th>E</th><th>D</th><th>B</th></tr>
+<tr><th>124</th><th align="left">ミクラス</th><th align="left">ウインダム</th><th align="left">ウインダム ミクラス(R1)</th><th>1540</th><th>1320</th><th>910</th><th>680</th><th>1000</th><th>1070</th><th>B</th><th>B</th><th>C</th><th>D</th><th>D</th><th>C</th></tr>
+<tr><th>125</th><th align="left">ミクラス</th><th align="left">ノーバ</th><th align="left">ノーバ ミクラス</th><th>1300</th><th>1400</th><th>700</th><th>900</th><th>1000</th><th>1000</th><th>B</th><th>B</th><th>D</th><th>D</th><th>C</th><th>C</th></tr>
+<tr><th>126</th><th align="left">ミクラス</th><th align="left">ノーバ</th><th align="left">ノーバ ミクラス(R1)</th><th>1020</th><th>1370</th><th>790</th><th>1020</th><th>1280</th><th>930</th><th>D</th><th>B</th><th>D</th><th>C</th><th>A</th><th>C</th></tr>
+<tr><th>127</th><th align="left">ミクラス</th><th align="left">超コッヴ</th><th align="left">超コッヴ ミクラス</th><th>1800</th><th>1600</th><th>700</th><th>700</th><th>500</th><th>1400</th><th>A</th><th>B</th><th>D</th><th>E</th><th>D</th><th>B</th></tr>
+<tr><th>128</th><th align="left">ミクラス</th><th align="left">超コッヴ</th><th align="left">超コッヴ ミクラス(R1)</th><th>1600</th><th>1810</th><th>760</th><th>800</th><th>450</th><th>1590</th><th>B</th><th>A</th><th>D</th><th>D</th><th>E</th><th>A</th></tr>
+<tr><th>129</th><th align="left">ミクラス</th><th align="left">特殊</th><th align="left">プラント ミクラス</th><th>1660</th><th>1240</th><th>1130</th><th>1060</th><th>710</th><th>940</th><th>A</th><th>C</th><th>C</th><th>C</th><th>D</th><th>E</th></tr>
+<tr><th>130</th><th align="left">ミクラス</th><th align="left">特殊</th><th align="left">プラント ミクラス(R1)</th><th>1310</th><th>1410</th><th>1100</th><th>1200</th><th>810</th><th>900</th><th>C</th><th>B</th><th>C</th><th>B</th><th>C</th><th>E</th></tr>
+<tr><th>131</th><th align="left">メトロン星人</th><th align="left">メトロン星人</th><th align="left">メトロン星人</th><th>1300</th><th>600</th><th>1900</th><th>1700</th><th>800</th><th>400</th><th>C</th><th>E</th><th>A</th><th>A</th><th>C</th><th>E</th></tr>
+<tr><th>132</th><th align="left">メトロン星人</th><th align="left">メトロン星人</th><th align="left">メトロン星人(R1)</th><th>1230</th><th>680</th><th>1690</th><th>1770</th><th>910</th><th>480</th><th>C</th><th>D</th><th>B</th><th>A</th><th>B</th><th>E</th></tr>
+<tr><th>133</th><th align="left">メトロン星人</th><th align="left">ゴモラ</th><th align="left">ゴモラ メトロン星人</th><th>1400</th><th>900</th><th>1500</th><th>1400</th><th>800</th><th>700</th><th>B</th><th>D</th><th>B</th><th>B</th><th>C</th><th>D</th></tr>
+<tr><th>134</th><th align="left">メトロン星人</th><th align="left">ゴモラ</th><th align="left">ゴモラ メトロン星人(R1)</th><th>1590</th><th>990</th><th>1440</th><th>1370</th><th>710</th><th>800</th><th>A</th><th>D</th><th>B</th><th>B</th><th>D</th><th>C</th></tr>
+<tr><th>135</th><th align="left">メトロン星人</th><th align="left">ゼットン</th><th align="left">ゼットン メトロン星人</th><th>1300</th><th>1000</th><th>1800</th><th>1600</th><th>900</th><th>800</th><th>C</th><th>C</th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+<tr><th>136</th><th align="left">メトロン星人</th><th align="left">ゼットン</th><th align="left">ゼットン メトロン星人(R1)</th><th>1290</th><th>1130</th><th>1760</th><th>1420</th><th>1000</th><th>740</th><th>C</th><th>B</th><th>B</th><th>C</th><th>C</th><th>D</th></tr>
+<tr><th>137</th><th align="left">メトロン星人</th><th align="left">バルタン</th><th align="left">バルタン メトロン星人</th><th>1000</th><th>600</th><th>1900</th><th>1600</th><th>1200</th><th>500</th><th>D</th><th>E</th><th>A</th><th>A</th><th>B</th><th>E</th></tr>
+<tr><th>138</th><th align="left">メトロン星人</th><th align="left">バルタン</th><th align="left">バルタン メトロン星人(R1)</th><th>1130</th><th>540</th><th>1880</th><th>1260</th><th>1360</th><th>570</th><th>C</th><th>E</th><th>A</th><th>C</th><th>A</th><th>D</th></tr>
+<tr><th>139</th><th align="left">メトロン星人</th><th align="left">ダダ</th><th align="left">ダダ メトロン星人</th><th>1100</th><th>600</th><th>1900</th><th>1700</th><th>1100</th><th>400</th><th>D</th><th>E</th><th>A</th><th>A</th><th>B</th><th>E</th></tr>
+<tr><th>140</th><th align="left">メトロン星人</th><th align="left">ダダ</th><th align="left">ダダ メトロン星人(R1)</th><th>1030</th><th>680</th><th>1960</th><th>1510</th><th>1070</th><th>460</th><th>D</th><th>D</th><th>A</th><th>B</th><th>B</th><th>D</th></tr>
+<tr><th>141</th><th align="left">メトロン星人</th><th align="left">ベムスター</th><th align="left">ベムスター メトロン星人</th><th>1100</th><th>800</th><th>1400</th><th>1600</th><th>1000</th><th>400</th><th>D</th><th>D</th><th>B</th><th>A</th><th>C</th><th>E</th></tr>
+<tr><th>142</th><th align="left">メトロン星人</th><th align="left">ベムスター</th><th align="left">ベムスター メトロン星人(R1)</th><th>1070</th><th>910</th><th>1240</th><th>1690</th><th>1130</th><th>440</th><th>D</th><th>C</th><th>C</th><th>A</th><th>B</th><th>E</th></tr>
+<tr><th>143</th><th align="left">メトロン星人</th><th align="left">セブンガー</th><th align="left">セブンガー メトロン星人</th><th>1100</th><th>1000</th><th>1700</th><th>1500</th><th>800</th><th>700</th><th>D</th><th>C</th><th>B</th><th>B</th><th>C</th><th>D</th></tr>
+<tr><th>144</th><th align="left">メトロン星人</th><th align="left">セブンガー</th><th align="left">セブンガー メトロン星人(R1)</th><th>1100</th><th>1280</th><th>1510</th><th>1460</th><th>840</th><th>770</th><th>D</th><th>A</th><th>C</th><th>B</th><th>C</th><th>D</th></tr>
+<tr><th>145</th><th align="left">メトロン星人</th><th align="left">エースキラー</th><th align="left">エースキラー メトロン星人</th><th>1200</th><th>1000</th><th>1700</th><th>1800</th><th>600</th><th>800</th><th>C</th><th>C</th><th>B</th><th>A</th><th>D</th><th>D</th></tr>
+<tr><th>146</th><th align="left">メトロン星人</th><th align="left">エースキラー</th><th align="left">エースキラー メトロン星人(R1)</th><th>1180</th><th>1130</th><th>1700</th><th>1800</th><th>540</th><th>910</th><th>C</th><th>B</th><th>B</th><th>A</th><th>E</th><th>C</th></tr>
+<tr><th>147</th><th align="left">メトロン星人</th><th align="left">特殊</th><th align="left">ユウヤケ メトロン星人</th><th>910</th><th>1120</th><th>1790</th><th>1330</th><th>1330</th><th>640</th><th>D</th><th>C</th><th>A</th><th>B</th><th>B</th><th>E</th></tr>
+<tr><th>148</th><th align="left">メトロン星人</th><th align="left">特殊</th><th align="left">ユウヤケ メトロン星人(R1)</th><th>1170</th><th>1210</th><th>1410</th><th>1300</th><th>1510</th><th>600</th><th>B</th><th>C</th><th>C</th><th>B</th><th>A</th><th>E</th></tr>
+<tr><th>149</th><th align="left">ベムスター</th><th align="left">ベムスター</th><th align="left">ベムスター</th><th>700</th><th>1300</th><th>600</th><th>1300</th><th>1500</th><th>600</th><th>E</th><th>C</th><th>D</th><th>B</th><th>B</th><th>E</th></tr>
+<tr><th>150</th><th align="left">ベムスター</th><th align="left">ベムスター</th><th align="left">ベムスター(R1)</th><th>800</th><th>1280</th><th>660</th><th>1020</th><th>1470</th><th>770</th><th>D</th><th>C</th><th>D</th><th>D</th><th>B</th><th>C</th></tr>
+<tr><th>151</th><th align="left">ベムスター</th><th align="left">エレキング</th><th align="left">エレキング ベムスター</th><th>800</th><th>1300</th><th>800</th><th>1400</th><th>1300</th><th>600</th><th>D</th><th>C</th><th>D</th><th>B</th><th>C</th><th>E</th></tr>
+<tr><th>152</th><th align="left">ベムスター</th><th align="left">エレキング</th><th align="left">エレキング ベムスター(R1)</th><th>910</th><th>1330</th><th>790</th><th>1590</th><th>1160</th><th>570</th><th>C</th><th>C</th><th>D</th><th>A</th><th>D</th><th>E</th></tr>
+<tr><th>153</th><th align="left">ベムスター</th><th align="left">キングジョー</th><th align="left">キングジョー ベムスター</th><th>900</th><th>1500</th><th>800</th><th>1200</th><th>1000</th><th>1200</th><th>D</th><th>B</th><th>D</th><th>B</th><th>C</th><th>C</th></tr>
+<tr><th>154</th><th align="left">ベムスター</th><th align="left">キングジョー</th><th align="left">キングジョー ベムスター(R1)</th><th>970</th><th>1700</th><th>910</th><th>1070</th><th>790</th><th>1540</th><th>D</th><th>A</th><th>C</th><th>C</th><th>E</th><th>A</th></tr>
+<tr><th>155</th><th align="left">ベムスター</th><th align="left">ガンQ</th><th align="left">ガンQ ベムスター</th><th>700</th><th>1000</th><th>1000</th><th>1500</th><th>1300</th><th>600</th><th>E</th><th>D</th><th>C</th><th>B</th><th>B</th><th>E</th></tr>
+<tr><th>156</th><th align="left">ベムスター</th><th align="left">ガンQ</th><th align="left">ガンQ ベムスター(R1)</th><th>790</th><th>930</th><th>1130</th><th>1700</th><th>1160</th><th>690</th><th>E</th><th>D</th><th>B</th><th>A</th><th>C</th><th>E</th></tr>
+<tr><th>157</th><th align="left">ベムスター</th><th align="left">ノーバ</th><th align="left">ノーバ ベムスター</th><th>700</th><th>1300</th><th>700</th><th>1300</th><th>1500</th><th>500</th><th>E</th><th>C</th><th>D</th><th>B</th><th>B</th><th>E</th></tr>
+<tr><th>158</th><th align="left">ベムスター</th><th align="left">ノーバ</th><th align="left">ノーバ ベムスター(R1)</th><th>640</th><th>1160</th><th>800</th><th>1390</th><th>1700</th><th>440</th><th>E</th><th>D</th><th>C</th><th>B</th><th>A</th><th>E</th></tr>
+<tr><th>159</th><th align="left">ベムスター</th><th align="left">セブンガー</th><th align="left">セブンガー ベムスター</th><th>700</th><th>1400</th><th>800</th><th>1300</th><th>1300</th><th>800</th><th>E</th><th>B</th><th>D</th><th>B</th><th>B</th><th>D</th></tr>
+<tr><th>160</th><th align="left">ベムスター</th><th align="left">セブンガー</th><th align="left">セブンガー ベムスター(R1)</th><th>800</th><th>1460</th><th>910</th><th>1240</th><th>1160</th><th>770</th><th>D</th><th>B</th><th>C</th><th>B</th><th>C</th><th>D</th></tr>
+<tr><th>161</th><th align="left">ベムスター</th><th align="left">特殊</th><th align="left">スプリング ベムスター</th><th>630</th><th>1180</th><th>1070</th><th>990</th><th>1670</th><th>780</th><th>E</th><th>C</th><th>C</th><th>C</th><th>A</th><th>D</th></tr>
+<tr><th>162</th><th align="left">ベムスター</th><th align="left">特殊</th><th align="left">スプリング ベムスター(R1)</th><th>810</th><th>1100</th><th>1100</th><th>880</th><th>1480</th><th>840</th><th>B</th><th>C</th><th>C</th><th>D</th><th>B</th><th>D</th></tr>
+<tr><th>163</th><th align="left">セブンガー</th><th align="left">セブンガー</th><th align="left">セブンガー</th><th>700</th><th>1700</th><th>1200</th><th>1100</th><th>1000</th><th>1300</th><th>E</th><th>A</th><th>C</th><th>C</th><th>C</th><th>B</th></tr>
+<tr><th>164</th><th align="left">セブンガー</th><th align="left">セブンガー</th><th align="left">セブンガー(R1)</th><th>900</th><th>1770</th><th>1190</th><th>980</th><th>1070</th><th>1280</th><th>C</th><th>A</th><th>C</th><th>D</th><th>C</th><th>B</th></tr>
+<tr><th>165</th><th align="left">セブンガー</th><th align="left">キングジョー</th><th align="left">キングジョー セブンガー</th><th>900</th><th>1800</th><th>1200</th><th>1100</th><th>700</th><th>1600</th><th>D</th><th>A</th><th>C</th><th>C</th><th>D</th><th>B</th></tr>
+<tr><th>166</th><th align="left">セブンガー</th><th align="left">キングジョー</th><th align="left">キングジョー セブンガー(R1)</th><th>980</th><th>1880</th><th>1140</th><th>1070</th><th>620</th><th>1810</th><th>D</th><th>A</th><th>C</th><th>C</th><th>E</th><th>A</th></tr>
+<tr><th>167</th><th align="left">セブンガー</th><th align="left">ガンQ</th><th align="left">ガンQ セブンガー</th><th>700</th><th>1300</th><th>1300</th><th>1300</th><th>1000</th><th>1100</th><th>E</th><th>C</th><th>C</th><th>B</th><th>C</th><th>C</th></tr>
+<tr><th>168</th><th align="left">セブンガー</th><th align="left">ガンQ</th><th align="left">ガンQ セブンガー(R1)</th><th>660</th><th>1470</th><th>1390</th><th>1470</th><th>890</th><th>1060</th><th>E</th><th>B</th><th>C</th><th>A</th><th>D</th><th>C</th></tr>
+<tr><th>169</th><th align="left">セブンガー</th><th align="left">バルタン</th><th align="left">バルタン セブンガー</th><th>600</th><th>1300</th><th>1500</th><th>1100</th><th>1300</th><th>1100</th><th>E</th><th>B</th><th>B</th><th>C</th><th>B</th><th>C</th></tr>
+<tr><th>170</th><th align="left">セブンガー</th><th align="left">バルタン</th><th align="left">バルタン セブンガー(R1)</th><th>690</th><th>1240</th><th>1700</th><th>1060</th><th>1470</th><th>980</th><th>E</th><th>B</th><th>A</th><th>C</th><th>A</th><th>D</th></tr>
+<tr><th>171</th><th align="left">セブンガー</th><th align="left">メトロン</th><th align="left">メトロン セブンガー</th><th>900</th><th>1300</th><th>1400</th><th>1300</th><th>1000</th><th>1000</th><th>D</th><th>C</th><th>B</th><th>B</th><th>C</th><th>C</th></tr>
+<tr><th>172</th><th align="left">セブンガー</th><th align="left">メトロン</th><th align="left">メトロン セブンガー(R1)</th><th>1150</th><th>1230</th><th>1240</th><th>1470</th><th>890</th><th>890</th><th>B</th><th>C</th><th>C</th><th>A</th><th>C</th><th>D</th></tr>
+<tr><th>173</th><th align="left">セブンガー</th><th align="left">ダダ</th><th align="left">ダダ セブンガー</th><th>700</th><th>1300</th><th>1400</th><th>1200</th><th>1200</th><th>1000</th><th>E</th><th>B</th><th>B</th><th>C</th><th>B</th><th>C</th></tr>
+<tr><th>174</th><th align="left">セブンガー</th><th align="left">ダダ</th><th align="left">ダダ セブンガー(R1)</th><th>900</th><th>1200</th><th>1440</th><th>1170</th><th>1260</th><th>890</th><th>C</th><th>B</th><th>B</th><th>C</th><th>B</th><th>D</th></tr>
+<tr><th>175</th><th align="left">セブンガー</th><th align="left">ベムスター</th><th align="left">ベムスター セブンガー</th><th>700</th><th>1600</th><th>1000</th><th>1100</th><th>1200</th><th>1100</th><th>E</th><th>B</th><th>C</th><th>C</th><th>C</th><th>C</th></tr>
+<tr><th>176</th><th align="left">セブンガー</th><th align="left">ベムスター</th><th align="left">ベムスター セブンガー(R1)</th><th>800</th><th>1540</th><th>890</th><th>1200</th><th>1360</th><th>1020</th><th>D</th><th>B</th><th>D</th><th>C</th><th>B</th><th>C</th></tr>
+<tr><th>177</th><th align="left">セブンガー</th><th align="left">ノーバ</th><th align="left">ノーバ セブンガー</th><th>700</th><th>1500</th><th>1100</th><th>1200</th><th>1200</th><th>900</th><th>E</th><th>B</th><th>C</th><th>C</th><th>B</th><th>C</th></tr>
+<tr><th>178</th><th align="left">セブンガー</th><th align="left">ノーバ</th><th align="left">ノーバ セブンガー(R1)</th><th>800</th><th>1700</th><th>980</th><th>1360</th><th>1170</th><th>800</th><th>D</th><th>A</th><th>D</th><th>B</th><th>B</th><th>D</th></tr>
+<tr><th>179</th><th align="left">セブンガー</th><th align="left">エースキラー</th><th align="left">エースキラー セブンガー</th><th>800</th><th>1700</th><th>1200</th><th>1400</th><th>700</th><th>1400</th><th>E</th><th>A</th><th>C</th><th>B</th><th>D</th><th>B</th></tr>
+<tr><th>180</th><th align="left">セブンガー</th><th align="left">エースキラー</th><th align="left">エースキラー セブンガー(R1)</th><th>910</th><th>1740</th><th>1260</th><th>1590</th><th>620</th><th>1380</th><th>D</th><th>A</th><th>C</th><th>A</th><th>E</th><th>B</th></tr>
+<tr><th>181</th><th align="left">セブンガー</th><th align="left">モッチー</th><th align="left">モッチー セブンガー</th><th>1060</th><th>1490</th><th>1170</th><th>1310</th><th>820</th><th>1220</th><th>D</th><th>B</th><th>C</th><th>C</th><th>C</th><th>B</th></tr>
+<tr><th>182</th><th align="left">セブンガー</th><th align="left">モッチー</th><th align="left">モッチー セブンガー(R1)</th><th>1530</th><th>1320</th><th>1200</th><th>1160</th><th>730</th><th>1300</th><th>A</th><th>B</th><th>C</th><th>D</th><th>D</th><th>B</th></tr>
+<tr><th>183</th><th align="left">セブンガー</th><th align="left">特殊</th><th align="left">セブンガー 光の巨人ペイント</th><th>978</th><th>1178</th><th>1678</th><th>1378</th><th>978</th><th>878</th><th>C</th><th>A</th><th>D</th><th>B</th><th>E</th><th>C</th></tr>
+<tr><th>184</th><th align="left">ノーバ</th><th align="left">ノーバ</th><th align="left">ノーバ</th><th>500</th><th>1100</th><th>900</th><th>1500</th><th>1600</th><th>300</th><th>D</th><th>C</th><th>D</th><th>B</th><th>A</th><th>E</th></tr>
+<tr><th>185</th><th align="left">ノーバ</th><th align="left">ノーバ</th><th align="left">ノーバ(R1)</th><th>560</th><th>1070</th><th>1150</th><th>1330</th><th>1420</th><th>340</th><th>D</th><th>C</th><th>B</th><th>C</th><th>B</th><th>D</th></tr>
+<tr><th>186</th><th align="left">ノーバ</th><th align="left">ガンQ</th><th align="left">ガンQ ノーバ</th><th>600</th><th>900</th><th>1100</th><th>1600</th><th>1400</th><th>400</th><th>D</th><th>D</th><th>C</th><th>B</th><th>B</th><th>E</th></tr>
+<tr><th>187</th><th align="left">ノーバ</th><th align="left">ガンQ</th><th align="left">ガンQ ノーバ(R1)</th><th>670</th><th>880</th><th>1090</th><th>1810</th><th>1240</th><th>460</th><th>D</th><th>D</th><th>C</th><th>A</th><th>C</th><th>D</th></tr>
+<tr><th>188</th><th align="left">ノーバ</th><th align="left">ダダ</th><th align="left">ダダ ノーバ</th><th>500</th><th>1000</th><th>1200</th><th>1500</th><th>1600</th><th>300</th><th>D</th><th>C</th><th>C</th><th>B</th><th>A</th><th>E</th></tr>
+<tr><th>189</th><th align="left">ノーバ</th><th align="left">ダダ</th><th align="left">ダダ ノーバ(R1)</th><th>450</th><th>990</th><th>1540</th><th>1410</th><th>1420</th><th>400</th><th>E</th><th>C</th><th>A</th><th>B</th><th>B</th><th>E</th></tr>
+<tr><th>190</th><th align="left">ノーバ</th><th align="left">カネゴン</th><th align="left">カネゴン ノーバ</th><th>500</th><th>900</th><th>1100</th><th>1500</th><th>1700</th><th>300</th><th>D</th><th>D</th><th>D</th><th>B</th><th>A</th><th>E</th></tr>
+<tr><th>191</th><th align="left">ノーバ</th><th align="left">カネゴン</th><th align="left">カネゴン ノーバ(R1)</th><th>570</th><th>840</th><th>1250</th><th>1330</th><th>1660</th><th>360</th><th>C</th><th>D</th><th>C</th><th>C</th><th>A</th><th>E</th></tr>
+<tr><th>192</th><th align="left">ノーバ</th><th align="left">ミクラス</th><th align="left">ミクラス ノーバ</th><th>1000</th><th>1300</th><th>900</th><th>1100</th><th>1200</th><th>700</th><th>C</th><th>C</th><th>D</th><th>C</th><th>B</th><th>D</th></tr>
+<tr><th>193</th><th align="left">ノーバ</th><th align="left">ミクラス</th><th align="left">ミクラス ノーバ(R1)</th><th>1280</th><th>1340</th><th>870</th><th>980</th><th>1260</th><th>800</th><th>A</th><th>C</th><th>D</th><th>D</th><th>B</th><th>C</th></tr>
+<tr><th>194</th><th align="left">ノーバ</th><th align="left">ベムスター</th><th align="left">ベムスター ノーバ</th><th>500</th><th>1100</th><th>800</th><th>1500</th><th>1600</th><th>400</th><th>D</th><th>C</th><th>D</th><th>B</th><th>A</th><th>E</th></tr>
+<tr><th>195</th><th align="left">ノーバ</th><th align="left">ベムスター</th><th align="left">ベムスター ノーバ(R1)</th><th>600</th><th>1030</th><th>910</th><th>1700</th><th>1420</th><th>370</th><th>D</th><th>C</th><th>C</th><th>A</th><th>B</th><th>E</th></tr>
+<tr><th>196</th><th align="left">ノーバ</th><th align="left">セブンガー</th><th align="left">セブンガー ノーバ</th><th>500</th><th>1300</th><th>1000</th><th>1400</th><th>1400</th><th>700</th><th>D</th><th>B</th><th>D</th><th>B</th><th>B</th><th>D</th></tr>
+<tr><th>197</th><th align="left">ノーバ</th><th align="left">セブンガー</th><th align="left">セブンガー ノーバ(R1)</th><th>570</th><th>1470</th><th>990</th><th>1340</th><th>1240</th><th>800</th><th>D</th><th>A</th><th>D</th><th>B</th><th>C</th><th>C</th></tr>
+<tr><th>198</th><th align="left">ノーバ</th><th align="left">テレスドン</th><th align="left">テレスドン ノーバ</th><th>800</th><th>1200</th><th>900</th><th>1200</th><th>1300</th><th>700</th><th>D</th><th>C</th><th>D</th><th>C</th><th>B</th><th>D</th></tr>
+<tr><th>199</th><th align="left">ノーバ</th><th align="left">テレスドン</th><th align="left">テレスドン ノーバ(R1)</th><th>910</th><th>1360</th><th>820</th><th>1140</th><th>1160</th><th>770</th><th>C</th><th>B</th><th>D</th><th>C</th><th>C</th><th>D</th></tr>
+<tr><th>200</th><th align="left">ノーバ</th><th align="left">特殊</th><th align="left">ガリ ノーバ</th><th>740</th><th>1420</th><th>1320</th><th>1140</th><th>810</th><th>900</th><th>D</th><th>B</th><th>B</th><th>C</th><th>D</th><th>C</th></tr>
+<tr><th>201</th><th align="left">ノーバ</th><th align="left">特殊</th><th align="left">ガリ ノーバ(R1)</th><th>800</th><th>1370</th><th>1500</th><th>1120</th><th>920</th><th>800</th><th>D</th><th>B</th><th>A</th><th>C</th><th>C</th><th>D</th></tr>
+<tr><th>202</th><th align="left">ゴルザ</th><th align="left">ゴルザ</th><th align="left">ゴルザ</th><th>1500</th><th>1500</th><th>600</th><th>700</th><th>800</th><th>1400</th><th>B</th><th>B</th><th>D</th><th>D</th><th>D</th><th>B</th></tr>
+<tr><th>203</th><th align="left">ゴルザ</th><th align="left">ゴルザ</th><th align="left">ゴルザ(R1)</th><th>1330</th><th>1470</th><th>660</th><th>800</th><th>910</th><th>1390</th><th>C</th><th>B</th><th>D</th><th>C</th><th>C</th><th>B</th></tr>
+<tr><th>204</th><th align="left">ゴルザ</th><th align="left">ゴモラ</th><th align="left">ゴモラ ゴルザ</th><th>1500</th><th>1500</th><th>600</th><th>700</th><th>800</th><th>1400</th><th>B</th><th>B</th><th>D</th><th>D</th><th>D</th><th>B</th></tr>
+<tr><th>205</th><th align="left">ゴルザ</th><th align="left">ゴモラ</th><th align="left">ゴモラ ゴルザ(R1)</th><th>1700</th><th>1440</th><th>540</th><th>800</th><th>770</th><th>1490</th><th>A</th><th>B</th><th>E</th><th>C</th><th>D</th><th>B</th></tr>
+<tr><th>206</th><th align="left">ゴルザ</th><th align="left">エレキング</th><th align="left">エレキング ゴルザ</th><th>1300</th><th>1400</th><th>800</th><th>1000</th><th>800</th><th>1200</th><th>B</th><th>B</th><th>D</th><th>C</th><th>D</th><th>C</th></tr>
+<tr><th>207</th><th align="left">ゴルザ</th><th align="left">エレキング</th><th align="left">エレキング ゴルザ(R1)</th><th>1260</th><th>1320</th><th>910</th><th>1130</th><th>900</th><th>1070</th><th>B</th><th>B</th><th>C</th><th>B</th><th>D</th><th>D</th></tr>
+<tr><th>208</th><th align="left">ゴルザ</th><th align="left">レッドキング</th><th align="left">レッドキング ゴルザ</th><th>1500</th><th>1600</th><th>600</th><th>700</th><th>700</th><th>1400</th><th>B</th><th>B</th><th>D</th><th>D</th><th>D</th><th>B</th></tr>
+<tr><th>209</th><th align="left">ゴルザ</th><th align="left">レッドキング</th><th align="left">レッドキング ゴルザ(R1)</th><th>1470</th><th>1810</th><th>580</th><th>790</th><th>800</th><th>1240</th><th>B</th><th>A</th><th>D</th><th>D</th><th>C</th><th>C</th></tr>
+<tr><th>210</th><th align="left">ゴルザ</th><th align="left">ガンQ</th><th align="left">ガンQ ゴルザ</th><th>1300</th><th>1100</th><th>1000</th><th>1100</th><th>800</th><th>1100</th><th>C</th><th>C</th><th>C</th><th>C</th><th>D</th><th>C</th></tr>
+<tr><th>211</th><th align="left">ゴルザ</th><th align="left">ガンQ</th><th align="left">ガンQ ゴルザ(R1)</th><th>1160</th><th>1250</th><th>1070</th><th>1410</th><th>770</th><th>980</th><th>D</th><th>B</th><th>C</th><th>A</th><th>D</th><th>D</th></tr>
+<tr><th>212</th><th align="left">ゴルザ</th><th align="left">レイキュバス</th><th align="left">レイキュバス ゴルザ</th><th>1500</th><th>1500</th><th>600</th><th>700</th><th>600</th><th>1500</th><th>B</th><th>B</th><th>D</th><th>D</th><th>D</th><th>B</th></tr>
+<tr><th>213</th><th align="left">ゴルザ</th><th align="left">レイキュバス</th><th align="left">レイキュバス ゴルザ(R1)</th><th>1490</th><th>1700</th><th>570</th><th>800</th><th>540</th><th>1700</th><th>B</th><th>A</th><th>D</th><th>C</th><th>E</th><th>A</th></tr>
+<tr><th>214</th><th align="left">ゴルザ</th><th align="left">メルバ</th><th align="left">メルバ ゴルザ</th><th>1200</th><th>1400</th><th>700</th><th>900</th><th>1200</th><th>1200</th><th>C</th><th>B</th><th>D</th><th>D</th><th>C</th><th>C</th></tr>
+<tr><th>215</th><th align="left">ゴルザ</th><th align="left">メルバ</th><th align="left">メルバ ゴルザ(R1)</th><th>1070</th><th>1390</th><th>770</th><th>990</th><th>1540</th><th>1180</th><th>D</th><th>B</th><th>D</th><th>D</th><th>A</th><th>C</th></tr>
+<tr><th>216</th><th align="left">ゴルザ</th><th align="left">特殊</th><th align="left">ウィンター ゴルザ</th><th>1820</th><th>1210</th><th>1080</th><th>940</th><th>660</th><th>890</th><th>A</th><th>C</th><th>B</th><th>C</th><th>D</th><th>D</th></tr>
+<tr><th>217</th><th align="left">ゴルザ</th><th align="left">特殊</th><th align="left">ウィンター ゴルザ(R1)</th><th>1620</th><th>1370</th><th>960</th><th>1010</th><th>850</th><th>850</th><th>B</th><th>B</th><th>C</th><th>C</th><th>B</th><th>D</th></tr>
+<tr><th>218</th><th align="left">レイキュバス</th><th align="left">レイキュバス</th><th align="left">レイキュバス</th><th>1400</th><th>1500</th><th>500</th><th>800</th><th>300</th><th>1800</th><th>B</th><th>B</th><th>D</th><th>D</th><th>E</th><th>A</th></tr>
+<tr><th>219</th><th align="left">レイキュバス</th><th align="left">レイキュバス</th><th align="left">レイキュバス(R1)</th><th>1240</th><th>1550</th><th>570</th><th>780</th><th>340</th><th>1840</th><th>C</th><th>B</th><th>C</th><th>D</th><th>D</th><th>A</th></tr>
+<tr><th>220</th><th align="left">レイキュバス</th><th align="left">ゼットン</th><th align="left">ゼットン レイキュバス</th><th>1400</th><th>1600</th><th>900</th><th>1000</th><th>600</th><th>1700</th><th>B</th><th>B</th><th>C</th><th>D</th><th>D</th><th>B</th></tr>
+<tr><th>221</th><th align="left">レイキュバス</th><th align="left">ゼットン</th><th align="left">ゼットン レイキュバス(R1)</th><th>1370</th><th>1660</th><th>1020</th><th>1130</th><th>540</th><th>1510</th><th>B</th><th>B</th><th>B</th><th>C</th><th>D</th><th>C</th></tr>
+<tr><th>222</th><th align="left">レイキュバス</th><th align="left">キングジョー</th><th align="left">キングジョー レイキュバス</th><th>1400</th><th>1700</th><th>800</th><th>800</th><th>300</th><th>1900</th><th>B</th><th>B</th><th>D</th><th>D</th><th>E</th><th>A</th></tr>
+<tr><th>223</th><th align="left">レイキュバス</th><th align="left">キングジョー</th><th align="left">キングジョー レイキュバス(R1)</th><th>1240</th><th>1930</th><th>860</th><th>780</th><th>340</th><th>1880</th><th>C</th><th>A</th><th>D</th><th>D</th><th>D</th><th>A</th></tr>
+<tr><th>224</th><th align="left">レイキュバス</th><th align="left">バルタン</th><th align="left">バルタン レイキュバス</th><th>1000</th><th>1200</th><th>1100</th><th>1000</th><th>900</th><th>1400</th><th>C</th><th>C</th><th>C</th><th>C</th><th>C</th><th>B</th></tr>
+<tr><th>225</th><th align="left">レイキュバス</th><th align="left">バルタン</th><th align="left">バルタン レイキュバス(R1)</th><th>890</th><th>1190</th><th>1410</th><th>1070</th><th>1020</th><th>1100</th><th>D</th><th>C</th><th>A</th><th>C</th><th>B</th><th>D</th></tr>
+<tr><th>226</th><th align="left">レイキュバス</th><th align="left">ダダ</th><th align="left">ダダ レイキュバス</th><th>1200</th><th>1200</th><th>900</th><th>1000</th><th>800</th><th>1300</th><th>C</th><th>C</th><th>C</th><th>C</th><th>C</th><th>C</th></tr>
+<tr><th>227</th><th align="left">レイキュバス</th><th align="left">ダダ</th><th align="left">ダダ レイキュバス(R1)</th><th>1070</th><th>1140</th><th>1020</th><th>1130</th><th>880</th><th>1280</th><th>D</th><th>C</th><th>B</th><th>B</th><th>C</th><th>C</th></tr>
+<tr><th>228</th><th align="left">レイキュバス</th><th align="left">ゴルザ</th><th align="left">ゴルザ レイキュバス</th><th>1400</th><th>1500</th><th>500</th><th>800</th><th>500</th><th>1700</th><th>B</th><th>B</th><th>D</th><th>D</th><th>E</th><th>A</th></tr>
+<tr><th>229</th><th align="left">レイキュバス</th><th align="left">ゴルザ</th><th align="left">ゴルザ レイキュバス(R1)</th><th>1590</th><th>1600</th><th>480</th><th>710</th><th>640</th><th>1510</th><th>A</th><th>B</th><th>D</th><th>E</th><th>C</th><th>B</th></tr>
+<tr><th>230</th><th align="left">レイキュバス</th><th align="left">セブンガー</th><th align="left">セブンガー レイキュバス</th><th>1200</th><th>1500</th><th>700</th><th>900</th><th>500</th><th>1600</th><th>C</th><th>B</th><th>D</th><th>D</th><th>D</th><th>A</th></tr>
+<tr><th>231</th><th align="left">レイキュバス</th><th align="left">セブンガー</th><th align="left">セブンガー レイキュバス(R1)</th><th>1140</th><th>1700</th><th>660</th><th>1020</th><th>540</th><th>1260</th><th>C</th><th>A</th><th>D</th><th>C</th><th>D</th><th>C</th></tr>
+<tr><th>232</th><th align="left">レイキュバス</th><th align="left">特殊</th><th align="left">ハクセン レイキュバス</th><th>1140</th><th>1360</th><th>1220</th><th>900</th><th>810</th><th>1410</th><th>C</th><th>B</th><th>C</th><th>C</th><th>D</th><th>B</th></tr>
+<tr><th>233</th><th align="left">レイキュバス</th><th align="left">特殊</th><th align="left">ハクセン レイキュバス(R1)</th><th>900</th><th>1210</th><th>1380</th><th>1150</th><th>920</th><th>1360</th><th>E</th><th>C</th><th>B</th><th>A</th><th>C</th><th>B</th></tr>
+<tr><th>234</th><th align="left">ガンQ</th><th align="left">ガンQ</th><th align="left">ガンQ</th><th>900</th><th>500</th><th>1600</th><th>1800</th><th>900</th><th>600</th><th>D</th><th>E</th><th>B</th><th>A</th><th>C</th><th>D</th></tr>
+<tr><th>235</th><th align="left">ガンQ</th><th align="left">ガンQ</th><th align="left">ガンQ(R1)</th><th>1020</th><th>560</th><th>1420</th><th>1770</th><th>1020</th><th>700</th><th>C</th><th>E</th><th>C</th><th>A</th><th>B</th><th>D</th></tr>
+<tr><th>236</th><th align="left">ガンQ</th><th align="left">レッドキング</th><th align="left">レッドキング ガンQ</th><th>1100</th><th>1000</th><th>1200</th><th>1400</th><th>800</th><th>900</th><th>C</th><th>C</th><th>C</th><th>B</th><th>C</th><th>C</th></tr>
+<tr><th>237</th><th align="left">ガンQ</th><th align="left">レッドキング</th><th align="left">レッドキング ガンQ(R1)</th><th>1190</th><th>1280</th><th>1070</th><th>1240</th><th>780</th><th>1020</th><th>C</th><th>A</th><th>D</th><th>C</th><th>C</th><th>B</th></tr>
+<tr><th>238</th><th align="left">ガンQ</th><th align="left">ダダ</th><th align="left">ダダ ガンQ</th><th>900</th><th>500</th><th>1600</th><th>1700</th><th>1200</th><th>600</th><th>D</th><th>E</th><th>B</th><th>A</th><th>B</th><th>D</th></tr>
+<tr><th>239</th><th align="left">ガンQ</th><th align="left">ダダ</th><th align="left">ダダ ガンQ(R1)</th><th>800</th><th>490</th><th>1810</th><th>1510</th><th>1290</th><th>680</th><th>D</th><th>E</th><th>A</th><th>B</th><th>B</th><th>C</th></tr>
+<tr><th>240</th><th align="left">ガンQ</th><th align="left">ベムスター</th><th align="left">ベムスター ガンQ</th><th>900</th><th>800</th><th>1200</th><th>1600</th><th>1100</th><th>600</th><th>D</th><th>D</th><th>C</th><th>A</th><th>C</th><th>D</th></tr>
+<tr><th>241</th><th align="left">ガンQ</th><th align="left">ベムスター</th><th align="left">ベムスター ガンQ(R1)</th><th>880</th><th>910</th><th>1070</th><th>1680</th><th>1410</th><th>540</th><th>D</th><th>C</th><th>D</th><th>A</th><th>A</th><th>E</th></tr>
+<tr><th>242</th><th align="left">ガンQ</th><th align="left">セブンガー</th><th align="left">セブンガー ガンQ</th><th>900</th><th>900</th><th>1500</th><th>1600</th><th>900</th><th>800</th><th>D</th><th>C</th><th>B</th><th>B</th><th>C</th><th>C</th></tr>
+<tr><th>243</th><th align="left">ガンQ</th><th align="left">セブンガー</th><th align="left">セブンガー ガンQ(R1)</th><th>960</th><th>1020</th><th>1480</th><th>1570</th><th>800</th><th>910</th><th>D</th><th>B</th><th>B</th><th>B</th><th>D</th><th>B</th></tr>
+<tr><th>244</th><th align="left">ガンQ</th><th align="left">スエゾー</th><th align="left">スエゾー ガンQ</th><th>870</th><th>980</th><th>1810</th><th>1460</th><th>790</th><th>930</th><th>D</th><th>D</th><th>A</th><th>B</th><th>D</th><th>C</th></tr>
+<tr><th>245</th><th align="left">ガンQ</th><th align="left">スエゾー</th><th align="left">スエゾー ガンQ(R1)</th><th>1120</th><th>960</th><th>1910</th><th>1300</th><th>900</th><th>900</th><th>B</th><th>D</th><th>A</th><th>C</th><th>C</th><th>C</th></tr>
+<tr><th>246</th><th align="left">ガラモン</th><th align="left">ガラモン</th><th align="left">ガラモン</th><th>1200</th><th>1400</th><th>500</th><th>300</th><th>400</th><th>1900</th><th>B</th><th>C</th><th>E</th><th>E</th><th>E</th><th>A</th></tr>
+<tr><th>247</th><th align="left">ガラモン</th><th align="left">ガラモン</th><th align="left">ガラモン(R1)</th><th>940</th><th>1370</th><th>640</th><th>400</th><th>520</th><th>1690</th><th>D</th><th>C</th><th>C</th><th>E</th><th>C</th><th>B</th></tr>
+<tr><th>248</th><th align="left">ガラモン</th><th align="left">レッドキング</th><th align="left">レッドキング ガラモン</th><th>1300</th><th>1600</th><th>500</th><th>400</th><th>400</th><th>1800</th><th>B</th><th>B</th><th>E</th><th>E</th><th>E</th><th>A</th></tr>
+<tr><th>249</th><th align="left">ガラモン</th><th align="left">レッドキング</th><th align="left">レッドキング ガラモン(R1)</th><th>1270</th><th>1810</th><th>420</th><th>460</th><th>490</th><th>1410</th><th>B</th><th>A</th><th>E</th><th>D</th><th>E</th><th>C</th></tr>
+<tr><th>250</th><th align="left">ガラモン</th><th align="left">バルタン</th><th align="left">バルタン ガラモン</th><th>900</th><th>1200</th><th>1100</th><th>700</th><th>900</th><th>1500</th><th>C</th><th>C</th><th>C</th><th>D</th><th>C</th><th>B</th></tr>
+<tr><th>251</th><th align="left">ガラモン</th><th align="left">バルタン</th><th align="left">バルタン ガラモン(R1)</th><th>990</th><th>1070</th><th>1250</th><th>660</th><th>1020</th><th>1330</th><th>C</th><th>D</th><th>B</th><th>D</th><th>B</th><th>C</th></tr>
+<tr><th>252</th><th align="left">ガラモン</th><th align="left">ネロンガ</th><th align="left">ネロンガ ガラモン</th><th>1400</th><th>1300</th><th>600</th><th>700</th><th>400</th><th>1500</th><th>B</th><th>C</th><th>E</th><th>D</th><th>E</th><th>B</th></tr>
+<tr><th>253</th><th align="left">ガラモン</th><th align="left">ネロンガ</th><th align="left">ネロンガ ガラモン(R1)</th><th>1590</th><th>1160</th><th>680</th><th>900</th><th>370</th><th>1330</th><th>A</th><th>D</th><th>D</th><th>C</th><th>E</th><th>C</th></tr>
+<tr><th>254</th><th align="left">ガラモン</th><th align="left">超コッヴ</th><th align="left">超コッヴ ガラモン</th><th>1400</th><th>1400</th><th>500</th><th>500</th><th>400</th><th>1800</th><th>B</th><th>C</th><th>E</th><th>E</th><th>E</th><th>A</th></tr>
+<tr><th>255</th><th align="left">ガラモン</th><th align="left">超コッヴ</th><th align="left">超コッヴ ガラモン(R1)</th><th>1320</th><th>1590</th><th>440</th><th>570</th><th>460</th><th>1410</th><th>B</th><th>B</th><th>E</th><th>D</th><th>D</th><th>C</th></tr>
+<tr><th>256</th><th align="left">ガラモン</th><th align="left">特殊</th><th align="left">モノクロ ガラモン</th><th>800</th><th>1700</th><th>700</th><th>1000</th><th>900</th><th>1300</th><th>D</th><th>A</th><th>D</th><th>C</th><th>D</th><th>C</th></tr>
+<tr><th>257</th><th align="left">ガラモン</th><th align="left">特殊</th><th align="left">モノクロ ガラモン(R1)</th><th>910</th><th>1510</th><th>800</th><th>1280</th><th>870</th><th>1160</th><th>D</th><th>B</th><th>C</th><th>A</th><th>D</th><th>D</th></tr>
+<tr><th>258</th><th align="left">カネゴン</th><th align="left">カネゴン</th><th align="left">カネゴン</th><th>300</th><th>400</th><th>1500</th><th>1300</th><th>1900</th><th>300</th><th>E</th><th>E</th><th>C</th><th>C</th><th>A</th><th>E</th></tr>
+<tr><th>259</th><th align="left">カネゴン</th><th align="left">カネゴン</th><th align="left">カネゴン(R1)</th><th>390</th><th>500</th><th>1590</th><th>1020</th><th>1690</th><th>390</th><th>C</th><th>E</th><th>C</th><th>E</th><th>B</th><th>C</th></tr>
+<tr><th>260</th><th align="left">カネゴン</th><th align="left">エレキング</th><th align="left">エレキング カネゴン</th><th>500</th><th>700</th><th>1400</th><th>1400</th><th>1500</th><th>400</th><th>D</th><th>D</th><th>C</th><th>C</th><th>B</th><th>E</th></tr>
+<tr><th>261</th><th align="left">カネゴン</th><th align="left">エレキング</th><th align="left">エレキング カネゴン(R1)</th><th>470</th><th>770</th><th>1480</th><th>1790</th><th>1330</th><th>390</th><th>D</th><th>D</th><th>C</th><th>A</th><th>C</th><th>E</th></tr>
+<tr><th>262</th><th align="left">カネゴン</th><th align="left">ゼットン</th><th align="left">ゼットン カネゴン</th><th>600</th><th>900</th><th>1500</th><th>1300</th><th>1700</th><th>700</th><th>D</th><th>C</th><th>C</th><th>C</th><th>B</th><th>D</th></tr>
+<tr><th>263</th><th align="left">カネゴン</th><th align="left">ゼットン</th><th align="left">ゼットン カネゴン(R1)</th><th>700</th><th>1020</th><th>1480</th><th>1160</th><th>1620</th><th>770</th><th>D</th><th>B</th><th>C</th><th>D</th><th>B</th><th>D</th></tr>
+<tr><th>264</th><th align="left">カネゴン</th><th align="left">バルタン</th><th align="left">バルタン カネゴン</th><th>300</th><th>500</th><th>1700</th><th>1300</th><th>1900</th><th>400</th><th>E</th><th>E</th><th>B</th><th>C</th><th>A</th><th>E</th></tr>
+<tr><th>265</th><th align="left">カネゴン</th><th align="left">バルタン</th><th align="left">バルタン カネゴン(R1)</th><th>400</th><th>480</th><th>1930</th><th>1240</th><th>1690</th><th>460</th><th>E</th><th>E</th><th>A</th><th>C</th><th>B</th><th>D</th></tr>
+<tr><th>266</th><th align="left">カネゴン</th><th align="left">メトロン</th><th align="left">メトロン カネゴン</th><th>700</th><th>400</th><th>1600</th><th>1400</th><th>1500</th><th>300</th><th>D</th><th>E</th><th>B</th><th>B</th><th>B</th><th>E</th></tr>
+<tr><th>267</th><th align="left">カネゴン</th><th align="left">メトロン</th><th align="left">メトロン カネゴン(R1)</th><th>620</th><th>390</th><th>1540</th><th>1590</th><th>1700</th><th>400</th><th>E</th><th>E</th><th>B</th><th>A</th><th>A</th><th>E</th></tr>
+<tr><th>268</th><th align="left">カネゴン</th><th align="left">ベムスター</th><th align="left">ベムスター カネゴン</th><th>400</th><th>700</th><th>1200</th><th>1300</th><th>1800</th><th>400</th><th>E</th><th>D</th><th>C</th><th>C</th><th>A</th><th>E</th></tr>
+<tr><th>269</th><th align="left">カネゴン</th><th align="left">ベムスター</th><th align="left">ベムスター カネゴン(R1)</th><th>370</th><th>800</th><th>1070</th><th>1470</th><th>1790</th><th>490</th><th>E</th><th>C</th><th>D</th><th>B</th><th>A</th><th>E</th></tr>
+<tr><th>270</th><th align="left">カネゴン</th><th align="left">セブンガー</th><th align="left">セブンガー カネゴン</th><th>400</th><th>900</th><th>1400</th><th>1300</th><th>1600</th><th>700</th><th>E</th><th>C</th><th>C</th><th>C</th><th>B</th><th>D</th></tr>
+<tr><th>271</th><th align="left">カネゴン</th><th align="left">セブンガー</th><th align="left">セブンガー カネゴン(R1)</th><th>480</th><th>1150</th><th>1350</th><th>1160</th><th>1510</th><th>770</th><th>E</th><th>A</th><th>C</th><th>D</th><th>B</th><th>D</th></tr>
+<tr><th>272</th><th align="left">カネゴン</th><th align="left">ガンダー</th><th align="left">ガンダー カネゴン</th><th>600</th><th>600</th><th>1500</th><th>1100</th><th>1800</th><th>500</th><th>D</th><th>E</th><th>C</th><th>C</th><th>A</th><th>E</th></tr>
+<tr><th>273</th><th align="left">カネゴン</th><th align="left">ガンダー</th><th align="left">ガンダー カネゴン(R1)</th><th>680</th><th>680</th><th>1420</th><th>1140</th><th>1600</th><th>470</th><th>C</th><th>D</th><th>C</th><th>C</th><th>B</th><th>E</th></tr>
+<tr><th>274</th><th align="left">カネゴン</th><th align="left">ベリアル</th><th align="left">ベリアル カネゴン</th><th>1240</th><th>1630</th><th>1090</th><th>1420</th><th>1160</th><th>1370</th><th>C</th><th>A</th><th>D</th><th>B</th><th>D</th><th>C</th></tr>
+<tr><th>275</th><th align="left">カネゴン</th><th align="left">ベリアル</th><th align="left">ベリアル カネゴン(R1)</th><th>1330</th><th>1450</th><th>1400</th><th>1260</th><th>1320</th><th>1080</th><th>C</th><th>B</th><th>B</th><th>C</th><th>C</th><th>D</th></tr>
+<tr><th>276</th><th align="left">カネゴン</th><th align="left">特殊</th><th align="left">巨大カネゾー</th><th>1000</th><th>900</th><th>1700</th><th>1500</th><th>1000</th><th>800</th><th>D</th><th>E</th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+<tr><th>277</th><th align="left">カネゴン</th><th align="left">特殊</th><th align="left">巨大カネゾー(R1)</th><th>1280</th><th>1020</th><th>1510</th><th>1330</th><th>1100</th><th>760</th><th>B</th><th>D</th><th>B</th><th>C</th><th>C</th><th>D</th></tr>
+<tr><th>278</th><th align="left">ネロンガ</th><th align="left">ネロンガ</th><th align="left">ネロンガ</th><th>1700</th><th>1100</th><th>800</th><th>1400</th><th>500</th><th>900</th><th>B</th><th>C</th><th>D</th><th>C</th><th>E</th><th>D</th></tr>
+<tr><th>279</th><th align="left">ネロンガ</th><th align="left">ネロンガ</th><th align="left">ネロンガ(R1)</th><th>1930</th><th>1160</th><th>860</th><th>1370</th><th>640</th><th>800</th><th>A</th><th>C</th><th>D</th><th>C</th><th>C</th><th>E</th></tr>
+<tr><th>280</th><th align="left">ネロンガ</th><th align="left">エレキング</th><th align="left">エレキング ネロンガ</th><th>1500</th><th>1100</th><th>900</th><th>1400</th><th>600</th><th>900</th><th>B</th><th>C</th><th>D</th><th>C</th><th>E</th><th>D</th></tr>
+<tr><th>281</th><th align="left">ネロンガ</th><th align="left">エレキング</th><th align="left">エレキング ネロンガ(R1)</th><th>1460</th><th>980</th><th>1020</th><th>1440</th><th>680</th><th>870</th><th>B</th><th>D</th><th>C</th><th>C</th><th>D</th><th>D</th></tr>
+<tr><th>282</th><th align="left">ネロンガ</th><th align="left">ガンQ</th><th align="left">ガンQ ネロンガ</th><th>1400</th><th>900</th><th>1100</th><th>1500</th><th>600</th><th>800</th><th>C</th><th>D</th><th>C</th><th>B</th><th>D</th><th>D</th></tr>
+<tr><th>283</th><th align="left">ネロンガ</th><th align="left">ガンQ</th><th align="left">ガンQ ネロンガ(R1)</th><th>1360</th><th>860</th><th>1410</th><th>1570</th><th>540</th><th>880</th><th>C</th><th>D</th><th>A</th><th>B</th><th>E</th><th>D</th></tr>
+<tr><th>284</th><th align="left">ネロンガ</th><th align="left">ガラモン</th><th align="left">ガラモン ネロンガ</th><th>1500</th><th>1200</th><th>700</th><th>1000</th><th>500</th><th>1300</th><th>B</th><th>C</th><th>D</th><th>D</th><th>E</th><th>C</th></tr>
+<tr><th>285</th><th align="left">ネロンガ</th><th align="left">ガラモン</th><th align="left">ガラモン ネロンガ(R1)</th><th>1330</th><th>1250</th><th>670</th><th>980</th><th>560</th><th>1660</th><th>C</th><th>C</th><th>D</th><th>D</th><th>E</th><th>A</th></tr>
+<tr><th>286</th><th align="left">ネロンガ</th><th align="left">ゴルザ</th><th align="left">ゴルザ ネロンガ</th><th>1700</th><th>1200</th><th>800</th><th>1200</th><th>600</th><th>1100</th><th>B</th><th>C</th><th>D</th><th>C</th><th>E</th><th>C</th></tr>
+<tr><th>287</th><th align="left">ネロンガ</th><th align="left">ゴルザ</th><th align="left">ゴルザ ネロンガ(R1)</th><th>1510</th><th>1540</th><th>710</th><th>1360</th><th>660</th><th>1070</th><th>C</th><th>A</th><th>E</th><th>B</th><th>E</th><th>C</th></tr>
+<tr><th>288</th><th align="left">ネロンガ</th><th align="left">レイキュバス</th><th align="left">レイキュバス ネロンガ</th><th>1600</th><th>1200</th><th>700</th><th>1200</th><th>500</th><th>1200</th><th>B</th><th>C</th><th>D</th><th>C</th><th>E</th><th>C</th></tr>
+<tr><th>289</th><th align="left">ネロンガ</th><th align="left">レイキュバス</th><th align="left">レイキュバス ネロンガ(R1)</th><th>1420</th><th>1360</th><th>690</th><th>1170</th><th>600</th><th>1360</th><th>C</th><th>B</th><th>D</th><th>C</th><th>E</th><th>B</th></tr>
+<tr><th>290</th><th align="left">ネロンガ</th><th align="left">特殊</th><th align="left">ガル ネロンガ</th><th>1220</th><th>1390</th><th>740</th><th>1280</th><th>410</th><th>1470</th><th>D</th><th>B</th><th>D</th><th>C</th><th>E</th><th>B</th></tr>
+<tr><th>291</th><th align="left">ネロンガ</th><th align="left">特殊</th><th align="left">ガル ネロンガ(R1)</th><th>1080</th><th>1330</th><th>840</th><th>1450</th><th>470</th><th>1310</th><th>E</th><th>B</th><th>C</th><th>B</th><th>D</th><th>C</th></tr>
+<tr><th>292</th><th align="left">ゼットン</th><th align="left">ゼットン</th><th align="left">ゼットン</th><th>1200</th><th>1800</th><th>1500</th><th>1300</th><th>1200</th><th>1400</th><th>C</th><th>A</th><th>B</th><th>C</th><th>C</th><th>C</th></tr>
+<tr><th>293</th><th align="left">ゼットン</th><th align="left">ゼットン</th><th align="left">ゼットン(R1)</th><th>1360</th><th>2040</th><th>1330</th><th>1360</th><th>1190</th><th>1590</th><th>B</th><th>B</th><th>C</th><th>C</th><th>C</th><th>B</th></tr>
+<tr><th>294</th><th align="left">ゼットン</th><th align="left">キングジョー</th><th align="left">キングジョー ゼットン</th><th>1200</th><th>1800</th><th>1500</th><th>1200</th><th>800</th><th>1600</th><th>C</th><th>A</th><th>B</th><th>C</th><th>D</th><th>B</th></tr>
+<tr><th>295</th><th align="left">ゼットン</th><th align="left">キングジョー</th><th align="left">キングジョー ゼットン(R1)</th><th>1190</th><th>1900</th><th>1480</th><th>1070</th><th>880</th><th>1810</th><th>C</th><th>A</th><th>B</th><th>D</th><th>D</th><th>A</th></tr>
+<tr><th>296</th><th align="left">ゼットン</th><th align="left">バルタン</th><th align="left">バルタン ゼットン</th><th>900</th><th>1400</th><th>1700</th><th>1300</th><th>1400</th><th>1200</th><th>D</th><th>B</th><th>B</th><th>C</th><th>B</th><th>C</th></tr>
+<tr><th>297</th><th align="left">ゼットン</th><th align="left">バルタン</th><th align="left">バルタン ゼットン(R1)</th><th>800</th><th>1340</th><th>1930</th><th>1370</th><th>1590</th><th>1070</th><th>E</th><th>B</th><th>A</th><th>C</th><th>A</th><th>D</th></tr>
+<tr><th>298</th><th align="left">ゼットン</th><th align="left">メトロン</th><th align="left">メトロン ゼットン</th><th>1200</th><th>1400</th><th>1600</th><th>1400</th><th>1100</th><th>1000</th><th>C</th><th>C</th><th>B</th><th>B</th><th>C</th><th>D</th></tr>
+<tr><th>299</th><th align="left">ゼットン</th><th align="left">メトロン</th><th align="left">メトロン ゼットン(R1)</th><th>1290</th><th>1330</th><th>1810</th><th>1590</th><th>1050</th><th>890</th><th>C</th><th>C</th><th>A</th><th>A</th><th>C</th><th>E</th></tr>
+<tr><th>300</th><th align="left">ゼットン</th><th align="left">ダダ</th><th align="left">ダダ ゼットン</th><th>1000</th><th>1400</th><th>1500</th><th>1300</th><th>1400</th><th>1000</th><th>D</th><th>B</th><th>B</th><th>C</th><th>B</th><th>D</th></tr>
+<tr><th>301</th><th align="left">ゼットン</th><th align="left">ダダ</th><th align="left">ダダ ゼットン(R1)</th><th>990</th><th>1100</th><th>1550</th><th>1470</th><th>1590</th><th>990</th><th>D</th><th>D</th><th>B</th><th>B</th><th>A</th><th>D</th></tr>
+<tr><th>302</th><th align="left">ゼットン</th><th align="left">カネゴン</th><th align="left">カネゴン ゼットン</th><th>900</th><th>1300</th><th>1500</th><th>1300</th><th>1400</th><th>1000</th><th>D</th><th>C</th><th>B</th><th>C</th><th>B</th><th>D</th></tr>
+<tr><th>303</th><th align="left">ゼットン</th><th align="left">カネゴン</th><th align="left">カネゴン ゼットン(R1)</th><th>1020</th><th>1230</th><th>1330</th><th>1290</th><th>1440</th><th>1130</th><th>C</th><th>C</th><th>C</th><th>C</th><th>B</th><th>C</th></tr>
+<tr><th>304</th><th align="left">ゼットン</th><th align="left">レイキュバス</th><th align="left">レイキュバス ゼットン</th><th>1200</th><th>1700</th><th>1100</th><th>1100</th><th>900</th><th>1500</th><th>C</th><th>A</th><th>C</th><th>C</th><th>D</th><th>B</th></tr>
+<tr><th>305</th><th align="left">ゼットン</th><th align="left">レイキュバス</th><th align="left">レイキュバス ゼットン(R1)</th><th>1190</th><th>1770</th><th>1070</th><th>1160</th><th>800</th><th>1700</th><th>C</th><th>A</th><th>C</th><th>C</th><th>E</th><th>A</th></tr>
+<tr><th>306</th><th align="left">ゼットン</th><th align="left">ベムスター</th><th align="left">ベムスター ゼットン</th><th>1000</th><th>1600</th><th>1200</th><th>1300</th><th>1300</th><th>1100</th><th>D</th><th>B</th><th>C</th><th>C</th><th>C</th><th>D</th></tr>
+<tr><th>307</th><th align="left">ゼットン</th><th align="left">ベムスター</th><th align="left">ベムスター ゼットン(R1)</th><th>990</th><th>1420</th><th>1170</th><th>1470</th><th>1470</th><th>1250</th><th>D</th><th>C</th><th>C</th><th>B</th><th>B</th><th>C</th></tr>
+<tr><th>308</th><th align="left">ゼットン</th><th align="left">セブンガー</th><th align="left">セブンガー ゼットン</th><th>1000</th><th>1800</th><th>1400</th><th>1300</th><th>1200</th><th>1400</th><th>D</th><th>A</th><th>B</th><th>C</th><th>C</th><th>C</th></tr>
+<tr><th>309</th><th align="left">ゼットン</th><th align="left">セブンガー</th><th align="left">セブンガー ゼットン(R1)</th><th>1100</th><th>1600</th><th>1360</th><th>1250</th><th>1360</th><th>1500</th><th>D</th><th>B</th><th>B</th><th>C</th><th>B</th><th>C</th></tr>
+<tr><th>310</th><th align="left">ゼットン</th><th align="left">特殊</th><th align="left">サマー ゼットン</th><th>1640</th><th>1410</th><th>1440</th><th>1180</th><th>1050</th><th>1590</th><th>A</th><th>C</th><th>C</th><th>B</th><th>D</th><th>B</th></tr>
+<tr><th>311</th><th align="left">ゼットン</th><th align="left">特殊</th><th align="left">サマー ゼットン(R1)</th><th>1290</th><th>1380</th><th>1530</th><th>1340</th><th>1000</th><th>1800</th><th>C</th><th>C</th><th>C</th><th>A</th><th>D</th><th>A</th></tr>
+<tr><th>312</th><th align="left">ウインダム</th><th align="left">ウインダム</th><th align="left">ウインダム</th><th>1200</th><th>1100</th><th>1000</th><th>800</th><th>1400</th><th>900</th><th>C</th><th>C</th><th>D</th><th>D</th><th>C</th><th>C</th></tr>
+<tr><th>313</th><th align="left">ウインダム</th><th align="left">ウインダム</th><th align="left">ウインダム(R1)</th><th>1280</th><th>980</th><th>1100</th><th>910</th><th>1350</th><th>1020</th><th>C</th><th>D</th><th>D</th><th>C</th><th>C</th><th>B</th></tr>
+<tr><th>314</th><th align="left">ウインダム</th><th align="left">ゼットン</th><th align="left">ゼットン ウインダム</th><th>1200</th><th>1300</th><th>1200</th><th>1000</th><th>1400</th><th>1100</th><th>C</th><th>B</th><th>C</th><th>D</th><th>C</th><th>C</th></tr>
+<tr><th>315</th><th align="left">ウインダム</th><th align="left">ゼットン</th><th align="left">ゼットン ウインダム(R1)</th><th>1070</th><th>1470</th><th>1360</th><th>970</th><th>1470</th><th>1100</th><th>D</th><th>A</th><th>B</th><th>D</th><th>C</th><th>C</th></tr>
+<tr><th>316</th><th align="left">ウインダム</th><th align="left">ダダ</th><th align="left">ダダ ウインダム</th><th>1000</th><th>1000</th><th>1200</th><th>1000</th><th>1500</th><th>700</th><th>D</th><th>C</th><th>C</th><th>C</th><th>B</th><th>D</th></tr>
+<tr><th>317</th><th align="left">ウインダム</th><th align="left">ダダ</th><th align="left">ダダ ウインダム(R1)</th><th>890</th><th>950</th><th>1540</th><th>1130</th><th>1580</th><th>620</th><th>E</th><th>C</th><th>A</th><th>B</th><th>B</th><th>E</th></tr>
+<tr><th>318</th><th align="left">ウインダム</th><th align="left">ミクラス</th><th align="left">ミクラス ウインダム</th><th>1400</th><th>1300</th><th>900</th><th>700</th><th>1100</th><th>1100</th><th>B</th><th>C</th><th>D</th><th>D</th><th>C</th><th>C</th></tr>
+<tr><th>319</th><th align="left">ウインダム</th><th align="left">ミクラス</th><th align="left">ミクラス ウインダム(R1)</th><th>1590</th><th>1470</th><th>850</th><th>620</th><th>1070</th><th>1160</th><th>A</th><th>B</th><th>D</th><th>E</th><th>C</th><th>C</th></tr>
+<tr><th>320</th><th align="left">ウインダム</th><th align="left">メルバ</th><th align="left">メルバ ウインダム</th><th>1000</th><th>1100</th><th>1000</th><th>1000</th><th>1600</th><th>900</th><th>D</th><th>C</th><th>D</th><th>D</th><th>B</th><th>C</th></tr>
+<tr><th>321</th><th align="left">ウインダム</th><th align="left">メルバ</th><th align="left">メルバ ウインダム(R1)</th><th>970</th><th>1160</th><th>1130</th><th>930</th><th>1810</th><th>800</th><th>D</th><th>C</th><th>C</th><th>D</th><th>A</th><th>D</th></tr>
+<tr><th>322</th><th align="left">ウインダム</th><th align="left">エースキラー</th><th align="left">エースキラー ウインダム</th><th>1200</th><th>1300</th><th>1100</th><th>1200</th><th>1000</th><th>1100</th><th>C</th><th>B</th><th>D</th><th>C</th><th>D</th><th>C</th></tr>
+<tr><th>323</th><th align="left">ウインダム</th><th align="left">エースキラー</th><th align="left">エースキラー ウインダム(R1)</th><th>1070</th><th>1250</th><th>1170</th><th>1540</th><th>890</th><th>1250</th><th>D</th><th>B</th><th>D</th><th>A</th><th>E</th><th>B</th></tr>
+<tr><th>324</th><th align="left">ウインダム</th><th align="left">特殊</th><th align="left">ピロロ ウインダム</th><th>760</th><th>820</th><th>1230</th><th>1520</th><th>1710</th><th>960</th><th>D</th><th>E</th><th>C</th><th>B</th><th>A</th><th>D</th></tr>
+<tr><th>325</th><th align="left">ウインダム</th><th align="left">特殊</th><th align="left">ピロロ ウインダム(R1)</th><th>840</th><th>770</th><th>1390</th><th>1720</th><th>1520</th><th>1040</th><th>D</th><th>E</th><th>B</th><th>A</th><th>B</th><th>D</th></tr>
+<tr><th>326</th><th align="left">ウインダム</th><th align="left">特殊</th><th align="left">ウインダム 光の巨人ペイント</th><th>907</th><th>1007</th><th>1507</th><th>1207</th><th>807</th><th>1407</th><th>D</th><th>D</th><th>B</th><th>C</th><th>D</th><th>B</th></tr>
+<tr><th>327</th><th align="left">キングジョー</th><th align="left">キングジョー</th><th align="left">キングジョー</th><th>1400</th><th>2000</th><th>1300</th><th>900</th><th>200</th><th>2100</th><th>C</th><th>A</th><th>C</th><th>C</th><th>E</th><th>A</th></tr>
+<tr><th>328</th><th align="left">キングジョー</th><th align="left">キングジョー</th><th align="left">キングジョー(R1)</th><th>1590</th><th>2040</th><th>1270</th><th>800</th><th>300</th><th>2040</th><th>B</th><th>A</th><th>C</th><th>D</th><th>E</th><th>A</th></tr>
+<tr><th>329</th><th align="left">キングジョー</th><th align="left">ゴモラ</th><th align="left">ゴモラ キングジョー</th><th>1400</th><th>1800</th><th>1100</th><th>900</th><th>400</th><th>1800</th><th>B</th><th>A</th><th>C</th><th>C</th><th>E</th><th>B</th></tr>
+<tr><th>330</th><th align="left">キングジョー</th><th align="left">ゴモラ</th><th align="left">ゴモラ キングジョー(R1)</th><th>1590</th><th>1600</th><th>980</th><th>990</th><th>460</th><th>1770</th><th>A</th><th>B</th><th>D</th><th>C</th><th>D</th><th>B</th></tr>
+<tr><th>331</th><th align="left">キングジョー</th><th align="left">ゼットン</th><th align="left">ゼットン キングジョー</th><th>1400</th><th>2000</th><th>1300</th><th>1000</th><th>600</th><th>1900</th><th>C</th><th>A</th><th>C</th><th>C</th><th>D</th><th>B</th></tr>
+<tr><th>332</th><th align="left">キングジョー</th><th align="left">ゼットン</th><th align="left">ゼットン キングジョー(R1)</th><th>1240</th><th>2100</th><th>1220</th><th>1130</th><th>680</th><th>1850</th><th>D</th><th>A</th><th>C</th><th>B</th><th>C</th><th>B</th></tr>
+<tr><th>333</th><th align="left">キングジョー</th><th align="left">バルタン</th><th align="left">バルタン キングジョー</th><th>1000</th><th>1500</th><th>1500</th><th>1000</th><th>800</th><th>1600</th><th>D</th><th>B</th><th>B</th><th>C</th><th>C</th><th>B</th></tr>
+<tr><th>334</th><th align="left">キングジョー</th><th align="left">バルタン</th><th align="left">バルタン キングジョー(R1)</th><th>990</th><th>1330</th><th>1700</th><th>1100</th><th>1030</th><th>1260</th><th>D</th><th>C</th><th>A</th><th>C</th><th>A</th><th>D</th></tr>
+<tr><th>335</th><th align="left">キングジョー</th><th align="left">ダダ</th><th align="left">ダダ キングジョー</th><th>1200</th><th>1500</th><th>1400</th><th>1100</th><th>800</th><th>1500</th><th>D</th><th>B</th><th>B</th><th>C</th><th>C</th><th>C</th></tr>
+<tr><th>336</th><th align="left">キングジョー</th><th align="left">ダダ</th><th align="left">ダダ キングジョー(R1)</th><th>1070</th><th>1420</th><th>1470</th><th>1250</th><th>910</th><th>1460</th><th>E</th><th>B</th><th>B</th><th>B</th><th>B</th><th>C</th></tr>
+<tr><th>337</th><th align="left">キングジョー</th><th align="left">ウインダム</th><th align="left">ウインダム キングジョー</th><th>1400</th><th>1700</th><th>1200</th><th>900</th><th>600</th><th>1700</th><th>C</th><th>B</th><th>C</th><th>C</th><th>D</th><th>B</th></tr>
+<tr><th>338</th><th align="left">キングジョー</th><th align="left">ウインダム</th><th align="left">ウインダム キングジョー(R1)</th><th>1360</th><th>1510</th><th>1360</th><th>800</th><th>700</th><th>1930</th><th>C</th><th>C</th><th>B</th><th>D</th><th>D</th><th>A</th></tr>
+<tr><th>339</th><th align="left">キングジョー</th><th align="left">ノーバ</th><th align="left">ノーバ キングジョー</th><th>1100</th><th>1700</th><th>1200</th><th>1100</th><th>700</th><th>1400</th><th>C</th><th>B</th><th>C</th><th>C</th><th>C</th><th>C</th></tr>
+<tr><th>340</th><th align="left">キングジョー</th><th align="left">ノーバ</th><th align="left">ノーバ キングジョー(R1)</th><th>1070</th><th>1340</th><th>1290</th><th>1410</th><th>800</th><th>1240</th><th>C</th><th>D</th><th>C</th><th>A</th><th>B</th><th>D</th></tr>
+<tr><th>341</th><th align="left">キングジョー</th><th align="left">エースキラー</th><th align="left">エースキラー キングジョー</th><th>1300</th><th>1900</th><th>1300</th><th>1300</th><th>200</th><th>1900</th><th>C</th><th>A</th><th>C</th><th>B</th><th>E</th><th>A</th></tr>
+<tr><th>342</th><th align="left">キングジョー</th><th align="left">エースキラー</th><th align="left">エースキラー キングジョー(R1)</th><th>1230</th><th>1690</th><th>1470</th><th>1470</th><th>230</th><th>1490</th><th>C</th><th>B</th><th>B</th><th>A</th><th>D</th><th>C</th></tr>
+<tr><th>343</th><th align="left">キングジョー</th><th align="left">特殊</th><th align="left">ゴーレム キングジョー</th><th>1660</th><th>1930</th><th>1040</th><th>810</th><th>360</th><th>2000</th><th>B</th><th>A</th><th>D</th><th>D</th><th>E</th><th>A</th></tr>
+<tr><th>344</th><th align="left">キングジョー</th><th align="left">特殊</th><th align="left">ゴーレム キングジョー(R1)</th><th>1880</th><th>1710</th><th>1180</th><th>760</th><th>410</th><th>1770</th><th>A</th><th>B</th><th>C</th><th>D</th><th>D</th><th>B</th></tr>
+<tr><th>345</th><th align="left">ガンダー</th><th align="left">ガンダー</th><th align="left">ガンダー</th><th>1200</th><th>1000</th><th>1300</th><th>600</th><th>1500</th><th>1000</th><th>C</th><th>D</th><th>C</th><th>D</th><th>B</th><th>D</th></tr>
+<tr><th>346</th><th align="left">ガンダー</th><th align="left">ガンダー</th><th align="left">ガンダー(R1)</th><th>1360</th><th>910</th><th>1340</th><th>680</th><th>1330</th><th>990</th><th>B</th><th>D</th><th>C</th><th>C</th><th>C</th><th>D</th></tr>
+<tr><th>347</th><th align="left">ガンダー</th><th align="left">エレキング</th><th align="left">エレキング ガンダー</th><th>1200</th><th>1000</th><th>1300</th><th>1000</th><th>1300</th><th>900</th><th>C</th><th>D</th><th>C</th><th>C</th><th>C</th><th>D</th></tr>
+<tr><th>348</th><th align="left">ガンダー</th><th align="left">エレキング</th><th align="left">エレキング ガンダー(R1)</th><th>1180</th><th>1100</th><th>1470</th><th>1280</th><th>1020</th><th>1020</th><th>C</th><th>C</th><th>B</th><th>A</th><th>E</th><th>C</th></tr>
+<tr><th>349</th><th align="left">ガンダー</th><th align="left">メトロン</th><th align="left">メトロン ガンダー</th><th>1200</th><th>900</th><th>1500</th><th>1000</th><th>1300</th><th>800</th><th>C</th><th>D</th><th>B</th><th>C</th><th>B</th><th>D</th></tr>
+<tr><th>350</th><th align="left">ガンダー</th><th align="left">メトロン</th><th align="left">メトロン ガンダー(R1)</th><th>1170</th><th>880</th><th>1700</th><th>1130</th><th>1390</th><th>710</th><th>C</th><th>D</th><th>A</th><th>B</th><th>B</th><th>E</th></tr>
+<tr><th>351</th><th align="left">ガンダー</th><th align="left">カネゴン</th><th align="left">カネゴン ガンダー</th><th>900</th><th>800</th><th>1300</th><th>800</th><th>1600</th><th>800</th><th>D</th><th>D</th><th>C</th><th>D</th><th>B</th><th>D</th></tr>
+<tr><th>352</th><th align="left">ガンダー</th><th align="left">カネゴン</th><th align="left">カネゴン ガンダー(R1)</th><th>800</th><th>910</th><th>1330</th><th>770</th><th>1810</th><th>740</th><th>E</th><th>C</th><th>C</th><th>D</th><th>A</th><th>D</th></tr>
+<tr><th>353</th><th align="left">ガンダー</th><th align="left">特殊</th><th align="left">ナーガ ガンダー</th><th>920</th><th>1460</th><th>990</th><th>1210</th><th>1030</th><th>1190</th><th>D</th><th>B</th><th>D</th><th>B</th><th>D</th><th>C</th></tr>
+<tr><th>354</th><th align="left">ガンダー</th><th align="left">特殊</th><th align="left">ナーガ ガンダー(R1)</th><th>1000</th><th>1650</th><th>880</th><th>1190</th><th>1320</th><th>1060</th><th>D</th><th>A</th><th>E</th><th>B</th><th>B</th><th>D</th></tr>
+<tr><th>355</th><th align="left">エースキラー</th><th align="left">エースキラー</th><th align="left">エースキラー</th><th>1000</th><th>1700</th><th>1400</th><th>2000</th><th>200</th><th>1600</th><th>D</th><th>A</th><th>C</th><th>A</th><th>E</th><th>B</th></tr>
+<tr><th>356</th><th align="left">エースキラー</th><th align="left">エースキラー</th><th align="left">エースキラー(R1)</th><th>980</th><th>1510</th><th>1590</th><th>1770</th><th>300</th><th>1810</th><th>D</th><th>B</th><th>B</th><th>B</th><th>E</th><th>A</th></tr>
+<tr><th>357</th><th align="left">エースキラー</th><th align="left">ゼットン</th><th align="left">ゼットン エースキラー</th><th>1000</th><th>1700</th><th>1400</th><th>1800</th><th>600</th><th>1600</th><th>D</th><th>A</th><th>C</th><th>B</th><th>D</th><th>B</th></tr>
+<tr><th>358</th><th align="left">エースキラー</th><th align="left">ゼットン</th><th align="left">ゼットン エースキラー(R1)</th><th>1130</th><th>1670</th><th>1590</th><th>1790</th><th>660</th><th>1420</th><th>C</th><th>A</th><th>B</th><th>B</th><th>D</th><th>C</th></tr>
+<tr><th>359</th><th align="left">エースキラー</th><th align="left">ダダ</th><th align="left">ダダ エースキラー</th><th>900</th><th>1300</th><th>1500</th><th>1800</th><th>800</th><th>1200</th><th>D</th><th>B</th><th>B</th><th>A</th><th>C</th><th>C</th></tr>
+<tr><th>360</th><th align="left">エースキラー</th><th align="left">ダダ</th><th align="left">ダダ エースキラー(R1)</th><th>990</th><th>1160</th><th>1700</th><th>1770</th><th>910</th><th>1070</th><th>D</th><th>C</th><th>A</th><th>A</th><th>B</th><th>D</th></tr>
+<tr><th>361</th><th align="left">エースキラー</th><th align="left">ウインダム</th><th align="left">ウインダム エースキラー</th><th>1000</th><th>1500</th><th>1300</th><th>1600</th><th>600</th><th>1400</th><th>D</th><th>B</th><th>C</th><th>B</th><th>D</th><th>B</th></tr>
+<tr><th>362</th><th align="left">エースキラー</th><th align="left">ウインダム</th><th align="left">ウインダム エースキラー(R1)</th><th>1130</th><th>1470</th><th>1340</th><th>1420</th><th>680</th><th>1390</th><th>C</th><th>B</th><th>C</th><th>C</th><th>C</th><th>B</th></tr>
+<tr><th>363</th><th align="left">エースキラー</th><th align="left">特殊</th><th align="left">アントラン エースキラー</th><th>1240</th><th>1410</th><th>1350</th><th>1640</th><th>560</th><th>1790</th><th>C</th><th>B</th><th>C</th><th>C</th><th>D</th><th>A</th></tr>
+<tr><th>364</th><th align="left">エースキラー</th><th align="left">特殊</th><th align="left">アントラン エースキラー(R1)</th><th>1590</th><th>1450</th><th>1200</th><th>1460</th><th>810</th><th>1410</th><th>A</th><th>B</th><th>D</th><th>D</th><th>A</th><th>C</th></tr>
+<tr><th>365</th><th align="left">バードン</th><th align="left">バードン</th><th align="left">バードン</th><th>1100</th><th>1700</th><th>1200</th><th>1300</th><th>1600</th><th>1200</th><th>C</th><th>B</th><th>C</th><th>C</th><th>B</th><th>C</th></tr>
+<tr><th>366</th><th align="left">バードン</th><th align="left">バードン</th><th align="left">バードン(R1)</th><th>1140</th><th>1510</th><th>1150</th><th>1470</th><th>1660</th><th>1070</th><th>C</th><th>C</th><th>C</th><th>A</th><th>B</th><th>D</th></tr>
+<tr><th>367</th><th align="left">バードン</th><th align="left">ミクラス</th><th align="left">ミクラス バードン</th><th>1300</th><th>1700</th><th>1000</th><th>1000</th><th>1200</th><th>1200</th><th>B</th><th>B</th><th>C</th><th>D</th><th>C</th><th>C</th></tr>
+<tr><th>368</th><th align="left">バードン</th><th align="left">ミクラス</th><th align="left">ミクラス バードン(R1)</th><th>1470</th><th>1780</th><th>990</th><th>1060</th><th>1070</th><th>1360</th><th>A</th><th>B</th><th>C</th><th>D</th><th>D</th><th>B</th></tr>
+<tr><th>369</th><th align="left">バードン</th><th align="left">メルバ</th><th align="left">メルバ バードン</th><th>900</th><th>1500</th><th>1100</th><th>1300</th><th>1700</th><th>1100</th><th>D</th><th>B</th><th>C</th><th>C</th><th>B</th><th>C</th></tr>
+<tr><th>370</th><th align="left">バードン</th><th align="left">メルバ</th><th align="left">メルバ バードン(R1)</th><th>870</th><th>1460</th><th>1250</th><th>1360</th><th>1930</th><th>980</th><th>D</th><th>B</th><th>B</th><th>C</th><th>A</th><th>D</th></tr>
+<tr><th>371</th><th align="left">バードン</th><th align="left">超コッヴ</th><th align="left">超コッヴ バードン</th><th>1300</th><th>1700</th><th>1000</th><th>1200</th><th>1100</th><th>1300</th><th>C</th><th>B</th><th>D</th><th>C</th><th>C</th><th>C</th></tr>
+<tr><th>372</th><th align="left">バードン</th><th align="left">超コッヴ</th><th align="left">超コッヴ バードン(R1)</th><th>1470</th><th>1930</th><th>940</th><th>1070</th><th>1040</th><th>1360</th><th>B</th><th>A</th><th>D</th><th>D</th><th>C</th><th>C</th></tr>
+<tr><th>373</th><th align="left">バードン</th><th align="left">特殊</th><th align="left">ダックン バードン</th><th>860</th><th>1570</th><th>1330</th><th>1490</th><th>1810</th><th>940</th><th>C</th><th>C</th><th>C</th><th>B</th><th>A</th><th>D</th></tr>
+<tr><th>374</th><th align="left">バードン</th><th align="left">特殊</th><th align="left">ダックン バードン(R1)</th><th>900</th><th>1630</th><th>1700</th><th>1320</th><th>1610</th><th>900</th><th>C</th><th>C</th><th>A</th><th>C</th><th>B</th><th>D</th></tr>
+<tr><th>375</th><th align="left">メルバ</th><th align="left">メルバ</th><th align="left">メルバ</th><th>600</th><th>1200</th><th>900</th><th>1300</th><th>2000</th><th>800</th><th>E</th><th>C</th><th>D</th><th>C</th><th>A</th><th>D</th></tr>
+<tr><th>376</th><th align="left">メルバ</th><th align="left">メルバ</th><th align="left">メルバ(R1)</th><th>680</th><th>1300</th><th>1150</th><th>1220</th><th>1770</th><th>710</th><th>D</th><th>C</th><th>B</th><th>C</th><th>B</th><th>E</th></tr>
+<tr><th>377</th><th align="left">メルバ</th><th align="left">キングジョー</th><th align="left">キングジョー メルバ</th><th>900</th><th>1500</th><th>1000</th><th>1200</th><th>1300</th><th>1300</th><th>D</th><th>B</th><th>D</th><th>C</th><th>C</th><th>C</th></tr>
+<tr><th>378</th><th align="left">メルバ</th><th align="left">キングジョー</th><th align="left">キングジョー メルバ(R1)</th><th>1000</th><th>1700</th><th>950</th><th>1130</th><th>1020</th><th>1660</th><th>D</th><th>A</th><th>D</th><th>C</th><th>D</th><th>A</th></tr>
+<tr><th>379</th><th align="left">メルバ</th><th align="left">ダダ</th><th align="left">ダダ メルバ</th><th>600</th><th>1000</th><th>1200</th><th>1300</th><th>1900</th><th>700</th><th>E</th><th>C</th><th>C</th><th>C</th><th>A</th><th>D</th></tr>
+<tr><th>380</th><th align="left">メルバ</th><th align="left">ダダ</th><th align="left">ダダ メルバ(R1)</th><th>590</th><th>990</th><th>1360</th><th>1660</th><th>1490</th><th>720</th><th>E</th><th>C</th><th>B</th><th>A</th><th>C</th><th>D</th></tr>
+<tr><th>381</th><th align="left">メルバ</th><th align="left">バードン</th><th align="left">バードン メルバ</th><th>800</th><th>1400</th><th>1000</th><th>1300</th><th>1900</th><th>900</th><th>D</th><th>C</th><th>D</th><th>C</th><th>A</th><th>D</th></tr>
+<tr><th>382</th><th align="left">メルバ</th><th align="left">バードン</th><th align="left">バードン メルバ(R1)</th><th>810</th><th>1590</th><th>960</th><th>1160</th><th>1940</th><th>1020</th><th>D</th><th>B</th><th>D</th><th>D</th><th>A</th><th>C</th></tr>
+<tr><th>383</th><th align="left">メルバ</th><th align="left">ベムスター</th><th align="left">ベムスター メルバ</th><th>600</th><th>1200</th><th>800</th><th>1300</th><th>1800</th><th>800</th><th>E</th><th>C</th><th>D</th><th>C</th><th>A</th><th>D</th></tr>
+<tr><th>384</th><th align="left">メルバ</th><th align="left">ベムスター</th><th align="left">ベムスター メルバ(R1)</th><th>670</th><th>1160</th><th>910</th><th>1470</th><th>1740</th><th>710</th><th>E</th><th>C</th><th>D</th><th>B</th><th>A</th><th>E</th></tr>
+<tr><th>385</th><th align="left">メルバ</th><th align="left">超コッヴ</th><th align="left">超コッヴ メルバ</th><th>1000</th><th>1300</th><th>800</th><th>1200</th><th>1400</th><th>1100</th><th>D</th><th>C</th><th>D</th><th>C</th><th>C</th><th>C</th></tr>
+<tr><th>386</th><th align="left">メルバ</th><th align="left">超コッヴ</th><th align="left">超コッヴ メルバ(R1)</th><th>1280</th><th>1470</th><th>710</th><th>1070</th><th>1320</th><th>1250</th><th>B</th><th>B</th><th>E</th><th>E</th><th>C</th><th>B</th></tr>
+<tr><th>387</th><th align="left">メルバ</th><th align="left">特殊</th><th align="left">ムー メルバ</th><th>840</th><th>1610</th><th>1260</th><th>970</th><th>1480</th><th>1120</th><th>D</th><th>B</th><th>B</th><th>D</th><th>B</th><th>C</th></tr>
+<tr><th>388</th><th align="left">メルバ</th><th align="left">特殊</th><th align="left">ムー メルバ(R1)</th><th>950</th><th>1820</th><th>1120</th><th>1240</th><th>1160</th><th>1070</th><th>C</th><th>A</th><th>C</th><th>B</th><th>D</th><th>C</th></tr>
+<tr><th>389</th><th align="left">超コッヴ</th><th align="left">超コッヴ</th><th align="left">超コッヴ</th><th>1700</th><th>1600</th><th>600</th><th>1000</th><th>300</th><th>1600</th><th>B</th><th>B</th><th>E</th><th>D</th><th>E</th><th>B</th></tr>
+<tr><th>390</th><th align="left">超コッヴ</th><th align="left">超コッヴ</th><th align="left">超コッヴ(R1)</th><th>1930</th><th>1420</th><th>610</th><th>950</th><th>390</th><th>1810</th><th>A</th><th>C</th><th>E</th><th>D</th><th>E</th><th>A</th></tr>
+<tr><th>391</th><th align="left">超コッヴ</th><th align="left">ガンQ</th><th align="left">ガンQ 超コッヴ</th><th>1400</th><th>1200</th><th>1000</th><th>1300</th><th>500</th><th>1200</th><th>C</th><th>C</th><th>D</th><th>C</th><th>D</th><th>C</th></tr>
+<tr><th>392</th><th align="left">超コッヴ</th><th align="left">ガンQ</th><th align="left">ガンQ 超コッヴ(R1)</th><th>1100</th><th>1260</th><th>1130</th><th>1660</th><th>450</th><th>1180</th><th>E</th><th>C</th><th>C</th><th>A</th><th>E</th><th>C</th></tr>
+<tr><th>393</th><th align="left">超コッヴ</th><th align="left">メトロン</th><th align="left">メトロン 超コッヴ</th><th>1600</th><th>1200</th><th>1100</th><th>1200</th><th>500</th><th>1200</th><th>B</th><th>C</th><th>C</th><th>C</th><th>D</th><th>C</th></tr>
+<tr><th>394</th><th align="left">超コッヴ</th><th align="left">メトロン</th><th align="left">メトロン 超コッヴ(R1)</th><th>1690</th><th>1070</th><th>1410</th><th>1360</th><th>420</th><th>1070</th><th>B</th><th>D</th><th>A</th><th>B</th><th>D</th><th>D</th></tr>
+<tr><th>395</th><th align="left">超コッヴ</th><th align="left">メルバ</th><th align="left">メルバ 超コッヴ</th><th>1300</th><th>1500</th><th>700</th><th>1100</th><th>900</th><th>1300</th><th>C</th><th>B</th><th>E</th><th>D</th><th>C</th><th>C</th></tr>
+<tr><th>396</th><th align="left">超コッヴ</th><th align="left">メルバ</th><th align="left">メルバ 超コッヴ(R1)</th><th>1160</th><th>1460</th><th>800</th><th>1170</th><th>1020</th><th>1370</th><th>D</th><th>B</th><th>D</th><th>D</th><th>B</th><th>C</th></tr>
+<tr><th>397</th><th align="left">超コッヴ</th><th align="left">ジョーカー</th><th align="left">ジョーカー 超コッヴ</th><th>1160</th><th>1080</th><th>1660</th><th>1390</th><th>1010</th><th>870</th><th>C</th><th>C</th><th>B</th><th>B</th><th>E</th><th>D</th></tr>
+<tr><th>398</th><th align="left">超コッヴ</th><th align="left">ジョーカー</th><th align="left">ジョーカー 超コッヴ(R1)</th><th>1220</th><th>1230</th><th>1750</th><th>1240</th><th>1290</th><th>770</th><th>C</th><th>B</th><th>B</th><th>C</th><th>C</th><th>E</th></tr>
+<tr><th>399</th><th align="left">超コッヴ</th><th align="left">ゼットン</th><th align="left">ゼットン 超コッヴ</th><th>1500</th><th>1600</th><th>900</th><th>1100</th><th>600</th><th>1600</th><th>B</th><th>B</th><th>D</th><th>D</th><th>D</th><th>B</th></tr>
+<tr><th>400</th><th align="left">超コッヴ</th><th align="left">ゼットン</th><th align="left">ゼットン 超コッヴ(R1)</th><th>1330</th><th>1810</th><th>960</th><th>1250</th><th>580</th><th>1640</th><th>C</th><th>A</th><th>D</th><th>C</th><th>D</th><th>B</th></tr>
+<tr><th>401</th><th align="left">タイラント</th><th align="left">タイラント</th><th align="left">タイラント</th><th>1900</th><th>2000</th><th>1000</th><th>1100</th><th>600</th><th>1700</th><th>A</th><th>A</th><th>D</th><th>C</th><th>E</th><th>B</th></tr>
+<tr><th>402</th><th align="left">タイラント</th><th align="left">タイラント</th><th align="left">タイラント(R1)</th><th>1930</th><th>1770</th><th>1130</th><th>1410</th><th>680</th><th>1340</th><th>A</th><th>B</th><th>C</th><th>A</th><th>D</th><th>D</th></tr>
+<tr><th>403</th><th align="left">タイラント</th><th align="left">オータム</th><th align="left">オータム タイラント</th><th>1710</th><th>1940</th><th>1220</th><th>1460</th><th>770</th><th>1310</th><th>B</th><th>A</th><th>C</th><th>B</th><th>E</th><th>C</th></tr>
+<tr><th>404</th><th align="left">タイラント</th><th align="left">オータム</th><th align="left">オータム タイラント(R1)</th><th>1520</th><th>1520</th><th>1560</th><th>1500</th><th>990</th><th>1260</th><th>C</th><th>C</th><th>A</th><th>B</th><th>C</th><th>C</th></tr>
+<tr><th>405</th><th align="left">ファイブキング</th><th align="left">ファイブキング</th><th align="left">ファイブキング</th><th>1500</th><th>1800</th><th>1100</th><th>1300</th><th>1000</th><th>1200</th><th>C</th><th>A</th><th>D</th><th>C</th><th>C</th><th>C</th></tr>
+<tr><th>406</th><th align="left">ファイブキング</th><th align="left">ファイブキング</th><th align="left">ファイブキング(R1)</th><th>1500</th><th>1300</th><th>1100</th><th>1800</th><th>1000</th><th>1200</th><th>C</th><th>B</th><th>D</th><th>B</th><th>C</th><th>C</th></tr>
+<tr><th>407</th><th align="left">ファイブキング</th><th align="left">ファイブキング</th><th align="left">ファイブキング(R2)</th><th>1500</th><th>2300</th><th>1100</th><th>800</th><th>1000</th><th>1200</th><th>C</th><th>A</th><th>D</th><th>C</th><th>C</th><th>C</th></tr>
+<tr><th>408</th><th align="left">ファイブキング</th><th align="left">ファイブキング</th><th align="left">ファイブキング(R3)</th><th>1500</th><th>1800</th><th>1100</th><th>1300</th><th>500</th><th>1700</th><th>C</th><th>A</th><th>D</th><th>C</th><th>D</th><th>B</th></tr>
+<tr><th>409</th><th align="left">ファイブキング</th><th align="left">ファイブキング</th><th align="left">ファイブキング(R4)</th><th>1000</th><th>1800</th><th>1100</th><th>1300</th><th>1500</th><th>1200</th><th>D</th><th>A</th><th>D</th><th>C</th><th>B</th><th>C</th></tr>
+<tr><th>410</th><th align="left">ファイブキング</th><th align="left">ファイブキング</th><th align="left">ファイブキング(R5)</th><th>2000</th><th>1800</th><th>850</th><th>1300</th><th>750</th><th>1200</th><th>B</th><th>A</th><th>E</th><th>C</th><th>C</th><th>C</th></tr>
+<tr><th>411</th><th align="left">ファイブキング</th><th align="left">ファイブキング</th><th align="left">ファイブキング(R6)</th><th>1700</th><th>1770</th><th>1250</th><th>1270</th><th>790</th><th>1360</th><th>B</th><th>A</th><th>C</th><th>C</th><th>E</th><th>B</th></tr>
+<tr><th>412</th><th align="left">ファイブキング</th><th align="left">特殊</th><th align="left">ムジカ ファイブキング</th><th>1170</th><th>1690</th><th>1330</th><th>1510</th><th>880</th><th>1420</th><th>D</th><th>B</th><th>C</th><th>B</th><th>D</th><th>B</th></tr>
+<tr><th>413</th><th align="left">ファイブキング</th><th align="left">特殊</th><th align="left">ムジカ ファイブキング(R1)</th><th>1330</th><th>1500</th><th>1700</th><th>1550</th><th>810</th><th>1260</th><th>C</th><th>C</th><th>A</th><th>B</th><th>D</th><th>C</th></tr>
+<tr><th>414</th><th align="left">スカルゴモラ</th><th align="left">スカルゴモラ</th><th align="left">スカルゴモラ</th><th>2000</th><th>2200</th><th>700</th><th>1000</th><th>700</th><th>1800</th><th>A</th><th>A</th><th>D</th><th>C</th><th>E</th><th>B</th></tr>
+<tr><th>415</th><th align="left">スカルゴモラ</th><th align="left">スカルゴモラ</th><th align="left">スカルゴモラ(R1)</th><th>1770</th><th>1950</th><th>800</th><th>1280</th><th>900</th><th>1410</th><th>B</th><th>B</th><th>C</th><th>A</th><th>C</th><th>D</th></tr>
+<tr><th>416</th><th align="left">サンダーキラー</th><th align="left">サンダーキラー</th><th align="left">サンダーキラー</th><th>1300</th><th>1800</th><th>1500</th><th>1900</th><th>500</th><th>1400</th><th>C</th><th>B</th><th>C</th><th>A</th><th>E</th><th>B</th></tr>
+<tr><th>417</th><th align="left">サンダーキラー</th><th align="left">サンダーキラー</th><th align="left">サンダーキラー(R1)</th><th>1260</th><th>1890</th><th>1920</th><th>1690</th><th>640</th><th>1100</th><th>C</th><th>B</th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+<tr><th>418</th><th align="left">ペダニウムゼットン</th><th align="left">ペダニウムゼットン</th><th align="left">ペダニウムゼットン</th><th>1600</th><th>2000</th><th>1600</th><th>900</th><th>300</th><th>2000</th><th>B</th><th>A</th><th>B</th><th>D</th><th>E</th><th>A</th></tr>
+<tr><th>419</th><th align="left">ペダニウムゼットン</th><th align="left">ペダニウムゼットン</th><th align="left">ペダニウムゼットン(R1)</th><th>1810</th><th>1770</th><th>1500</th><th>1020</th><th>340</th><th>1570</th><th>A</th><th>B</th><th>B</th><th>C</th><th>D</th><th>C</th></tr>
+<tr><th>420</th><th align="left">モッチー</th><th align="left">モッチー</th><th align="left">モッチー</th><th>1100</th><th>1000</th><th>1200</th><th>1400</th><th>1500</th><th>1300</th><th>C</th><th>D</th><th>D</th><th>C</th><th>C</th><th>B</th></tr>
+<tr><th>421</th><th align="left">モッチー</th><th align="left">モッチー</th><th align="left">モッチー(R1)</th><th>1410</th><th>940</th><th>1250</th><th>1240</th><th>1700</th><th>1160</th><th>A</th><th>D</th><th>D</th><th>D</th><th>B</th><th>C</th></tr>
+<tr><th>422</th><th align="left">モッチー</th><th align="left">エレキング</th><th align="left">エレキング モッチー</th><th>1100</th><th>1000</th><th>1200</th><th>1400</th><th>1300</th><th>1100</th><th>C</th><th>D</th><th>D</th><th>C</th><th>C</th><th>C</th></tr>
+<tr><th>423</th><th align="left">モッチー</th><th align="left">エレキング</th><th align="left">エレキング モッチー(R1)</th><th>1070</th><th>1130</th><th>1300</th><th>1590</th><th>1210</th><th>980</th><th>C</th><th>C</th><th>D</th><th>B</th><th>C</th><th>D</th></tr>
+<tr><th>424</th><th align="left">モッチー</th><th align="left">メトロン</th><th align="left">メトロン モッチー</th><th>1100</th><th>900</th><th>1400</th><th>1500</th><th>1300</th><th>1000</th><th>C</th><th>D</th><th>C</th><th>B</th><th>C</th><th>C</th></tr>
+<tr><th>425</th><th align="left">モッチー</th><th align="left">メトロン</th><th align="left">メトロン モッチー(R1)</th><th>1250</th><th>880</th><th>1790</th><th>1480</th><th>1360</th><th>790</th><th>B</th><th>D</th><th>A</th><th>B</th><th>C</th><th>E</th></tr>
+<tr><th>426</th><th align="left">モッチー</th><th align="left">カネゴン</th><th align="left">カネゴン モッチー</th><th>800</th><th>800</th><th>1300</th><th>1400</th><th>1600</th><th>900</th><th>D</th><th>D</th><th>D</th><th>C</th><th>B</th><th>C</th></tr>
+<tr><th>427</th><th align="left">モッチー</th><th align="left">カネゴン</th><th align="left">カネゴン モッチー(R1)</th><th>710</th><th>910</th><th>1660</th><th>1330</th><th>1810</th><th>800</th><th>E</th><th>C</th><th>B</th><th>C</th><th>A</th><th>D</th></tr>
+<tr><th>428</th><th align="left">モッチー</th><th align="left">特殊</th><th align="left">科特隊 モッチー</th><th>1220</th><th>900</th><th>1470</th><th>1640</th><th>590</th><th>1310</th><th>D</th><th>E</th><th>B</th><th>B</th><th>D</th><th>A</th></tr>
+<tr><th>429</th><th align="left">モッチー</th><th align="left">特殊</th><th align="left">モッチー 光の巨人スタイル</th><th>1178</th><th>1378</th><th>1678</th><th>1278</th><th>978</th><th>1078</th><th>C</th><th>C</th><th>B</th><th>C</th><th>E</th><th>C</th></tr>
+<tr><th>430</th><th align="left">モッチー</th><th align="left">特殊</th><th align="left">モッチー 光の巨人スタイル(R1)</th><th>1148</th><th>1778</th><th>1490</th><th>1338</th><th>870</th><th>1254</th><th>D</th><th>A</th><th>C</th><th>C</th><th>D</th><th>C</th></tr>
+<tr><th>431</th><th align="left">スエゾー</th><th align="left">スエゾー</th><th align="left">スエゾー</th><th>800</th><th>1200</th><th>1700</th><th>1300</th><th>900</th><th>1000</th><th>D</th><th>C</th><th>A</th><th>B</th><th>D</th><th>D</th></tr>
+<tr><th>432</th><th align="left">スエゾー</th><th align="left">スエゾー</th><th align="left">スエゾー(R1)</th><th>770</th><th>1540</th><th>1340</th><th>1160</th><th>1000</th><th>1150</th><th>D</th><th>A</th><th>C</th><th>C</th><th>D</th><th>B</th></tr>
+<tr><th>433</th><th align="left">スエゾー</th><th align="left">ガンQ</th><th align="left">ガンQ スエゾー</th><th>800</th><th>1000</th><th>1700</th><th>1500</th><th>900</th><th>900</th><th>D</th><th>D</th><th>A</th><th>B</th><th>D</th><th>D</th></tr>
+<tr><th>434</th><th align="left">スエゾー</th><th align="left">ガンQ</th><th align="left">ガンQ スエゾー(R1)</th><th>900</th><th>990</th><th>1680</th><th>1700</th><th>1020</th><th>800</th><th>D</th><th>D</th><th>A</th><th>A</th><th>C</th><th>E</th></tr>
+<tr><th>435</th><th align="left">スエゾー</th><th align="left">ダダ</th><th align="left">ダダ スエゾー</th><th>800</th><th>1000</th><th>1700</th><th>1300</th><th>1200</th><th>800</th><th>D</th><th>C</th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+<tr><th>436</th><th align="left">スエゾー</th><th align="left">ダダ</th><th align="left">ダダ スエゾー(R1)</th><th>710</th><th>970</th><th>1660</th><th>1360</th><th>1540</th><th>880</th><th>E</th><th>C</th><th>A</th><th>B</th><th>A</th><th>D</th></tr>
+<tr><th>437</th><th align="left">スエゾー</th><th align="left">ウインダム</th><th align="left">ウインダム スエゾー</th><th>900</th><th>1200</th><th>1500</th><th>1100</th><th>1100</th><th>1000</th><th>D</th><th>C</th><th>B</th><th>C</th><th>D</th><th>D</th></tr>
+<tr><th>438</th><th align="left">スエゾー</th><th align="left">ウインダム</th><th align="left">ウインダム スエゾー(R1)</th><th>1150</th><th>1070</th><th>1540</th><th>980</th><th>1250</th><th>950</th><th>B</th><th>D</th><th>B</th><th>D</th><th>C</th><th>D</th></tr>
+<tr><th>439</th><th align="left">スエゾー</th><th align="left">特殊</th><th align="left">科特隊 スエゾー</th><th>1220</th><th>900</th><th>1470</th><th>1640</th><th>590</th><th>1310</th><th>C</th><th>D</th><th>B</th><th>A</th><th>E</th><th>C</th></tr>
+<tr><th>440</th><th align="left">スエゾー</th><th align="left">特殊</th><th align="left">科特隊 スエゾー(R1)</th><th>1190</th><th>1150</th><th>1310</th><th>1600</th><th>670</th><th>1410</th><th>C</th><th>B</th><th>C</th><th>A</th><th>D</th><th>C</th></tr>
+<tr><th>441</th><th align="left">スエゾー</th><th align="left">特殊</th><th align="left">流星 スエゾー</th><th>700</th><th>1100</th><th>1500</th><th>900</th><th>1600</th><th>600</th><th>E</th><th>B</th><th>C</th><th>D</th><th>A</th><th>E</th></tr>
+</tbody></table>
+<br>
+		</form>
+	</body>
+</html>
