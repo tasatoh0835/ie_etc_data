@@ -1,0 +1,1647 @@
+<html>
+   <head>
+       <title>Inazuma Eleven 2 Total Form Calcurator</title>
+       <script type="text/javascript">
+           // Total Form Calcurate
+           function TotalFormCalc() {
+               // Get unit stats.
+               var unit_kick = document.calcForm.unit_kick.value;
+               var unit_body = document.calcForm.unit_body.value;
+               var unit_control = document.calcForm.unit_control.value;
+               var unit_guard = document.calcForm.unit_guard.value;
+               var unit_speed = document.calcForm.unit_speed.value;
+               var unit_stamina = document.calcForm.unit_stamina.value;
+               var unit_guts = document.calcForm.unit_guts.value;
+               
+               // Get "unitcalc"
+               // "unitcalc" is a revise value peculiar to each command.
+               // unitcalc_Type = { kick, body, guard, control, speed, guts, stamina, limit, magnification, random_width, burning_phase, shoot_power, power }
+               var unitcalc = [
+                   [ 80,  0,  0,  0,  0, 20,  0,  0,  40, 100,  20, 10, 100 ],    // unitcalc_Shoot
+                   [  0, 70,  0, 20,  0, 20,  0,  0, -25, 100,  20,  0, 100 ],    // unitcalc_Dribble
+                   [  0, 20, 70,  0,  0, 20,  0,  0,  15,  20,  20,  0, 100 ],    // unitcalc_Block
+                   [  0,  0, 80,  0,  0, 20,  0,  0,  70,  40,  20,  0, 100 ],    // unitcalc_Catch
+                   [ 80,  0,  0, 20,  0,  0,  0,  0,  80,  80,  20,  0, 100 ],    // unitcalc_ShootBlockShoot
+                   [  0,  0, 80,  0,  0, 20,  0,  0,  80,  80,  20,  0, 100 ],    // unitcalc_ShootBlockBlock
+                   [  0,  0,  0, 50, 20, 30,  0,  0,  50, 100,   0,  0,   0 ],    // unitcalc_miniduel1
+                   [  0, 20, 50,  0,  0, 20,  0,  0,   0,   0,   0,  0,   0 ],    // unitcalc_miniduel2
+                   [ 80,  0,  0,  0,  0, 20,  0,  0,  20,  25,  20, 10, 100 ],    // unitcalc_Normal_Shot(when not using a special move)
+                   [ 50,  0,  0, 50,  0,  0,  0,  0,   5,  40,  20, 10, 100 ],    // unitcalc_Chip_Shot(when not using a special move)
+                   [ 50,  0,  0, 30, 20,  0,  0,  0,  30,  30,  20, 10, 100 ],    // unitcalc_Direct_Shot(when not using a special move)
+                   [  0, 75,  0, 25,  0,  0,  0,  0, -40,  60,  20,  0, 100 ],    // unitcalc_Dribble(when not using a special move)
+                   [  0, 25, 75,  0,  0,  0,  0,  0, -10,  30,  20,  0, 100 ],    // unitcalc_Block(when not using a special move)
+                   [  0, 20, 80,  0,  0,  0,  0,  0,  40,  10,  20,  0, 100 ] ];  // unitcalc_Catch(when not using a special move)
+
+               var uniccalc_count = 14;
+               var not_move_count = 6;
+               
+               // Get "Key Player"
+               // "Key Player" affects "unitcalc".
+               var keyPlayerType;
+               var unitcalc_add;
+               
+               keyPlayerType = document.calcForm.keyPlayer.value;
+               
+               switch (keyPlayerType) {
+                   case "FW" :
+                       if( unit_kick > 120 ) {
+                           unitcalc_add = 13;
+                       } else {
+                           unitcalc_add = Math.floor( unit_kick / 10 ) ;
+                       }
+                       for(var unitCount = 0; unitCount < uniccalc_count; unitCount++) {
+                           if(unitcalc[unitCount][0] > 0) {
+                               unitcalc[unitCount][0] += unitcalc_add;
+                           }
+                       }
+                       break;
+                   case "MF" :
+                       if( unit_control > 120 ) {
+                           unitcalc_add = 13;
+                       } else {
+                           unitcalc_add = Math.floor( unit_control / 10 ) ;
+                       }
+                       for(var unitCount = 0; unitCount < uniccalc_count; unitCount++) {
+                           if(unitcalc[unitCount][3] > 0) {
+                               unitcalc[unitCount][3] += unitcalc_add;
+                           }
+                       }
+                       break;
+                   case "DF" :
+                       if( unit_guard > 120 ) {
+                           unitcalc_add = 13;
+                       } else {
+                           unitcalc_add = Math.floor( unit_guard / 10 ) ;
+                       }
+                       for(var unitCount = 0; unitCount < uniccalc_count; unitCount++) {
+                           if(unitcalc[unitCount][1] > 0) {
+                               unitcalc[unitCount][1] += unitcalc_add;
+                           }
+                       }
+                       break;
+                   case "GK" :
+                       if( unit_body > 120 ) {
+                           unitcalc_add = 13;
+                       } else {
+                           unitcalc_add = Math.floor( unit_body / 10 ) ;
+                       }
+                       for(var unitCount = 0; unitCount < uniccalc_count; unitCount++) {
+                           if(unitcalc[unitCount][12] > 0) {
+                               unitcalc[unitCount][12] += unitcalc_add;
+                           }
+                       }
+                       break;
+                   default :
+                       break;
+               }
+               
+               // Get Special Moves Data
+               
+               var moveCount = 1;
+               for( var loopCount = 0; loopCount < 17; loopCount++ ) {
+                   // Get Special Moves element, type, and power
+                   var moveType = document.getElementsByName( 'move_type[' + moveCount + ']' );
+                   var moveElement = document.getElementsByName( 'move_element[' + moveCount + ']' );
+                   var movePower = document.getElementsByName( 'move_power[' + moveCount + ']' );
+                   
+                   var moveTypeValue;
+                   var moveElemenValue;
+                   var movePowerValue;
+                   
+                   // This part does run in Miniduel
+                   if( moveType[0] == undefined ) {
+                       if( loopCount > 7 ) {
+                           moveTypeValue = not_move_count;
+                           not_move_count = not_move_count + 1;
+                       } else {
+                           moveTypeValue = 'none';
+                       }
+                   } else {
+                       moveTypeValue = moveType[0].value;
+                   }
+                   if( moveElement[0] == undefined) {
+                       moveElemenValue = 0;
+                   } else {
+                       moveElemenValue = moveElement[0].value;
+                   }
+                   if( movePower[0] == undefined) {
+                       movePowerValue = 0;
+                   } else {
+                       movePowerValue = movePower[0].value;
+                   }
+                   
+                   if ( loopCount < 8 && ( moveTypeValue == 'none' || moveElemenValue == 'none' || movePowerValue == 0 ) ) {
+                       // If "no data" is included, Total Form set to 0.
+                       document.getElementsByName( 'calculated_min[' + moveCount + ']' )[0].value = "0";
+                       document.getElementsByName( 'calculated_max[' + moveCount + ']' )[0].value = "0";
+                       document.getElementsByName( 'calculated_effective_min[' + moveCount + ']' )[0].value = "0";
+                       document.getElementsByName( 'calculated_effective_max[' + moveCount + ']' )[0].value = "0";
+                       document.getElementsByName( 'calculated_unfavorable_min[' + moveCount + ']' )[0].value = "0";
+                       document.getElementsByName( 'calculated_unfavorable_max[' + moveCount + ']' )[0].value = "0";
+                       moveCount++;
+                       continue;
+                   }
+                   
+                   // BasePower of Special Moves.
+                   var totalForm = 0;
+                   totalForm = movePowerValue * unitcalc[moveTypeValue][12];
+                   
+                   // Calculation of stats.
+                   totalForm += unit_kick * unitcalc[moveTypeValue][0] + unit_body * unitcalc[moveTypeValue][1] + 
+                                unit_guard * unitcalc[moveTypeValue][2] + unit_control * unitcalc[moveTypeValue][3] + 
+                                unit_speed * unitcalc[moveTypeValue][4] + unit_guts * unitcalc[moveTypeValue][5] + 
+                                unit_stamina * unitcalc[moveTypeValue][6];
+                   
+                   // Decrease the scale.
+                   totalForm = Math.floor( totalForm * 41 / 4096 );
+
+                   // Calculation of magnification
+                   totalForm += unitcalc[moveTypeValue][8];
+                   
+                   // Calculation of random.
+                   // Random revise is given in the range from 0 to random_width.
+                   var totalFormMin = totalForm;
+                   var totalFormMax = totalForm + unitcalc[moveTypeValue][9];
+                   
+                   // Calculation of burning phase.
+                   // Burning phase further strengthens the Special Moves.
+                   if( document.calcForm.burnning_phase.value == 'On' ) {
+                       totalFormMin += unitcalc[moveTypeValue][10];
+                       totalFormMax += unitcalc[moveTypeValue][10];
+                   }
+                   
+                   // Calculation of shoot power.
+                   // What Shoot Power Level:
+                   // Shoot, Volley, Headshot and Loop Shoot can select by 0 to 3.
+                   var shootPowerLevel = 0;
+                   if( moveTypeValue == 0 ) {
+                       shootPowerLevel = 1;
+                   }
+                   totalFormMin += unitcalc[moveTypeValue][11] * shootPowerLevel;
+                   totalFormMax += unitcalc[moveTypeValue][11] * shootPowerLevel;
+                   
+                   // Calculation of Special Move Type.
+                   if( moveElemenValue == document.calcForm.unit_element.value ) {
+                       totalFormMin += 10;
+                       totalFormMax += 10;
+                   }
+                   
+                   // Calculation of Skill.
+                   // Charm UP! or Cool UP!
+                   if( document.calcForm.charm_up.checked == true ) { 
+                       totalFormMin = Math.floor( totalFormMin * 90 / 100 );
+                       totalFormMax = Math.floor( totalFormMax * 90 / 100 );
+                   }
+                   
+                   // Keeper Plus
+                   if( document.calcForm.keeper_plus.checked == true && moveTypeValue == 3 ) { 
+                       totalFormMin = Math.floor( totalFormMin * 110 / 100 );
+                       totalFormMax = Math.floor( totalFormMax * 110 / 100 );
+                   }
+                   
+                   // Shoot Plus
+                   // I don't know how to activate this skill.
+                   // I knew. (3/10/2019)
+                   if( document.calcForm.shoot_plus.value == "On" && moveTypeValue == 0 ) { 
+                       totalFormMin = Math.floor( totalFormMin * 110 / 100 );
+                       totalFormMax = Math.floor( totalFormMax * 110 / 100 );
+                   }
+                   // Defense Plus
+                   // Shoot block isn't a target of Defense Plus. (3/10/2019)
+                   //if( document.calcForm.defense_plus.value == "On" && ( moveTypeValue == 2 || moveTypeValue == 5 ) ) { 
+                   if( document.calcForm.defense_plus.value == "On" && moveTypeValue == 2 ) { 
+                       totalFormMin = Math.floor( totalFormMin * 110 / 100 );
+                       totalFormMax = Math.floor( totalFormMax * 110 / 100 );
+                   }
+                   
+                   // Offense Plus
+                   if( document.calcForm.offense_plus.value == "On" && moveTypeValue == 1 ) { 
+                       totalFormMin = Math.floor( totalFormMin * 110 / 100 );
+                       totalFormMax = Math.floor( totalFormMax * 110 / 100 );
+                   }
+                   
+                   // Big Moves!
+                   if( document.calcForm.big_moves.checked == true ) { 
+                       totalFormMin = Math.floor( totalFormMin * 120 / 100 );
+                       totalFormMax = Math.floor( totalFormMax * 120 / 100 );
+                   }
+                   
+                   // Critical
+                   if( document.calcForm.critical.checked == true ) { 
+                       totalFormMax = Math.floor( totalFormMax * 150 / 100 );
+                       totalFormMaxFavorable = Math.floor( totalFormMaxFavorable * 150 / 100 );
+                   }
+                   
+                   // Lucky
+                   if( document.calcForm.lucky.checked == true ) { 
+                       totalFormMax = Math.floor( totalFormMax * 105 / 100 );
+                   }
+                   
+                   // Jinx
+                   if( document.calcForm.jinx.checked == true ) { 
+                       totalFormMin = Math.floor( totalFormMin * 95 / 100 );
+                       totalFormMax = Math.floor( totalFormMax * 95 / 100 );
+                   }
+                   
+                   // Shoot Force
+                   // I don't know how to activate this skill.
+                   // I knew. (3/10/2019)
+                   if( document.calcForm.shoot_force.value == "On" && moveTypeValue == 0 ) {
+                       totalFormMin = Math.floor( totalFormMin * 105 / 100 );
+                       totalFormMax = Math.floor( totalFormMax * 105 / 100 );
+                   }
+                   
+                   // Defense Force
+                   // Shoot block isn't a target of Defense Plus. (3/10/2019)
+                   //if( document.calcForm.defense_force.value == "On" && ( moveTypeValue == 2 || moveTypeValue == 5 ) ) { 
+                   if( document.calcForm.defense_force.value == "On" && moveTypeValue == 2 ) { 
+                       totalFormMin = Math.floor( totalFormMin * 105 / 100 );
+                       totalFormMax = Math.floor( totalFormMax * 105 / 100 );
+                   }
+                   
+                   // Offense Force
+                   if( document.calcForm.offense_force.value == "On" && moveTypeValue == 1 ) { 
+                       totalFormMin = Math.floor( totalFormMin * 105 / 100 );
+                       totalFormMax = Math.floor( totalFormMax * 105 / 100 );
+                   }
+                   
+                   // Never Give Up
+                   if( document.calcForm.never_give_up.checked == true && document.calcForm.goal_difference.value < 0 ) { 
+                       totalFormMin = Math.floor( totalFormMin * 105 / 100 );
+                       totalFormMax = Math.floor( totalFormMax * 105 / 100 );
+                   }
+                   
+                   // Move It!
+                   if( document.calcForm.move_it.checked == true ) {
+                       var moveItMagnification = 105;
+                       var goalDifference = document.calcForm.goal_difference.value;
+                       if( goalDifference < 0 ) { 
+                           moveItMagnification = 95;
+                           goalDifference = Math.abs(goalDifference);
+                       }
+                       for(var moveItCount = 0; moveItCount < goalDifference; moveItCount++ ) {
+                           totalFormMin = Math.floor( totalFormMin * moveItMagnification / 100 );
+                           totalFormMax = Math.floor( totalFormMax * moveItMagnification / 100 );
+                       }
+                   }
+                   
+                   // Everyone Move It!
+                   if( document.calcForm.everyone_move_it.checked == true ) { 
+                       var everyoneMoveItMagnification = 105;
+                       var goalDifference = document.calcForm.goal_difference.value;
+                       if( goalDifference < 0 ) { 
+                           everyoneMoveItMagnification = 95;
+                           goalDifference = Math.abs(goalDifference);
+                       }
+                       for(var moveItCount = 0; moveItCount < goalDifference; moveItCount++ ) {
+                           totalFormMin = Math.floor( totalFormMin * everyoneMoveItMagnification / 100 );
+                           totalFormMax = Math.floor( totalFormMax * everyoneMoveItMagnification / 100 );
+                       }
+                   }
+                   
+                   // Calculation of Element
+                   var totalFormMinFavorable = totalFormMin;
+                   var totalFormMaxFavorable = totalFormMax;
+                   var totalFormMinUnfavorable = totalFormMin;
+                   var totalFormMaxUnfavorable = totalFormMax;
+                   if( document.calcForm.no_element.checked == false ) {
+                       var ElementEffect;
+                       // The minimum value of dribble and block is 1.
+                       if( moveTypeValue == 1 || moveTypeValue == 2 ) {
+                           // Dribble and Block
+                           ElementEffect = 16;
+                       } else {
+                           // Shoot and Catch
+                           ElementEffect = 10;
+                       }
+                       // Power Element
+                       if( document.calcForm.power_element.checked == true ) {
+                           ElementEffect *= 1.5;
+                       }
+                       totalFormMinFavorable += ElementEffect;
+                       totalFormMaxFavorable += ElementEffect;
+                       totalFormMinUnfavorable -= ElementEffect;
+                       totalFormMaxUnfavorable -= ElementEffect;
+                   }
+                   
+                   // Limit
+                   totalFormMin = Math.max( totalFormMin, unitcalc[moveTypeValue][7] );
+                   totalFormMax = Math.max( totalFormMax, unitcalc[moveTypeValue][7] );
+                   totalFormMinFavorable = Math.max( totalFormMinFavorable, unitcalc[moveTypeValue][7] );
+                   totalFormMaxFavorable = Math.max( totalFormMaxFavorable, unitcalc[moveTypeValue][7] );
+                   totalFormMinUnfavorable = Math.max( totalFormMinUnfavorable, unitcalc[moveTypeValue][7] );
+                   totalFormMaxUnfavorable = Math.max( totalFormMaxUnfavorable, unitcalc[moveTypeValue][7] );
+                   
+                   //// ShootBlock(Block)
+                   //// Power Down's processe.
+                   //if( moveTypeValue == 5 ) {
+                   //    totalFormMin += 25;
+                   //    totalFormMax += 25;
+                   //    totalFormMinFavorable += 25;
+                   //    totalFormMaxFavorable += 25;
+                   //}
+                   
+                   // Dribble and Block
+                   // The minimum value of dribble and block is 1.
+                   if( moveTypeValue == 1 || moveTypeValue == 2 ) {
+                       totalFormMin = Math.max( totalFormMin, 1 );
+                       totalFormMax = Math.max( totalFormMax, 1 );
+                       totalFormMinFavorable = Math.max( totalFormMinFavorable, 1 );
+                       totalFormMaxFavorable = Math.max( totalFormMaxFavorable, 1 );
+                       totalFormMinUnfavorable = Math.max( totalFormMinUnfavorable, 1 );
+                       totalFormMaxUnfavorable = Math.max( totalFormMaxUnfavorable, 1 );
+                   }
+                   
+                   document.getElementsByName( 'calculated_min[' + moveCount + ']' )[0].value = totalFormMin;
+                   document.getElementsByName( 'calculated_max[' + moveCount + ']' )[0].value = totalFormMax;
+                   document.getElementsByName( 'calculated_effective_min[' + moveCount + ']' )[0].value = totalFormMinFavorable;
+                   document.getElementsByName( 'calculated_effective_max[' + moveCount + ']' )[0].value = totalFormMaxFavorable;
+                   document.getElementsByName( 'calculated_unfavorable_min[' + moveCount + ']' )[0].value = totalFormMinUnfavorable;
+                   document.getElementsByName( 'calculated_unfavorable_max[' + moveCount + ']' )[0].value = totalFormMaxUnfavorable;
+                   
+                   // Next Move
+                   moveCount++;
+               }
+           }
+           
+           // String to Boolean
+           function parseStrToBoolean(str) {
+               return (str == 'true') ? true : false;
+           }
+           
+           // Backup data input and create
+           function BackupDataInputAndCreate() {
+               
+               // If you enter comma-delimited data, it will be reflected in other items.
+               // data output.
+               var unitData = document.calcForm.unit_name.value + "," + document.calcForm.unit_element.value + "," +
+                              document.calcForm.unit_kick.value + "," + document.calcForm.unit_body.value + "," +
+                              document.calcForm.unit_control.value + "," + document.calcForm.unit_guard.value + "," +
+                              document.calcForm.unit_speed.value + "," + document.calcForm.unit_stamina.value + "," +
+                              document.calcForm.unit_guts.value + "," + "," +
+                              document.calcForm.big_moves.checked + "," + "," +
+                              document.calcForm.critical.checked + "," + document.calcForm.jinx.checked + "," +
+                              document.calcForm.power_element.checked + "," + document.calcForm.no_element.checked + "," +
+                              document.calcForm.lucky.checked + "," + document.calcForm.no_element.checked + "," +
+                              document.calcForm.charm_up.checked + "," + document.calcForm.keeper_plus.checked + "," +
+                              document.calcForm.move_it.checked + "," + document.calcForm.everyone_move_it.checked + "," +
+                              document.calcForm.never_give_up.checked + "," + document.calcForm.goal_difference.value + ",";
+               
+               var moveCount = 1;
+               for( var loopCount = 0; loopCount < 8; loopCount++ ) {
+                   // Get Special Moves element, type, and power
+                   unitData += document.getElementsByName( 'move_name[' + moveCount + ']' )[0].value + "," + 
+                               document.getElementsByName( 'move_type[' + moveCount + ']' )[0].value + "," + 
+                               document.getElementsByName( 'move_element[' + moveCount + ']' )[0].value + "," + 
+                               document.getElementsByName( 'move_power[' + moveCount + ']' )[0].value + ",";
+                   moveCount++;
+               }
+               unitData += document.calcForm.offense_plus.value + "," + document.calcForm.offense_force.value + "," + 
+                           document.calcForm.defense_plus.value + "," + document.calcForm.defense_force.value + "," + 
+                           document.calcForm.keyPlayer.value + "," + document.calcForm.burnning_phase.value + ",";
+               
+               // FP and TP
+               unitData += document.calcForm.unit_FP.value + "," + document.calcForm.unit_TP.value;
+               
+               // Shoot Plus and Shoot Force
+               unitData += "," + document.calcForm.shoot_plus.value + "," + document.calcForm.shoot_force.value;
+               
+               // popup.
+               var unitInputData = window.prompt("Unit Data", unitData);
+               
+               // data input
+               var unitDataArray = unitInputData.split(',');
+               document.calcForm.unit_name.value = unitDataArray[0];
+               document.calcForm.unit_element.value = unitDataArray[1];
+               document.calcForm.unit_kick.value = unitDataArray[2];
+               document.calcForm.unit_body.value = unitDataArray[3];
+               document.calcForm.unit_control.value = unitDataArray[4];
+               document.calcForm.unit_guard.value = unitDataArray[5];
+               document.calcForm.unit_speed.value = unitDataArray[6];
+               document.calcForm.unit_stamina.value = unitDataArray[7];
+               document.calcForm.unit_guts.value = unitDataArray[8];
+               document.calcForm.big_moves.checked = parseStrToBoolean(unitDataArray[10]);
+               
+               document.calcForm.critical.checked = parseStrToBoolean(unitDataArray[12]);
+               document.calcForm.jinx.checked = parseStrToBoolean(unitDataArray[13]);
+               document.calcForm.power_element.checked = parseStrToBoolean(unitDataArray[14]);
+               document.calcForm.no_element.checked = parseStrToBoolean(unitDataArray[15]);
+               document.calcForm.lucky.checked = parseStrToBoolean(unitDataArray[16]);
+               document.calcForm.no_element.checked = parseStrToBoolean(unitDataArray[17]);
+               document.calcForm.charm_up.checked = parseStrToBoolean(unitDataArray[18]);
+               document.calcForm.keeper_plus.checked = parseStrToBoolean(unitDataArray[19]);
+               document.calcForm.move_it.checked = parseStrToBoolean(unitDataArray[20]);
+               document.calcForm.everyone_move_it.checked = parseStrToBoolean(unitDataArray[21]);
+               document.calcForm.never_give_up.checked = parseStrToBoolean(unitDataArray[22]);
+               document.calcForm.goal_difference.value = unitDataArray[23];
+               
+               moveCount = 1;
+               for( var loopCount = 0; loopCount < 8; loopCount++ ) {
+                   // Set Special Moves element, type, and power
+                   document.getElementsByName( 'move_name[' + moveCount + ']' )[0].value = unitDataArray[24 + 4 * loopCount];
+                   document.getElementsByName( 'move_type[' + moveCount + ']' )[0].value = unitDataArray[25 + 4 * loopCount];
+                   document.getElementsByName( 'move_element[' + moveCount + ']' )[0].value = unitDataArray[26 + 4 * loopCount];
+                   document.getElementsByName( 'move_power[' + moveCount + ']' )[0].value = unitDataArray[27 + 4 * loopCount];
+                   moveCount++;
+               }
+               
+               document.calcForm.offense_plus.value = unitDataArray[56];
+               document.calcForm.offense_force.value = unitDataArray[57];
+               document.calcForm.defense_plus.value = unitDataArray[58];
+               document.calcForm.defense_force.value = unitDataArray[59];
+               document.calcForm.keyPlayer.value = unitDataArray[60];
+               document.calcForm.burnning_phase.value = unitDataArray[61];
+               
+               // FP and TP
+               document.calcForm.unit_FP.value = unitDataArray[62];
+               document.calcForm.unit_TP.value = unitDataArray[63];
+               
+               // Helper Stats
+               //document.calcForm.helper1_name.value = unitDataArray[64];
+               //document.calcForm.helper1_element.value = unitDataArray[65];
+               //document.calcForm.helper1_no_element.checked = parseStrToBoolean(unitDataArray[66]);
+               //document.calcForm.helper1_kick.value = unitDataArray[67];
+               //document.calcForm.helper1_body.value = unitDataArray[68];
+               //document.calcForm.helper1_control.value = unitDataArray[69];
+               //document.calcForm.helper1_guard.value = unitDataArray[70];
+               //document.calcForm.helper1_speed.value = unitDataArray[71];
+               //document.calcForm.helper1_stamina.value = unitDataArray[72];
+               //document.calcForm.helper1_guts.value = unitDataArray[73];
+               //
+               //document.calcForm.helper2_name.value = unitDataArray[74];
+               //document.calcForm.helper2_element.value = unitDataArray[75];
+               //document.calcForm.helper2_no_element.checked = parseStrToBoolean(unitDataArray[76]);
+               //document.calcForm.helper2_kick.value = unitDataArray[77];
+               //document.calcForm.helper2_body.value = unitDataArray[78];
+               //document.calcForm.helper2_control.value = unitDataArray[79];
+               //document.calcForm.helper2_guard.value = unitDataArray[80];
+               //document.calcForm.helper2_speed.value = unitDataArray[81];
+               //document.calcForm.helper2_stamina.value = unitDataArray[82];
+               //document.calcForm.helper2_guts.value = unitDataArray[83];
+               
+               // Shoot Plus and Shoot Force
+               document.calcForm.shoot_plus.value = unitDataArray[64];
+               document.calcForm.shoot_force.value = unitDataArray[65];
+           }
+           
+           // move data set
+           function inputMoveName($this, moveListNo) {
+               var i = 0;
+               do {
+                   var tblTbody;
+                   switch( i ) {
+                       case 0:
+                           tblTbody = document.getElementById('ShootMove');
+                       break;
+                       case 1:
+                           tblTbody = document.getElementById('DribbleMove');
+                       break;
+                       case 2:
+                           tblTbody = document.getElementById('BlockMove');
+                       break;
+                       case 3:
+                           tblTbody = document.getElementById('CatchMove');
+                       break;
+                       default:
+                           exit;
+                       break;
+                   }
+                   for (var j = 1, rowLen = tblTbody.rows.length ; j < rowLen; j++) {
+                       var cells = tblTbody.rows[j].cells[0];
+                       // move data set
+                       if( cells.innerHTML == $this.value ) {
+                           var moveElement = tblTbody.rows[j].cells[1].innerHTML;
+                           var moveTP = tblTbody.rows[j].cells[3].innerHTML;
+                           // Big Moves! check
+                           if( document.calcForm.big_moves.checked == true ) { 
+                               moveTP = Math.floor(moveTP * 1.2);
+                           }
+                           var movePower = tblTbody.rows[j].cells[4].innerHTML;
+                           document.getElementsByName( 'move_type[' + moveListNo + ']' )[0].value = i;
+                           document.getElementsByName( 'move_element[' + moveListNo + ']' )[0].value = moveElement;
+                           document.getElementsByName( 'move_power[' + moveListNo + ']' )[0].value = movePower;
+                           document.getElementsByName( 'move_tp[' + moveListNo + ']' )[0].value = moveTP;
+                           exit;
+                       }
+                   }
+                   i++;
+               } while (i < 4);
+           }
+           
+           // Function for Unit Data HTML File Create
+           function setMoveType(selectValue) {
+               var retStr = "";
+               switch (selectValue) {
+                   case "0" :
+                       retStr += "Shoot";
+                       break;
+                   case "1" :
+                       retStr += "Dribble";
+                       break;
+                   case "2" :
+                       retStr += "Block";
+                       break;
+                   case "3" :
+                       retStr += "Catch,Punching";
+                       break;
+                   case "4" :
+                       retStr += "ShootBlock(Shoot)";
+                       break;
+                   case "5" :
+                       retStr += "ShootBlock(Block)";
+                       break;
+                       retStr += "-";
+                       break;
+               }
+               return retStr;
+           }
+           
+       </script>
+   </head>
+   <body>
+       <form name="calcForm">
+           <table border="1" width="800" cellspacing="0" style="color:#000000" bgcolor="#ccff99" bordercolor="#333333">
+               <tr bgcolor="#00ff99">
+                   <th colspan="4">Unit Stats</th>
+                   <th colspan="2">Unit Skills Enable</th>
+               </tr>
+               <tr>
+                   <th align="left">Name</th>
+                   <td><input type="text" style="width:80px;" name="unit_name" value="Unit Name" tabindex="1"></td>
+                   <th align="left">Element</th>
+                   <td>
+                       <select name="unit_element" tabindex="2">
+                       <option value="Wind" selected>Wind</option>
+                       <option value="Wood">Wood</option>
+                       <option value="Fire">Fire</option>
+                       <option value="Earth">Earth</option>
+                       </select>
+                   </td>
+                   <th align="left"><input type="checkbox" name="big_moves" tabindex="12">Big Moves!</th>
+                   <th align="left"></th>
+               </tr>
+               <tr>
+                   <th align="left">FP</th>
+                   <td><input type="number" min="1" max="255" style="width:50px;" name="unit_FP" value="100" tabindex="3"></td>
+                   <th align="left">TP</th>
+                   <td><input type="number" min="1" max="255" style="width:50px;" name="unit_TP" value="100" tabindex="4"></td>
+                   <th align="left"><input type="checkbox" name="critical" tabindex="14">Critical!</th>
+                   <th align="left"><input type="checkbox" name="jinx" tabindex="15">Jinx</th>
+               </tr>
+               <tr>
+                   <th align="left">Kick</th>
+                   <td><input type="number" min="1" max="255" style="width:50px;" name="unit_kick" value="50" tabindex="5"></td>
+                   <th align="left">Speed</th>
+                   <td><input type="number" min="1" max="255" style="width:50px;" name="unit_speed" value="50" tabindex="6"></td>
+                   <th align="left"><input type="checkbox" name="power_element" tabindex="16">Power Element</th>
+                   <th align="left" rowspan="2"><input type="checkbox" name="no_element" tabindex="17">No Element<br>(Opponent side's "No Element" include)</th>
+               </tr>
+               <tr>
+                   <th align="left">Body</th>
+                   <td><input type="number" min="1" max="255" style="width:50px;" name="unit_body" value="50" tabindex="7"></td>
+                   <th align="left">Stamina</th>
+                   <td><input type="number" min="1" max="255" style="width:50px;" name="unit_stamina" value="50" tabindex="8"></td>
+                   <th align="left"><input type="checkbox" name="lucky" tabindex="18">Lucky!</th>
+               </tr>
+               <tr>
+                   <th align="left">Control</th>
+                   <td><input type="number" min="1" max="255" style="width:50px;" name="unit_control" value="50" tabindex="9"></td>
+                   <th align="left">Guts</th>
+                   <td><input type="number" min="1" max="255" style="width:50px;" name="unit_guts" value="50" tabindex="10"></td>
+                   <th colspan="2" align="left"><input type="checkbox" name="charm_up" tabindex="19">Opponent's Charm Up! or Cool Up!</th>
+               </tr>
+               <tr>
+                   <th align="left">Guard</th>
+                   <td><input type="number" min="1" max="255" style="width:50px;" name="unit_guard" value="50" tabindex="11"></td>
+                   <td colspan="2"></td>
+                   <th colspan="2" align="left"><input type="checkbox" name="keeper_plus" tabindex="20">Keeper Plus</th>
+               </tr>
+               <tr>
+                   <th colspan="4" rowspan="3"></th>
+               </tr>
+               <tr>
+                   <th align="left"><input type="checkbox" name="move_it" tabindex="21">Move it!</th>
+                   <th align="left"><input type="checkbox" name="everyone_move_it" tabindex="22">Everyone Move It!</th>
+               </tr>
+               <tr>
+                   <th align="left"><input type="checkbox" name="never_give_up" tabindex="23">Never Give Up</th>
+                   <th align="left">&nbsp;Goal difference&nbsp;<input type="number" min="-99" max="99" style="width:50px;" name="goal_difference" value="0" tabindex="24"></th>
+               </tr>
+           </table>
+           <br>
+           <table border="1" width="1200" cellspacing="0" style="color:#000000" bgcolor="#ccff99" bordercolor="#333333">
+               <tr bgcolor="#00ff99">
+                   <th colspan="13">Unit's Special Moves</th>
+               </tr>
+               <tr  bgcolor="#00ff99">
+                   <th></th>
+                   <th align="left">Moves Name</td>
+                   <th align="left">Type</td>
+                   <th align="left">Element</td>
+                   <th align="left">Moves Power</td>
+                   <th align="left">TP</td>
+                   <th colspan="3" align="left">Total Form</td>
+                   <th colspan="3" align="left">It's super effective!</td>
+                   <th colspan="3" align="left">It's not very effective...</td>
+               </tr>
+               <tr>
+                   <th width="70" align="left">Move 1</td>
+                   <td><input type="text" style="width:140px;" name="move_name[1]" value="Move Name" onKeyUp="inputMoveName(this, 1)" tabindex="25"></td>
+                   <td>
+                       <select name="move_type[1]" tabindex="26">
+                           <option value="0" selected>Shoot</option>
+                           <option value="1">Dribble</option>
+                           <option value="2">Block</option>
+                           <option value="3">Catch,Punching</option>
+                           <option value="4">ShootBlock(Shoot)</option>
+                           <option value="5">ShootBlock(Block)</option>
+                           <option value="None">-</option>
+                       </select>
+                   </td>
+                   <td>
+                       <select name="move_element[1]" tabindex="27">
+                           <option value="Wind" selected>Wind</option>
+                           <option value="Wood">Wood</option>
+                           <option value="Fire">Fire</option>
+                           <option value="Earth">Earth</option>
+                           <option value="None">-</option>
+                       </select>
+                   </td>
+                   <td><input type="number" min="0" max="1200" style="width:80px;" name="move_power[1]" value="0" tabindex="28"></td>
+                   <td><input type="number" min="0" max="100" style="width:40px;" name="move_tp[1]" value="0" tabindex="-1"></td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_min[1]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_max[1]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_min[1]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_max[1]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_min[1]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_max[1]" tabindex="-1">
+                   </td>
+               </tr>
+               <tr>
+                   <th width="70" align="left">Move 2</td>
+                   <td><input type="text" style="width:140px;" name="move_name[2]" value="Move Name" onKeyUp="inputMoveName(this, 2)" tabindex="29"></td>
+                   <td>
+                       <select name="move_type[2]" tabindex="30">
+                           <option value="0" selected>Shoot</option>
+                           <option value="1">Dribble</option>
+                           <option value="2">Block</option>
+                           <option value="3">Catch,Punching</option>
+                           <option value="4">ShootBlock(Shoot)</option>
+                           <option value="5">ShootBlock(Block)</option>
+                           <option value="None">-</option>
+                       </select>
+                   </td>
+                   <td>
+                       <select name="move_element[2]" tabindex="31">
+                           <option value="Wind" selected>Wind</option>
+                           <option value="Wood">Wood</option>
+                           <option value="Fire">Fire</option>
+                           <option value="Earth">Earth</option>
+                           <option value="None">-</option>
+                       </select>
+                   </td>
+                   <td><input type="number" min="0" max="1200" style="width:80px;" name="move_power[2]" value="0" tabindex="32"></td>
+                   <td><input type="number" min="0" max="100" style="width:40px;" name="move_tp[2]" value="0" tabindex="-1"></td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_min[2]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_max[2]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_min[2]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_max[2]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_min[2]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_max[2]" tabindex="-1">
+                   </td>
+               </tr>
+               <tr>
+                   <th width="70" align="left">Move 3</td>
+                   <td><input type="text" style="width:140px;" name="move_name[3]" value="Move Name" onKeyUp="inputMoveName(this, 3)" tabindex="33"></td>
+                   <td>
+                       <select name="move_type[3]" tabindex="34">
+                           <option value="0" selected>Shoot</option>
+                           <option value="1">Dribble</option>
+                           <option value="2">Block</option>
+                           <option value="3">Catch,Punching</option>
+                           <option value="4">ShootBlock(Shoot)</option>
+                           <option value="5">ShootBlock(Block)</option>
+                           <option value="None">-</option>
+                       </select>
+                   </td>
+                   <td>
+                       <select name="move_element[3]" tabindex="35">
+                           <option value="Wind" selected>Wind</option>
+                           <option value="Wood">Wood</option>
+                           <option value="Fire">Fire</option>
+                           <option value="Earth">Earth</option>
+                           <option value="None">-</option>
+                       </select>
+                   </td>
+                   <td><input type="number" min="0" max="1200" style="width:80px;" name="move_power[3]" value="0" tabindex="36"></td>
+                   <td><input type="number" min="0" max="100" style="width:40px;" name="move_tp[3]" value="0" tabindex="-1"></td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_min[3]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_max[3]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_min[3]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_max[3]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_min[3]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_max[3]" tabindex="-1">
+                   </td>
+               </tr>
+               <tr>
+                   <th width="70" align="left">Move 4</td>
+                   <td><input type="text" style="width:140px;" name="move_name[4]" value="Move Name" onKeyUp="inputMoveName(this, 4)" tabindex="37"></td>
+                   <td>
+                       <select name="move_type[4]" tabindex="38">
+                           <option value="0" selected>Shoot</option>
+                           <option value="1">Dribble</option>
+                           <option value="2">Block</option>
+                           <option value="3">Catch,Punching</option>
+                           <option value="4">ShootBlock(Shoot)</option>
+                           <option value="5">ShootBlock(Block)</option>
+                           <option value="None">-</option>
+                       </select>
+                   </td>
+                   <td>
+                       <select name="move_element[4]" tabindex="39">
+                           <option value="Wind" selected>Wind</option>
+                           <option value="Wood">Wood</option>
+                           <option value="Fire">Fire</option>
+                           <option value="Earth">Earth</option>
+                           <option value="None">-</option>
+                       </select>
+                   </td>
+                   <td><input type="number" min="0" max="1200" style="width:80px;" name="move_power[4]" value="0" tabindex="40"></td>
+                   <td><input type="number" min="0" max="100" style="width:40px;" name="move_tp[4]" value="0" tabindex="-1"></td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_min[4]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_max[4]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_min[4]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_max[4]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_min[4]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_max[4]" tabindex="-1">
+                   </td>
+               </tr>
+               <tr>
+                   <th width="70" align="left">Move 5</td>
+                   <td><input type="text" style="width:140px;" name="move_name[5]" value="Move Name" onKeyUp="inputMoveName(this, 5)" tabindex="41"></td>
+                   <td>
+                       <select name="move_type[5]" tabindex="42">
+                           <option value="0" selected>Shoot</option>
+                           <option value="1">Dribble</option>
+                           <option value="2">Block</option>
+                           <option value="3">Catch,Punching</option>
+                           <option value="4">ShootBlock(Shoot)</option>
+                           <option value="5">ShootBlock(Block)</option>
+                           <option value="None">-</option>
+                       </select>
+                   </td>
+                   <td>
+                       <select name="move_element[5]" tabindex="43">
+                           <option value="Wind" selected>Wind</option>
+                           <option value="Wood">Wood</option>
+                           <option value="Fire">Fire</option>
+                           <option value="Earth">Earth</option>
+                           <option value="None">-</option>
+                       </select>
+                   </td>
+                   <td><input type="number" min="0" max="1200" style="width:80px;" name="move_power[5]" value="0" tabindex="44"></td>
+                   <td><input type="number" min="0" max="100" style="width:40px;" name="move_tp[5]" value="0" tabindex="-1"></td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_min[5]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_max[5]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_min[5]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_max[5]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_min[5]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_max[5]" tabindex="-1">
+                   </td>
+               </tr>
+               <tr>
+                   <th width="70" align="left">Move 6</td>
+                   <td><input type="text" style="width:140px;" name="move_name[6]" value="Move Name" onKeyUp="inputMoveName(this, 6)" tabindex="45"></td>
+                   <td>
+                       <select name="move_type[6]" tabindex="46">
+                           <option value="0" selected>Shoot</option>
+                           <option value="1">Dribble</option>
+                           <option value="2">Block</option>
+                           <option value="3">Catch,Punching</option>
+                           <option value="4">ShootBlock(Shoot)</option>
+                           <option value="5">ShootBlock(Block)</option>
+                           <option value="None">-</option>
+                       </select>
+                   </td>
+                   <td>
+                       <select name="move_element[6]" tabindex="47">
+                           <option value="Wind" selected>Wind</option>
+                           <option value="Wood">Wood</option>
+                           <option value="Fire">Fire</option>
+                           <option value="Earth">Earth</option>
+                           <option value="None">-</option>
+                       </select>
+                   </td>
+                   <td><input type="number" min="0" max="1200" style="width:80px;" name="move_power[6]" value="0" tabindex="48"></td>
+                   <td><input type="number" min="0" max="100" style="width:40px;" name="move_tp[6]" value="0" tabindex="-1"></td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_min[6]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_max[6]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_min[6]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_max[6]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_min[6]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_max[6]" tabindex="-1">
+                   </td>
+               </tr>
+               <tr>
+                   <th width="70" align="left">Move 7</td>
+                   <td><input type="text" style="width:140px;" name="move_name[7]" value="Move Name" onKeyUp="inputMoveName(this, 7)" tabindex="49"></td>
+                   <td>
+                       <select name="move_type[7]" tabindex="50">
+                           <option value="0" selected>Shoot</option>
+                           <option value="1">Dribble</option>
+                           <option value="2">Block</option>
+                           <option value="3">Catch,Punching</option>
+                           <option value="4">ShootBlock(Shoot)</option>
+                           <option value="5">ShootBlock(Block)</option>
+                           <option value="None">-</option>
+                       </select>
+                   </td>
+                   <td>
+                       <select name="move_element[7]" tabindex="51">
+                           <option value="Wind" selected>Wind</option>
+                           <option value="Wood">Wood</option>
+                           <option value="Fire">Fire</option>
+                           <option value="Earth">Earth</option>
+                           <option value="None">-</option>
+                       </select>
+                   </td>
+                   <td><input type="number" min="0" max="1200" style="width:80px;" name="move_power[7]" value="0" tabindex="52"></td>
+                   <td><input type="number" min="0" max="100" style="width:40px;" name="move_tp[7]" value="0" tabindex="-1"></td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_min[7]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_max[7]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_min[7]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_max[7]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_min[7]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_max[7]" tabindex="-1">
+                   </td>
+               </tr>
+               <tr>
+                   <th width="70" align="left">Move 8</td>
+                   <td><input type="text" style="width:140px;" name="move_name[8]" value="Move Name" onKeyUp="inputMoveName(this, 8)" tabindex="53"></td>
+                   <td>
+                       <select name="move_type[8]" tabindex="54">
+                           <option value="0" selected>Shoot</option>
+                           <option value="1">Dribble</option>
+                           <option value="2">Block</option>
+                           <option value="3">Catch,Punching</option>
+                           <option value="4">ShootBlock(Shoot)</option>
+                           <option value="5">ShootBlock(Block)</option>
+                           <option value="None">-</option>
+                       </select>
+                   </td>
+                   <td>
+                       <select name="move_element[8]" tabindex="55">
+                           <option value="Wind" selected>Wind</option>
+                           <option value="Wood">Wood</option>
+                           <option value="Fire">Fire</option>
+                           <option value="Earth">Earth</option>
+                           <option value="None">-</option>
+                       </select>
+                   </td>
+                   <td><input type="number" min="0" max="1200" style="width:80px;" name="move_power[8]" value="0" tabindex="56"></td>
+                   <td><input type="number" min="0" max="100" style="width:40px;" name="move_tp[8]" value="0" tabindex="-1"></td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_min[8]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_max[8]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_min[8]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_max[8]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_min[8]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_max[8]" tabindex="-1">
+                   </td>
+               </tr>
+               <tr bgcolor="#00ff99">
+                   <th colspan="13">Total Form of Miniduels</th>
+               </tr>
+               <tr  bgcolor="#00ff99">
+                   <th colspan="6">Situation when Miniduels</th>
+                   <th colspan="3" align="left">Total Form</th>
+                   <th colspan="3" align="left">It's super effective!</th>
+                   <th colspan="3" align="left">It's not very effective...</td>
+                   
+               </tr>
+               <tr>
+                   <th colspan="6" width="70" align="left">If teammate were touching the ball just before the Miniduels.</th>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_min[9]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_max[9]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_min[9]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_max[9]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_min[9]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_max[9]" tabindex="-1">
+                   </td>
+               </tr>
+               <tr>
+                   <th colspan="6" width="70" align="left">If opponent's player were touching the ball just before the Miniduels.</th>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_min[10]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_max[10]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_min[10]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_max[10]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_min[10]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_max[10]" tabindex="-1">
+                   </td>
+               </tr>
+               <tr>
+                   <th colspan="13" width="70" align="left">Miniduel calculation is performed twice. A player who wins two miniduel checks can keep the ball.</th>
+               </tr>
+               <tr bgcolor="#00ff99">
+                   <th colspan="13">Total Form of "If you don't use Special Moves"</th>
+               </tr>
+               <tr  bgcolor="#00ff99">
+                   <th colspan="6">Situation when Special Move is not selected</th>
+                   <th colspan="3" align="left">Total Form</th>
+                   <th colspan="3" align="left">It's super effective!</th>
+                   <th colspan="3" align="left">It's not very effective...</td>
+               </tr>
+               <tr>
+                   <th colspan="6" width="70" align="left">Normal Shot(If the scale is set to 1)</th>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_min[11]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_max[11]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_min[11]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_max[11]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_min[11]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_max[11]" tabindex="-1">
+                   </td>
+               </tr>
+               <tr>
+                   <th colspan="6" width="70" align="left">Chip Shot(If the scale is set to 1)</th>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_min[12]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_max[12]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_min[12]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_max[12]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_min[12]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_max[12]" tabindex="-1">
+                   </td>
+               </tr>
+               <tr>
+                   <th colspan="6" width="70" align="left">Direct Shot(If the scale is set to 1)</th>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_min[13]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_max[13]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_min[13]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_max[13]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_min[13]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_max[13]" tabindex="-1">
+                   </td>
+               </tr>
+               <tr>
+                   <th colspan="6" width="70" align="left">Dribble</th>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_min[14]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_max[14]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_min[14]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_max[14]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_min[14]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_max[14]" tabindex="-1">
+                   </td>
+               </tr>
+               <tr>
+                   <th colspan="6" width="70" align="left">Block</th>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_min[15]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_max[15]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_min[15]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_max[15]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_min[15]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_max[15]" tabindex="-1">
+                   </td>
+               </tr>
+               <tr>
+                   <th colspan="6" width="70" align="left">Catch or Pantching</th>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_min[16]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_max[16]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_min[16]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_effective_max[16]" tabindex="-1">
+                   </td>
+                   <td colspan="3">
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_min[16]" tabindex="-1">
+                       to
+                       <input type="text" size="4" style="width:50;" name="calculated_unfavorable_max[16]" tabindex="-1">
+                   </td>
+               </tr>
+           </table>
+           </table>
+           <br>
+           <table border="1" width="720" cellspacing="0" style="color:#000000" bgcolor="#ccffff" bordercolor="#333333">
+               <tr bgcolor="#00ffcc">
+                   <th colspan="12" align="left">Team Strategies</td>
+               </tr>
+               <tr>
+                   <th colspan="2" align="left">Shoot Plus</td>
+                   <th colspan="2" align="left">Shoot Force</td>
+                   <th colspan="2" align="left">Offense Plus</td>
+                   <th colspan="2" align="left">Offense Force</td>
+                   <th colspan="2" align="left">Defense Plus</td>
+                   <th colspan="2" align="left">Defense Force</td>
+               </tr>
+               <tr>
+                   <th align="left"><input type="radio" name="shoot_plus" value="On" tabindex="57">ON</th>
+                   <th align="left"><input type="radio" name="shoot_plus" value="Off" checked>OFF</th>
+                   <th align="left"><input type="radio" name="shoot_force" value="On" tabindex="58">ON</th>
+                   <th align="left"><input type="radio" name="shoot_force" value="Off" checked>OFF</th>
+                   <th align="left"><input type="radio" name="offense_plus" value="On" tabindex="57">ON</th>
+                   <th align="left"><input type="radio" name="offense_plus" value="Off" checked>OFF</th>
+                   <th align="left"><input type="radio" name="offense_force" value="On" tabindex="58">ON</th>
+                   <th align="left"><input type="radio" name="offense_force" value="Off" checked>OFF</th>
+                   <th align="left"><input type="radio" name="defense_plus" value="On" tabindex="59">ON</th>
+                   <th align="left"><input type="radio" name="defense_plus" value="Off" checked>OFF</th>
+                   <th align="left"><input type="radio" name="defense_force" value="On" tabindex="60">ON</th>
+                   <th align="left"><input type="radio" name="defense_force" value="Off" checked>OFF</th>
+               </tr>
+               <tr>
+                   <th colspan="8" align="left">Key Player</td>
+                   <th colspan="4" align="left">Burnning Phase</td>
+                   </th>
+               </tr>
+               <tr>
+                   <th align="left"><input type="radio" name="keyPlayer" value="FW" tabindex="61">FW</th>
+                   <th align="left"><input type="radio" name="keyPlayer" value="MF">MF</th>
+                   <th align="left"><input type="radio" name="keyPlayer" value="DF">DF</th>
+                   <th align="left"><input type="radio" name="keyPlayer" value="GK">GK</th>
+                   <th colspan="4" align="left"><input type="radio" name="keyPlayer" value="NotSet" checked>Not Set</th>
+                   <th colspan="2" align="left"><input type="radio" name="burnning_phase" value="On" tabindex="62">Activate!</th>
+                   <th colspan="2" align="left"><input type="radio" name="burnning_phase" value="Off" checked>Deactivate...</th>
+               </tr>
+           </table>
+           <br>
+           <table border="1" width="300" cellspacing="0" style="color:#000000" bgcolor="#99ffcc" bordercolor="#333333">
+               <tr>
+                   <th>Calculate</th>
+               </tr>
+               <tr>
+                   <th>
+                       <input type="button" name="cmdCalc" value="Special Moves Power Calc" onclick="TotalFormCalc()" tabindex="63">
+                   </th>
+               </tr>
+               <tr>
+                   <th>Backup Data Create</th>
+               </tr>
+               <tr>
+                   <th>
+                       <input type="button" name="cmdBackup" value="Backup Data Create" onclick="BackupDataInputAndCreate()" tabindex="64">
+                   </th>
+               </tr>
+           </table>
+           <br>
+<br>
+-Shoot Move<br>
+<table border="1" id="ShootMove"><tbody><tr bgcolor="#99FFFF"><th>Name</th><th>Element</th><th>Base<br>Power</th><th>TP</th><th>Limit of<br>Growth</th><th>Fouls<br>Rate</th><th>Secondary<br>Type</th><th>Restriction</th><th>Evolution<br>Type</th><th>Growth<br>Rates</th></tr>
+<tr><th>Cross Fire (Wind)</th><th>Wind</th><th>120</th><th>70</th><th>130</th><th>0</th><th></th><th>2 people (Fire Element)</th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Fire Blizzard (Wind)</th><th>Wind</th><th>120</th><th>35</th><th>130</th><th>0</th><th></th><th>2 people (Fire Element)</th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Space Penguins</th><th>Wind</th><th>120</th><th>35</th><th>128</th><th>0</th><th></th><th>3 people</th><th>Shin</th><th>Fast</th></tr>
+<tr><th>God Break</th><th>Wind</th><th>108</th><th>64</th><th>124</th><th>0</th><th></th><th></th><th>G</th><th>Medium</th></tr>
+<tr><th>Inazuma-1 Drop</th><th>Wind</th><th>114</th><th>66</th><th>122</th><th>0</th><th></th><th>3 people</th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Legendary Wolf</th><th>Wind</th><th>102</th><th>62</th><th>118</th><th>0</th><th></th><th></th><th>G</th><th>Medium</th></tr>
+<tr><th>Northern Impact</th><th>Wind</th><th>108</th><th>31</th><th>116</th><th>0</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Wyvern Blizzard</th><th>Wind</th><th>102</th><th>62</th><th>114</th><th>0</th><th></th><th>2 people (Eternal Blizzard)</th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Tri-Pegasus</th><th>Wind</th><th>102</th><th>62</th><th>112</th><th>0</th><th></th><th>3 people</th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Inazuma Break</th><th>Wind</th><th>99</th><th>46</th><th>109</th><th>0</th><th></th><th>3 people (Midium size 2 people)</th><th>Shin</th><th>Fast</th></tr>
+<tr><th>God Knows</th><th>Wind</th><th>96</th><th>59</th><th>106</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Gungnir</th><th>Wind</th><th>96</th><th>28</th><th>106</th><th>0</th><th>Long</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Divine Arrows</th><th>Wind</th><th>91</th><th>56</th><th>103</th><th>0</th><th></th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Revolution V</th><th>Wind</th><th>91</th><th>56</th><th>99</th><th>0</th><th></th><th>2 people</th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Tsunami Boost</th><th>Wind</th><th>84</th><th>64</th><th>92</th><th>0</th><th>Long</th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Inazuma-1</th><th>Wind</th><th>79</th><th>51</th><th>89</th><th>0</th><th>Shoot Block</th><th>2 people</th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Eternal Blizzard</th><th>Wind</th><th>79</th><th>40</th><th>89</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Inazuma Drop</th><th>Wind</th><th>72</th><th>44</th><th>80</th><th>0</th><th>Shoot Block</th><th>2 people (Large size)</th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Hawk Shot</th><th>Wind</th><th>68</th><th>34</th><th>78</th><th>0</th><th>Shoot Block</th><th>2 people</th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Back Tornado</th><th>Wind</th><th>60</th><th>35</th><th>70</th><th>0</th><th>Shoot Block</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Baby Dragon</th><th>Wind</th><th>60</th><th>35</th><th>68</th><th>0</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Cross Drive</th><th>Wind</th><th>57</th><th>33</th><th>67</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Condor Dive</th><th>Wind</th><th>48</th><th>24</th><th>58</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Comet Shot</th><th>Wind</th><th>33</th><th>36</th><th>45</th><th>0</th><th>Long</th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Spiral Shot</th><th>Wind</th><th>21</th><th>20</th><th>31</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Spinning Shot</th><th>Wind</th><th>14</th><th>17</th><th>24</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr bgcolor="#99FF00"><th>Name</th><th>Element</th><th>Base<br>
+Power</th><th>TP</th><th>Limit of<br>
+Growth</th><th>Fouls<br>Rate</th><th>Secondary<br>
+Type</th><th>Restriction</th><th>Evolution<br>
+Type</th><th>Growth<br>
+Rates</th></tr>
+<tr><th>Supernova</th><th>Wood</th><th>120</th><th>35</th><th>128</th><th>0</th><th></th><th>3 people</th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Dark Phoenix</th><th>Wood</th><th>114</th><th>66</th><th>122</th><th>0</th><th></th><th>3 people</th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Death Zone 2</th><th>Wood</th><th>108</th><th>64</th><th>122</th><th>0</th><th></th><th>3 people</th><th>G</th><th>Fast</th></tr>
+<tr><th>Emperor Penguin No.1</th><th>Wood</th><th>102</th><th>62</th><th>120</th><th>0</th><th></th><th></th><th>G</th><th>Slow</th></tr>
+<tr><th>Double Tornado</th><th>Wood</th><th>96</th><th>59</th><th>106</th><th>0</th><th>Shoot Block</th><th>2 people (Back Tornado)</th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Death Zone</th><th>Wood</th><th>96</th><th>59</th><th>104</th><th>0</th><th></th><th>3 people</th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Cosmic Blast</th><th>Wood</th><th>91</th><th>28</th><th>103</th><th>0</th><th></th><th>2 people</th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Emperor Penguin No.2</th><th>Wood</th><th>91</th><th>56</th><th>99</th><th>0</th><th></th><th>3 people</th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Wyvern Crash</th><th>Wood</th><th>91</th><th>56</th><th>99</th><th>0</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Ganymede Ray</th><th>Wood</th><th>84</th><th>24</th><th>96</th><th>0</th><th></th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Clone Shot</th><th>Wood</th><th>79</th><th>51</th><th>89</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Double Wrath Shot</th><th>Wood</th><th>79</th><th>51</th><th>87</th><th>0</th><th>Shoot Block</th><th>2 people</th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Astro Break</th><th>Wood</th><th>72</th><th>20</th><th>82</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Security Shot</th><th>Wood</th><th>72</th><th>44</th><th>82</th><th>0</th><th></th><th>2 people</th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Acrobat Bomber</th><th>Wood</th><th>68</th><th>42</th><th>80</th><th>0</th><th></th><th>2 people</th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Dark Tornado</th><th>Wood</th><th>68</th><th>42</th><th>78</th><th>0</th><th>Shoot Block</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Kung Fu Header</th><th>Wood</th><th>60</th><th>35</th><th>70</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Bed of Roses</th><th>Wood</th><th>60</th><th>35</th><th>68</th><th>0</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Freeze Shot</th><th>Wood</th><th>57</th><th>33</th><th>67</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Dragon Crash</th><th>Wood</th><th>57</th><th>33</th><th>65</th><th>0</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Run Ball Run</th><th>Wood</th><th>57</th><th>33</th><th>65</th><th>0</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Wrath Shot</th><th>Wood</th><th>48</th><th>24</th><th>58</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Phantom Shot</th><th>Wood</th><th>33</th><th>24</th><th>43</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Psycho Shot</th><th>Wood</th><th>21</th><th>20</th><th>31</th><th>0</th><th></th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Rolling Kick</th><th>Wood</th><th>14</th><th>17</th><th>22</th><th>0</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+
+<tr bgcolor="#FF3300"><th>Name</th><th>Element</th><th>Base<br>
+Power</th><th>TP</th><th>Limit of<br>
+Growth</th><th>Fouls<br>Rate</th><th>Secondary<br>
+Type</th><th>Restriction</th><th>Evolution<br>
+Type</th><th>Growth<br>
+Rates</th></tr>
+<tr><th>Neo Galaxy</th><th>Fire</th><th>120</th><th>70</th><th>130</th><th>0</th><th></th><th>3 people</th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Fire Blizzard (Fire)</th><th>Fire</th><th>120</th><th>35</th><th>130</th><th>0</th><th></th><th>2 people (Wind Element)</th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Cross Fire (Fire)</th><th>Fire</th><th>120</th><th>70</th><th>130</th><th>0</th><th></th><th>2 people</th><th>Shin</th><th>Medium</th></tr>
+<tr><th>The Galaxy</th><th>Fire</th><th>114</th><th>66</th><th>126</th><th>0</th><th></th><th>3 people</th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Fireball Storm</th><th>Fire</th><th>102</th><th>62</th><th>118</th><th>0</th><th></th><th></th><th>G</th><th>Medium</th></tr>
+<tr><th>Triple Boost</th><th>Fire</th><th>108</th><th>80</th><th>116</th><th>0</th><th>Long</th><th>3 people</th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Atomic Flare</th><th>Fire</th><th>108</th><th>31</th><th>116</th><th>0</th><th>Shoot Block</th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>The Phoenix</th><th>Fire</th><th>102</th><th>62</th><th>114</th><th>0</th><th></th><th>3 people</th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Twin Boost F</th><th>Fire</th><th>102</th><th>62</th><th>112</th><th>0</th><th></th><th>2 people (Fire Tornado)</th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Triangle Z</th><th>Fire</th><th>96</th><th>59</th><th>104</th><th>0</th><th></th><th>3 people</th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Fire Rooster</th><th>Fire</th><th>91</th><th>71</th><th>101</th><th>0</th><th>Long</th><th>2 people (Fire Element)</th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Meteor Blade</th><th>Fire</th><th>91</th><th>28</th><th>101</th><th>0</th><th>Shoot Block</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Meteor Blade (Secret Text)</th><th>Fire</th><th>91</th><th>56</th><th>101</th><th>0</th><th>Shoot Block</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Assault Shot</th><th>Fire</th><th>84</th><th>64</th><th>94</th><th>0</th><th>Long</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Dragon Cannon</th><th>Fire</th><th>79</th><th>51</th><th>89</th><th>0</th><th>Shoot Block</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Dragon Tornado</th><th>Fire</th><th>79</th><th>51</th><th>87</th><th>0</th><th></th><th>2 people (Fire Tornado)</th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Twin Boost</th><th>Fire</th><th>72</th><th>44</th><th>84</th><th>0</th><th></th><th>2 people</th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Steeple Shot</th><th>Fire</th><th>72</th><th>44</th><th>84</th><th>0</th><th></th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Utter Gutsiness Bat</th><th>Fire</th><th>68</th><th>42</th><th>80</th><th>0</th><th>Shoot Block</th><th>2 people</th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Shine Drive</th><th>Fire</th><th>68</th><th>42</th><th>78</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Dynamite Shot</th><th>Fire</th><th>60</th><th>35</th><th>70</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Double Grenade</th><th>Fire</th><th>60</th><th>35</th><th>70</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Patriot Shot</th><th>Fire</th><th>57</th><th>50</th><th>69</th><th>0</th><th>Long</th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Fire Tornado</th><th>Fire</th><th>57</th><th>33</th><th>65</th><th>0</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Meteor Attack</th><th>Fire</th><th>48</th><th>24</th><th>58</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Heel Kick</th><th>Fire</th><th>33</th><th>24</th><th>45</th><th>0</th><th></th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Grenade Shot</th><th>Fire</th><th>14</th><th>17</th><th>24</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+
+<tr bgcolor="#FFCC33"><th>Name</th><th>Element</th><th>Base<br>
+Power</th><th>TP</th><th>Limit of<br>
+Growth</th><th>Fouls<br>Rate</th><th>Secondary<br>
+Type</th><th>Restriction</th><th>Evolution<br>
+Type</th><th>Growth<br>
+Rates</th></tr>
+<tr><th>The Earth</th><th>Earth</th><th>120</th><th>70</th><th>134</th><th>0</th><th></th><th>3 people</th><th>G</th><th>Fast</th></tr>
+<tr><th>Gaia Break</th><th>Earth</th><th>114</th><th>31</th><th>122</th><th>0</th><th></th><th>3 people</th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Reflect Buster</th><th>Earth</th><th>102</th><th>62</th><th>112</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Eagle Buster</th><th>Earth</th><th>96</th><th>74</th><th>108</th><th>0</th><th>Long</th><th>3 people</th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Land Dragon</th><th>Earth</th><th>91</th><th>56</th><th>103</th><th>0</th><th></th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Butterfly Trance</th><th>Earth</th><th>91</th><th>56</th><th>103</th><th>0</th><th>Shoot Block</th><th>2 people</th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Megaton Head</th><th>Earth</th><th>79</th><th>51</th><th>93</th><th>0</th><th>Shoot Block</th><th></th><th>G</th><th>Fast</th></tr>
+<tr><th>Utter Gutsiness Club</th><th>Earth</th><th>79</th><th>51</th><th>87</th><th>0</th><th>Long</th><th>2 people</th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Spectacle Crash</th><th>Earth</th><th>72</th><th>44</th><th>84</th><th>0</th><th></th><th>2 people</th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Kung Fu Fighting</th><th>Earth</th><th>68</th><th>42</th><th>78</th><th>0</th><th>Shoot Block</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Leaping Thunder</th><th>Earth</th><th>68</th><th>42</th><th>78</th><th>0</th><th></th><th>2 people</th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Rainbow Arc</th><th>Earth</th><th>60</th><th>35</th><th>70</th><th>0</th><th>Long</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Gyro Head</th><th>Earth</th><th>57</th><th>33</th><th>67</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Dirt Ball</th><th>Earth</th><th>48</th><th>24</th><th>58</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Teleport Shot</th><th>Earth</th><th>33</th><th>24</th><th>43</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Tarzan Kick</th><th>Earth</th><th>21</th><th>20</th><th>31</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Snake Shot</th><th>Earth</th><th>14</th><th>17</th><th>22</th><th>0</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+</tbody></table>
+<br>
+<br>
+-Dribble Move<br>
+<table border="1" id="DribbleMove"><tbody><tr bgcolor="#99FFFF"><th>Name</th><th>Element</th><th>Base<br>
+Power</th><th>TP</th><th>Limit of<br>
+Growth</th><th>Fouls<br>Rate</th><th>Secondary<br>
+Type</th><th>Restriction</th><th>Evolution<br>
+Type</th><th>Growth<br>
+Rates</th></tr>
+<tr><th>Heaven's Time</th><th>Wind</th><th>84</th><th>44</th><th>99</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Water Veil</th><th>Wind</th><th>89</th><th>22</th><th>99</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Dash Storm</th><th>Wind</th><th>73</th><th>38</th><th>83</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Aikido</th><th>Wind</th><th>73</th><th>38</th><th>81</th><th>5</th><th></th><th>2 people (Midium size)</th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Big Fan</th><th>Wind</th><th>66</th><th>36</th><th>78</th><th>5</th><th></th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Aurora Dribble</th><th>Wind</th><th>57</th><th>32</th><th>67</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Whirlwind Cut</th><th>Wind</th><th>51</th><th>30</th><th>61</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Ribbon Shower</th><th>Wind</th><th>42</th><th>25</th><th>52</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Zigzag Spark</th><th>Wind</th><th>37</th><th>23</th><th>47</th><th>5</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Moonsault</th><th>Wind</th><th>28</th><th>22</th><th>38</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Poison Fog</th><th>Wind</th><th>14</th><th>17</th><th>24</th><th>5</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Whirlwind Twister</th><th>Wind</th><th>7</th><th>17</th><th>17</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Flurry Dash</th><th>Wind</th><th>0</th><th>15</th><th>8</th><th>1</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Rodeo Clown</th><th>Wind</th><th>0</th><th>15</th><th>8</th><th>1</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr bgcolor="#99FF00"><th>Name</th><th>Element</th><th>Base<br>
+Power</th><th>TP</th><th>Limit of<br>
+Growth</th><th>Fouls<br>Rate</th><th>Secondary<br>
+Type</th><th>Restriction</th><th>Evolution<br>
+Type</th><th>Growth<br>
+Rates</th></tr>
+<tr><th>Southern Cross</th><th>Wood</th><th>105</th><th>50</th><th>117</th><th>5</th><th></th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Dual Pass</th><th>Wood</th><th>84</th><th>44</th><th>94</th><th>1</th><th></th><th>2 people</th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Clone Faker</th><th>Wood</th><th>66</th><th>36</th><th>76</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Deceptor Dribble</th><th>Wood</th><th>57</th><th>32</th><th>65</th><th>1</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Dark Whirlwind</th><th>Wood</th><th>51</th><th>30</th><th>61</th><th>5</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Warp Drive</th><th>Wood</th><th>51</th><th>14</th><th>61</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Afterimage</th><th>Wood</th><th>42</th><th>25</th><th>52</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Illusion Ball</th><th>Wood</th><th>37</th><th>23</th><th>47</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Attack Scan</th><th>Wood</th><th>28</th><th>22</th><th>38</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Magic</th><th>Wood</th><th>14</th><th>17</th><th>22</th><th>1</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Black Magic</th><th>Wood</th><th>7</th><th>17</th><th>15</th><th>1</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr bgcolor="#FF3300"><th>Name</th><th>Element</th><th>Base<br>
+Power</th><th>TP</th><th>Limit of<br>
+Growth</th><th>Fouls<br>Rate</th><th>Secondary<br>
+Type</th><th>Restriction</th><th>Evolution<br>
+Type</th><th>Growth<br>
+Rates</th></tr>
+<tr><th>Boost Glider</th><th>Fire</th><th>105</th><th>50</th><th>117</th><th>5</th><th></th><th>3 people</th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Flame Veil</th><th>Fire</th><th>89</th><th>22</th><th>99</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Breakthrough 2</th><th>Fire</th><th>84</th><th>33</th><th>96</th><th>45</th><th></th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Armadillo Circus</th><th>Fire</th><th>73</th><th>38</th><th>83</th><th>1</th><th></th><th>2 people (Super Armadillo)</th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Lightning Sprint</th><th>Fire</th><th>73</th><th>17</th><th>83</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Gale Dash</th><th>Fire</th><th>66</th><th>36</th><th>74</th><th>1</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Meteor Shower</th><th>Fire</th><th>57</th><th>14</th><th>67</th><th>5</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Breakthrough</th><th>Fire</th><th>51</th><th>22</th><th>63</th><th>45</th><th></th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Heat Tackle</th><th>Fire</th><th>37</th><th>23</th><th>47</th><th>5</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Bubble Gum</th><th>Fire</th><th>28</th><th>22</th><th>38</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Double Touch</th><th>Fire</th><th>7</th><th>17</th><th>17</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr bgcolor="#FFCC33"><th>Name</th><th>Element</th><th>Base<br>
+Power</th><th>TP</th><th>Limit of<br>
+Growth</th><th>Fouls<br>Rate</th><th>Secondary<br>
+Type</th><th>Restriction</th><th>Evolution<br>
+Type</th><th>Growth<br>
+Rates</th></tr>
+<tr><th>Triple Dash</th><th>Earth</th><th>105</th><th>50</th><th>113</th><th>5</th><th></th><th>3 people</th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Three Legged Rush</th><th>Earth</th><th>84</th><th>44</th><th>94</th><th>1</th><th></th><th>2 people</th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Rolling Hell</th><th>Earth</th><th>73</th><th>38</th><th>85</th><th>5</th><th></th><th>2 people</th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Mole Shuffle</th><th>Earth</th><th>73</th><th>38</th><th>83</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Invisible Fake</th><th>Earth</th><th>66</th><th>36</th><th>76</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Prima Donna</th><th>Earth</th><th>57</th><th>32</th><th>69</th><th>1</th><th></th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Mole Fake</th><th>Earth</th><th>51</th><th>30</th><th>61</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Bewildered</th><th>Earth</th><th>37</th><th>23</th><th>49</th><th>5</th><th></th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Super Armadillo</th><th>Earth</th><th>28</th><th>22</th><th>38</th><th>5</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Monkey Turn</th><th>Earth</th><th>7</th><th>17</th><th>15</th><th>1</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Dash Accelerator</th><th>Earth</th><th>0</th><th>15</th><th>8</th><th>1</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+</tbody></table>
+<br>
+<br>
+-Block Move<br>
+<table border="1" id="BlockMove"><tbody><tr bgcolor="#99FFFF"><th>Name</th><th>Element</th><th>Base<br>
+Power</th><th>TP</th><th>Limit of<br>
+Growth</th><th>Fouls<br>Rate</th><th>Secondary<br>
+Type</th><th>Restriction</th><th>Evolution<br>
+Type</th><th>Growth<br>
+Rates</th></tr>
+<tr><th>Perfect Tower</th><th>Wind</th><th>105</th><th>50</th><th>115</th><th>5</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Hurricane Arrows</th><th>Wind</th><th>96</th><th>45</th><th>108</th><th>1</th><th></th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Frozen Steal</th><th>Wind</th><th>94</th><th>22</th><th>104</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Whale Guard</th><th>Wind</th><th>85</th><th>44</th><th>97</th><th>1</th><th></th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Whirlwind Force</th><th>Wind</th><th>80</th><th>33</th><th>90</th><th>1</th><th>Shoot Block</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Dash Storm</th><th>Wind</th><th>74</th><th>40</th><th>84</th><th>5</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>The Tower</th><th>Wind</th><th>70</th><th>38</th><th>78</th><th>1</th><th>Shoot Block</th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Perimeter Zone</th><th>Wind</th><th>63</th><th>36</th><th>73</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Cyclone</th><th>Wind</th><th>54</th><th>32</th><th>64</th><th>5</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Spinning Cut</th><th>Wind</th><th>46</th><th>30</th><th>58</th><th>5</th><th>Shoot Block</th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Land of Ice</th><th>Wind</th><th>36</th><th>25</th><th>44</th><th>1</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Blade Attack</th><th>Wind</th><th>29</th><th>23</th><th>39</th><th>5</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Coil Turn</th><th>Wind</th><th>0</th><th>15</th><th>8</th><th>1</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr bgcolor="#99FF00"><th>Name</th><th>Element</th><th>Base<br>
+Power</th><th>TP</th><th>Limit of<br>
+Growth</th><th>Fouls<br>Rate</th><th>Secondary<br>
+Type</th><th>Restriction</th><th>Evolution<br>
+Type</th><th>Growth<br>
+Rates</th></tr>
+<tr><th>Sigma Zone</th><th>Wood</th><th>105</th><th>50</th><th>113</th><th>5</th><th></th><th></th><th>Shin</th><th>Fast<tr><th>
+<tr><th>Stone Wall</th><th>Wood</th><th>96</th><th>45</th><th>108</th><th>1</th><th>Shoot Block</th><th>2 people (God Hand (Earth))</th><th>Shin</th><th>Slow<tr><th>
+<tr><th>Harvest</th><th>Wood</th><th>85</th><th>44</th><th>93</th><th>10</th><th></th><th></th><th>Shin</th><th>Fast<tr><th>
+<tr><th>Asteroid Belt</th><th>Wood</th><th>80</th><th>20</th><th>90</th><th>5</th><th>Shoot Block</th><th></th><th>Shin</th><th>Medium<tr><th>
+<tr><th>Dual Storm</th><th>Wood</th><th>74</th><th>40</th><th>84</th><th>5</th><th></th><th></th><th>Shin</th><th>Medium<tr><th>
+<tr><th>Sleeping Dust</th><th>Wood</th><th>70</th><th>38</th><th>80</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium<tr><th>
+<tr><th>Clone Defence</th><th>Wood</th><th>63</th><th>36</th><th>73</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium<tr><th>
+<tr><th>Shadow Stitch</th><th>Wood</th><th>54</th><th>32</th><th>64</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium<tr><th>
+<tr><th>Spider Web</th><th>Wood</th><th>46</th><th>30</th><th>56</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium<tr><th>
+<tr><th>Fake Ball</th><th>Wood</th><th>36</th><th>25</th><th>46</th><th>5</th><th></th><th></th><th>Shin</th><th>Medium<tr><th>
+<tr><th>Defence Scan</th><th>Wood</th><th>29</th><th>23</th><th>39</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium<tr><th>
+<tr><th>Ghost Pull</th><th>Wood</th><th>6</th><th>17</th><th>16</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium<tr><th>
+<tr><th>Doppelganger</th><th>Wood</th><th>6</th><th>17</th><th>16</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium<tr><th>
+<tr><th>Killer Slide</th><th>Wood</th><th>0</th><th>10</th><th>8</th><th>45</th><th></th><th></th><th>Shin</th><th>Fast<tr><th>
+<tr><th>Quick Draw</th><th>Wood</th><th>0</th><th>15</th><th>8</th><th>1</th><th></th><th></th><th>Shin</th><th>Fast<tr><th>
+<tr bgcolor="#FF3300"><th>Name</th><th>Element</th><th>Base<br>
+Power</th><th>TP</th><th>Limit of<br>
+Growth</th><th>Fouls<br>Rate</th><th>Secondary<br>
+Type</th><th>Restriction</th><th>Evolution<br>
+Type</th><th>Growth<br>
+Rates</th></tr>
+<tr><th>Mad Express</th><th>Fire</th><th>105</th><th>50</th><th>113</th><th>5</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Ignite Steal</th><th>Fire</th><th>94</th><th>22</th><th>104</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Planet Shield</th><th>Fire</th><th>80</th><th>20</th><th>90</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Shooting Star</th><th>Fire</th><th>74</th><th>40</th><th>84</th><th>1</th><th>Shoot Block</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Divine Stamp</th><th>Fire</th><th>70</th><th>38</th><th>80</th><th>5</th><th>Shoot Block</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Volcano Cut</th><th>Fire</th><th>63</th><th>36</th><th>73</th><th>1</th><th>Shoot Block</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Flame Dance</th><th>Fire</th><th>54</th><th>32</th><th>62</th><th>1</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Fake Bomber</th><th>Fire</th><th>46</th><th>30</th><th>56</th><th>10</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Super Sumo Stomp</th><th>Fire</th><th>36</th><th>25</th><th>44</th><th>1</th><th>Shoot Block</th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Photon Crash</th><th>Fire</th><th>29</th><th>11</th><th>39</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Supreme Spin</th><th>Fire</th><th>6</th><th>17</th><th>14</th><th>5</th><th>Shoot Block</th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr bgcolor="#FFCC33"><th>Name</th><th>Element</th><th>Base<br>
+Power</th><th>TP</th><th>Limit of<br>
+Growth</th><th>Fouls<br>Rate</th><th>Secondary<br>
+Type</th><th>Restriction</th><th>Evolution<br>
+Type</th><th>Growth<br>
+Rates</th></tr>
+<tr><th>Body Shield</th><th>Earth</th><th>105</th><th>50</th><th>115</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Bamboo Pattern</th><th>Earth</th><th>96</th><th>45</th><th>108</th><th>5</th><th></th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>No Escape</th><th>Earth</th><th>85</th><th>44</th><th>97</th><th>5</th><th></th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Mega Wall</th><th>Earth</th><th>85</th><th>44</th><th>95</th><th>1</th><th>Shoot Block</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Road Roller</th><th>Earth</th><th>80</th><th>42</th><th>92</th><th>1</th><th>Shoot Block</th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Circus Block</th><th>Earth</th><th>74</th><th>40</th><th>84</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Mega Quake</th><th>Earth</th><th>70</th><th>38</th><th>80</th><th>1</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Heavy Mettle</th><th>Earth</th><th>63</th><th>17</th><th>73</th><th>1</th><th>Shoot Block</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Gravitation</th><th>Earth</th><th>54</th><th>14</th><th>64</th><th>5</th><th>Shoot Block</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Earthquake</th><th>Earth</th><th>46</th><th>30</th><th>56</th><th>5</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>The Wall</th><th>Earth</th><th>36</th><th>25</th><th>48</th><th>5</th><th>Shoot Block</th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>About Face</th><th>Earth</th><th>29</th><th>17</th><th>41</th><th>45</th><th></th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Horn Train</th><th>Earth</th><th>6</th><th>17</th><th>16</th><th>10</th><th>Shoot Block</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Sumo Stomp</th><th>Earth</th><th>0</th><th>15</th><th>12</th><th>1</th><th></th><th></th><th>Shin</th><th>Slow</th></tr>
+</tbody></table>
+<br>
+<br>
+-Catch Move<br>
+<table border="1" id="CatchMove"><tbody><tr bgcolor="#99FFFF"><th>Name</th><th>Element</th><th>Base<br>
+Power</th><th>TP</th><th>Limit of<br>
+Growth</th><th>Fouls<br>Rate</th><th>Secondary<br>
+Type</th><th>Restriction</th><th>Evolution<br>
+Type</th><th>Growth<br>
+Rates</th></tr>
+<tr><th>Fist of Justice</th><th>Wind</th><th>105</th><th>57</th><th>121</th><th>0</th><th>Panching-2</th><th></th><th>G</th><th>Medium</th></tr>
+<tr><th>Temporal Wall</th><th>Wind</th><th>105</th><th>25</th><th>117</th><th>0</th><th>Panching-2</th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Ice Block</th><th>Wind</th><th>89</th><th>22</th><th>99</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Procyon Net</th><th>Wind</th><th>89</th><th>22</th><th>99</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Safety First</th><th>Wind</th><th>73</th><th>43</th><th>83</th><th>0</th><th>Panching-1</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Tsunami Wall</th><th>Wind</th><th>66</th><th>41</th><th>76</th><th>0</th><th>Panching-2</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Aurora Curtain</th><th>Wind</th><th>57</th><th>36</th><th>65</th><th>0</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Whirlwind</th><th>Wind</th><th>51</th><th>34</th><th>61</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Flower Power</th><th>Wind</th><th>36</th><th>28</th><th>48</th><th>0</th><th></th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Mistral</th><th>Wind</th><th>31</th><th>27</th><th>41</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Tornado Catch</th><th>Wind</th><th>5</th><th>19</th><th>13</th><th>0</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Swan Dive</th><th>Wind</th><th>0</th><th>17</th><th>10</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr bgcolor="#99FF00"><th>Name</th><th>Element</th><th>Base<br>
+Power</th><th>TP</th><th>Limit of<br>
+Growth</th><th>Fouls<br>Rate</th><th>Secondary<br>
+Type</th><th>Restriction</th><th>Evolution<br>
+Type</th><th>Growth<br>
+Rates</th></tr>
+<tr><th>Mugen The Hand</th><th>Wood</th><th>105</th><th>57</th><th>123</th><th>0</th><th></th><th></th><th>G</th><th>Slow</th></tr>
+<tr><th>Dual Smash</th><th>Wood</th><th>80</th><th>48</th><th>90</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Clone Block</th><th>Wood</th><th>80</th><th>48</th><th>90</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Majin The Hand (Wood)</th><th>Wood</th><th>73</th><th>46</th><th>81</th><th>0</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Wormhole</th><th>Wood</th><th>66</th><th>19</th><th>76</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Black Hole</th><th>Wood</th><th>57</th><th>16</th><th>65</th><th>0</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Claw Slash</th><th>Wood</th><th>51</th><th>34</th><th>63</th><th>0</th><th></th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>God Hand (Wood)</th><th>Wood</th><th>36</th><th>21</th><th>48</th><th>0</th><th></th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Shot Pocket</th><th>Wood</th><th>36</th><th>28</th><th>44</th><th>0</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Warp Space</th><th>Wood</th><th>5</th><th>19</th><th>15</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Killer Blade</th><th>Wood</th><th>0</th><th>17</th><th>12</th><th>0</th><th></th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr bgcolor="#FF3300"><th>Name</th><th>Element</th><th>Base<br>
+Power</th><th>TP</th><th>Limit of<br>
+Growth</th><th>Fouls<br>Rate</th><th>Secondary<br>
+Type</th><th>Restriction</th><th>Evolution<br>
+Type</th><th>Growth<br>
+Rates</th></tr>
+<tr><th>Beast Fang</th><th>Fire</th><th>105</th><th>57</th><th>123</th><th>0</th><th></th><th></th><th>G</th><th>Slow</th></tr>
+<tr><th>Triple God Hand</th><th>Fire</th><th>105</th><th>57</th><th>119</th><th>0</th><th></th><th></th><th>G</th><th>Fast</th></tr>
+<tr><th>Burnout</th><th>Fire</th><th>89</th><th>22</th><th>99</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Drill Smasher</th><th>Fire</th><th>89</th><th>22</th><th>97</th><th>0</th><th>Panching-1</th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Double Rocket</th><th>Fire</th><th>80</th><th>48</th><th>90</th><th>0</th><th>Panching-1</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Counter Strike</th><th>Fire</th><th>73</th><th>43</th><th>83</th><th>0</th><th>Panching-2</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Flame Breath</th><th>Fire</th><th>66</th><th>41</th><th>76</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Blazing Knuckle</th><th>Fire</th><th>57</th><th>36</th><th>67</th><th>0</th><th>Panching-1</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Full Power Shield</th><th>Fire</th><th>51</th><th>34</th><th>61</th><th>0</th><th>Panching-1</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Fireball Head</th><th>Fire</th><th>36</th><th>28</th><th>46</th><th>0</th><th>Panching-1</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Rocket Kobushi</th><th>Fire</th><th>31</th><th>27</th><th>41</th><th>0</th><th>Panching-1</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Power Shield</th><th>Fire</th><th>31</th><th>27</th><th>39</th><th>0</th><th>Panching-1</th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Pressure Punch</th><th>Fire</th><th>5</th><th>19</th><th>15</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Fireball Knuckle</th><th>Fire</th><th>0</th><th>17</th><th>8</th><th>0</th><th>Panching-1</th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr bgcolor="#FFCC33"><th>Name</th><th>Element</th><th>Base<br>
+Power</th><th>TP</th><th>Limit of<br>
+Growth</th><th>Fouls<br>Rate</th><th>Secondary<br>
+Type</th><th>Restriction</th><th>Evolution<br>
+Type</th><th>Growth<br>
+Rates</th></tr>
+<tr><th>Infinite Wall</th><th>Earth</th><th>105</th><th>57</th><th>121</th><th>0</th><th></th><th></th><th>G</th><th>Medium</th></tr>
+<tr><th>Gigant Wall</th><th>Earth</th><th>89</th><th>50</th><th>101</th><th>0</th><th></th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Triple Defence</th><th>Earth</th><th>89</th><th>50</th><th>97</th><th>0</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Majin The Hand (Earth)</th><th>Earth</th><th>73</th><th>46</th><th>81</th><th>0</th><th></th><th></th><th>Shin</th><th>Fast</th></tr>
+<tr><th>Table-Turner</th><th>Earth</th><th>66</th><th>41</th><th>76</th><th>0</th><th>Panching-1</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Utter Gutsiness Catch</th><th>Earth</th><th>57</th><th>36</th><th>69</th><th>0</th><th></th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Sliding Goal</th><th>Earth</th><th>51</th><th>34</th><th>63</th><th>0</th><th></th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>God Hand (Earth)</th><th>Earth</th><th>36</th><th>21</th><th>48</th><th>0</th><th></th><th></th><th>Shin</th><th>Slow</th></tr>
+<tr><th>Wild Claw</th><th>Earth</th><th>31</th><th>27</th><th>41</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Wood Chopper</th><th>Earth</th><th>5</th><th>19</th><th>15</th><th>0</th><th>Panching-1</th><th></th><th>Shin</th><th>Medium</th></tr>
+<tr><th>Toughness Block</th><th>Earth</th><th>0</th><th>17</th><th>10</th><th>0</th><th></th><th></th><th>Shin</th><th>Medium</th></tr>
+</tbody></table>
+"Punching - 1" and "Punching - 2" have different flight distances.<br>
+"Punching - 2" is fly than "Punching - 1".<br>
+<br>
+<br>
+<table border="1" width="1000" cellspacing="0" style="color:#000000" bgcolor="#ccff99" bordercolor="#333333">
+    <tr>
+        <th>
+ TIPS
+        </th>
+    </tr>
+    <tr>
+        <td align="left">
+<br>
+There is probably a mistake in there?
+<br>
+<br>
+- Power down has the same effect as "decay of shoot power by distance".<br>
+&nbsp;&nbsp;If you power down a shot that was made from the distance where the shoot power becomes 80%, it will be corrected down to 30% shoot.<br>
+<br>
+- Offense Plus and Defense Plus will activate 2 to 5 people depending on the position of formation.<br>
+&nbsp;&nbsp;Those with these skills are not necessarily strengthened.<br>
+<br>
+<s>- The position to activate Shoot Plus and Shoot Force are unknown.</s><br>
+<s>&nbsp;&nbsp;We want your ideas.</s><br>
+&nbsp;&nbsp;It corresponded. (ver 1.2.)<br>
+<br>
+- FW can use to "Distance effect" to gain a victory.<br>
+&nbsp;&nbsp;Let's as close to the center of the opponent's goal as possible.<br>
+<br>
+- The gauge set with normal shoot does not affect the Special Move Shoot.<br><br>
+        </td>
+    </tr>
+</table>
+
+<table border="1" width="1000" cellspacing="0" style="color:#000000" bgcolor="#ccff99" bordercolor="#333333">
+<tr>
+<th>Information</th>
+</tr>
+<tr>
+<td>
+I corrected the following points from ver 1.5.<br>
+&nbsp;&nbsp;-  I Fixed Special Move data's  performance to English version.<br>
+<br>
+<br>
+</td>
+</tr>
+<tr>
+<td>
+I corrected the following points from ver 1.4.<br>
+&nbsp;&nbsp;-  I corrected the correction value of the Miniduals.<br>
+&nbsp;&nbsp;-  I Fixed "Total form correction value when the element of the player and element of the special move match".<br>
+<br>
+<br>
+</td>
+</tr>
+<tr>
+<td>
+I corrected the following points from ver 1.3.<br>
+&nbsp;&nbsp;-  I added "Total Form of "If you don't use Special Moves"".<br>
+<br>
+<br>
+</td>
+</tr>
+<tr>
+<td>
+I corrected the following points from ver 1.2.<br>
+&nbsp;&nbsp;- Sorry. "Put Your Back Into It!" is irrelevant to the Miniduals.<br>
+<br>
+<br>
+</td>
+</tr>
+<tr>
+<td>
+I corrected the following points from ver 1.1.<br>
+&nbsp;&nbsp;- Supported Shoot Plus and Shoot Force.<br>
+&nbsp;&nbsp;- Fixed the effect of skills on Shoot Blocks.
+<br>
+<br>
+</td>
+</tr>
+<tr>
+<td>I corrected the following points from ver 1.0.<br>
+&nbsp;&nbsp;-I can't apologize enough.<br>
+&nbsp;&nbsp;&nbsp;There was one place where I set mistakenly Guts and Stamina.<br>
+<br>
+</td>
+</tr>
+</table>
+<br>
+       </form>
+   </body>
+</html>
