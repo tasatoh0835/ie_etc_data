@@ -332,14 +332,14 @@
                    totalFormMinUnfavorable = Math.max( totalFormMinUnfavorable, unitcalc[moveTypeValue][7] );
                    totalFormMaxUnfavorable = Math.max( totalFormMaxUnfavorable, unitcalc[moveTypeValue][7] );
                    
-                   //// ShootBlock(Block)
-                   //// Power Down's processe.
-                   //if( moveTypeValue == 5 ) {
-                   //    totalFormMin += 25;
-                   //    totalFormMax += 25;
-                   //    totalFormMinFavorable += 25;
-                   //    totalFormMaxFavorable += 25;
-                   //}
+                   // ShootBlock(Block)
+                   // Power Down's processe.
+                   if( moveTypeValue == 5 ) {
+                       totalFormMin = Math.floor( totalFormMin * 100 / 75 );
+                       totalFormMax = Math.floor( totalFormMax * 100 / 75 );
+                       totalFormMinFavorable = Math.floor( totalFormMinFavorable * 100 / 75 );
+                       totalFormMaxFavorable = Math.floor( totalFormMaxFavorable * 100 / 75 );
+                   }
                    
                    // Dribble and Block
                    // The minimum value of dribble and block is 1.
@@ -1593,6 +1593,14 @@ There is probably a mistake in there?
 </tr>
 <tr>
 <td>
+I corrected the following points from ver 1.6.<br>
+&nbsp;&nbsp;-  Block move's Shot Block displays the total form of the shot that can "power down".<br>
+<br>
+<br>
+</td>
+</tr>
+<tr>
+<td>
 I corrected the following points from ver 1.5.<br>
 &nbsp;&nbsp;-  I Fixed Special Move data's  performance to English version.<br>
 <br>
@@ -1644,4 +1652,5 @@ I corrected the following points from ver 1.1.<br>
 <br>
        </form>
    </body>
+
 </html>
