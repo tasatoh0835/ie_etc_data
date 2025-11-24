@@ -550,7 +550,7 @@
     const csvFaceData = JSON.parse(faceDecompressed);
     
     // 選手名参照対象リスト
-    const uniqueNames = [...new Set(csvFaceData.slice(1).map(row => row[0]))];
+    const uniqueNames = [...new Set(csvFaceData.slice(0).map(row => row[0]))];
     // 選手名入力テキストボックス
     const input = document.getElementById('searchInput');
     // 選手名予測リスト
@@ -608,7 +608,7 @@
       // 選手名とラジオボタンの選択から、一意の表示データを抽出する
       const selected = document.querySelector('input[name="viewType"]:checked');
       // csvUnitDataを読み込む
-      let matchedData = csvUnitData.slice(1).filter(row => row[2] === job && row[208] === selected.value);
+      let matchedData = csvUnitData.slice(0).filter(row => row[2] === job && row[208] === selected.value);
       // データが存在する場合
       if (matchedData) {
         matchedRow = matchedData[0]
@@ -757,7 +757,7 @@
           applyOneDigitStyle(cell);
         });
         // 選手画像取得
-        const matchedFaceRow = csvFaceData.slice(1).find(row => row[0] === job);
+        const matchedFaceRow = csvFaceData.slice(0).find(row => row[0] === job);
         const imageURL = matchedFaceRow[1].trim();
         imageCell.textContent = ''
         if (imageURL === 'No Image') {
