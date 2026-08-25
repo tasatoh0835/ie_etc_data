@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>イナズマイレブンGO1 推定トータルテクニック計算機 ver 1.0</title>
+<title>イナズマイレブンGO1 推定トータルテクニック計算機 ver 1.1</title>
 <style>
   body {
     font-family: sans-serif;
@@ -10,21 +10,32 @@
   }
   .playerData {
     display: inline-grid; 
-    grid-template-columns: 100px 200px 100px 200px 100px 200px;
+    grid-template-columns: 100px 150px 100px 150px 100px 150px;
     gap: 8px 12px;
     align-items: center;
 
     border: 2px solid black;
     padding: 10px;
   }
-  .movesData {
+  .keshiAndMoveData {
     display: inline-grid; 
-    grid-template-columns: 200px 200px 200px 200px 200px;
+    grid-template-columns: 200px 200px 120px 200px 50px;
     gap: 8px 12px;
     align-items: center;
 
     border: 2px solid black;
     padding: 10px;
+  }
+  .moveData {
+    display: inline-grid; 
+    grid-template-columns: 170px 70px 170px 40px 40px 40px 60px 60px 60px 20px;
+    gap: 8px 6px;
+    align-items: center;
+    border: 2px solid black;
+    padding: 10px;
+
+    grid-column: 1 / -1;
+    width: fit-content;
   }
   .checks {
     display: grid;
@@ -32,10 +43,26 @@
     gap: 8px;
     align-items: center;
   }
-
-  input[type="text"], input[type="number"] {
-    width: 160px;
+  #PlayerName, #CommandList {
+    width: 120px;
   }
+  #PlayerGender, #PlayerPhysique, #PlayerElementList,
+  #ShotCollectList, #DefenseCollectList, #MoveFailure ,#RandomValue {
+    width: 80px;
+  }
+  
+  #MainPara, #TechVal, #LuckVal, #KpVal, #KaVal {
+    width: 120px;
+  }
+  #SkillList1, #SkillList2 {
+    width: 140px;
+  }
+  #PlayersKeshinList, #KeshinSkillName1, 
+  #OtherKeshinList1, #KeshinSkillName2, 
+  #OtherKeshinList2, #KeshinSkillName3 {
+    width: 190px;
+  }
+  
   :root {
     --main-bg:  #000;
     --sub-bg:   #111;
@@ -75,7 +102,6 @@
     background-color: var(--sub-bg);
     color: var(--text2); 
   }
-/*段差の値を直打ちで編集しているので注意*/
   /* 奇数段 */
   table tr:nth-child(1) th {
     font-weight: bold;
@@ -105,7 +131,6 @@
   table tr:nth-child(even) th {
     color: var(--text2);
   }
-/*段差の値を直打ちで編集しているので注意*/
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -144,19 +169,27 @@ function exportTable() {
 
 <h2>イナズマイレブンGO1 推定トータルテクニック計算機  ver 1.0</h2>
 
-<div hidden>
-  <label>簡易入力用</label>
-  <select id="QuickEntryPlayerList">
-    <option value="なし">なし</option>
-    <option value="剣城">剣城</option>
-    <option value="白竜">白竜</option>
-    <option value="シュウ">シュウ</option>
-    <option value="御門">御門</option>
-    <option value="ゴンガン">ゴンガン</option>
-    <option value="カズマ">カズマ</option>
-    <option value="テンタクル">テンタクル</option>
-    <option value="円堂">円堂</option>
-  </select>
+<div>
+  <p>
+  <details>
+    <summary>お試し用　選手データ簡易入力</summary>
+    <select id="QuickEntryPlayerList">
+      <option value="なし">なし</option>
+      <option value="剣城">剣城(ファイアトルネードDD)</option>
+      <option value="白竜">白竜(ホワイトハリケーン)</option>
+      <option value="シュウ">シュウ(ブラックアッシュ)</option>
+      <option value="ランスロット剣城">剣城(ランスロット)</option>
+      <option value="シャイニングドラゴン白竜">白竜(シャイニングドラゴン)</option>
+      <option value="ダークエクソダスシュウ">シュウ(ダークエクソダス)</option>
+      <option value="ムサシ御門">御門(ムサシ)</option>
+      <option value="ダークエクソダス吉良">吉良(ダークエクソダス)</option>
+      <option value="グレイトゴンガン">ゴンガン(グレイト)</option>
+      <option value="グレイトカズマ">カズマ(グレイト)</option>
+      <option value="グレイトテンタクル">テンタクル(グレイト)</option>
+      <option value="グレイト円堂">円堂(グレイト)</option>
+      </select>
+  </details>
+  </p>
 </div>
 
 <!-- テキストボックス -->
@@ -165,7 +198,7 @@ function exportTable() {
   <label>選手名</label><input type="text" id="PlayerName" placeholder="選手名を入力" value="">
   <div></div><div></div><div></div><div></div>
   <label>性別</label>
-  <select id="PlayerGendert">
+  <select id="PlayerGender">
     <option value="男">男</option>
     <option value="女">女</option>
     <option value="無">無</option>
@@ -190,44 +223,71 @@ function exportTable() {
     <option value="DF">ブロック</option>
     <option value="GK">キャッチ</option>
   </select>
-  <div></div><div></div><div></div><div></div>
-  <label id="MainParaLabel">キック</label><input type="number" id="MainPara" placeholder="キック値入力" value="">
-  <label>テクニック</label><input type="number" id="tech" placeholder="テクニック値入力" value="">
-  <label>ラッキー</label><input type="number" id="luck" placeholder="ラッキー値入力" value="">
+  <label id="ShotCollectLabel">距離補正</label>
+  <select id="ShotCollectList">
+    <option value="1.0" selected>1.0倍</option>
+    <option value="0.8">0.8倍</option>
+    <option value="0.5">0.5倍</option>
+  </select>
+  <label id="DefenseCollectLabel">守備補正</label>
+  <select id="DefenseCollectList">
+    <option value="1.0">1倍</option>
+    <option value="1.2" selected>1.2倍</option>
+    <option value="1.44">1.44倍</option>
+    <option value="1.8">1.8倍</option>
+  </select>
+  <label id="MainParaLabel">キック</label><input type="number" data-integer id="MainPara" placeholder="キック値入力" value="1" min="1" step="1">
+  <label>テクニック</label><input type="number" data-integer id="TechVal" placeholder="テクニック値入力" value="1" min="1" step="1">
+  <label>ラッキー</label><input type="number" data-integer id="LuckVal" placeholder="ラッキー値入力" value="1" min="1" step="1">
   <label>習得スキル1</label><select id="SkillList1"></select>
   <label>習得スキル2</label><select id="SkillList2"></select>
 </div>
-<br>
+<br><br>
 <label>■化身・使用必殺技入力欄</label><br>
-<div class="movesData">
-  <label>選手が発動させている化身</label>
+<div class="keshiAndMoveData">
+  <label>選手の発動化身</label>
   <select id="PlayersKeshinList"></select>
   <label>化身スキル</label>
   <input type="text" id="KeshinSkillName1" value="なし">
   <div></div>
-  <label>発動化身の初期KP</label>
-  <input type="number" id="Kp" placeholder="KP" value="0">
+  <label>発動化身のKP</label>
+  <input type="number" data-integer id="KpVal" placeholder="KpVal" value="0" min="0" step="1">
   <label>発動化身のKA</label>
-  <input type="number" id="Ka" placeholder="KA" value="0">
+  <input type="number" data-integer id="KaVal" placeholder="KaVal" value="0" min="0" step="1">
   <div></div>
-  <label>発動中の化身1</label>
+    <div class="moveData">
+      <label>選手が使用する必殺技</label>
+      <label>必殺技名</label>
+      <select id="UseMoveList"></select>
+      <label>属性</label>
+      <input type="text" id="MoveElement" placeholder="必殺技の属性" value="無">
+      <label>威力</label>
+      <input type="number" data-integer id="MovePower" placeholder="必殺技威力" value="20" min="0" step="1">
+      <label>コスト</label>
+      <input type="number" data-integer id="MoveCost" placeholder="必殺技のコスト" value="0" min="0" step="1">
+    </div>
+  <label>味方が発動中の化身1</label>
   <select id="OtherKeshinList1"></select>
   <label>化身スキル</label>
   <input type="text" id="KeshinSkillName2" value="なし">
   <div></div>
-  <label>発動中の化身2</label>
+  <label>味方が発動中の化身2</label>
   <select id="OtherKeshinList2"></select>
   <label>化身スキル</label>
   <input type="text" id="KeshinSkillName3" value="なし">
   <div></div>
-  <label>選手が使用する必殺技</label>
-  <select id="UseMoveList"></select>
-  <input type="text" id="MoveElement" placeholder="必殺技の属性" value="無">
-  <input type="number" id="MovePower" placeholder="必殺技威力" value="20">
-  <input type="number" id="MoveCost" placeholder="必殺技のコスト" value="0">
+  <label>必殺技</label>
+  <select id="MoveFailure">
+    <option value="1.0" selected>成功</option>
+    <option value="0.8">失敗</option>
+  </select>
+  <label>上振れ</label>
+  <select id="RandomValue">
+    <option value="1.0">下振れ</option>
+    <option value="1.2" selected>上振れ</option>
+  </select>
 </div>
-
-<br>
+<br><br>
 <button onclick="calc()">計算実行</button>
 <button onclick="exportTable()">PNGとして保存</button>
 
@@ -246,12 +306,12 @@ function exportTable() {
   </colgroup>
   <!-- 選手データ項目（前半） -->
   <tr>
-    <th colspan="2">選手名</th>
-    <th id="cMainPara">キック</th>
-    <th>テクニック</th>
-    <th>ラッキー</th>
-    <th colspan="2">習得スキル1</th>
-    <th colspan="2">習得スキル2</th>
+    <th colspan="2" title="計算対象となった選手の名前です">選手名</th>
+    <th id="cMainPara" title="選手のスキル、化身スキルを加味したキック値です">キック</th>
+    <th title="選手のスキル、化身スキルを加味したテクニック値です">テクニック</th>
+    <th title="選手のスキル、化身スキルを加味したラッキー値です">ラッキー</th>
+    <th colspan="2" title="選手の習得スキルです">習得スキル1</th>
+    <th colspan="2" title="選手の習得スキルです">習得スキル2</th>
   </tr>
   <!-- 選手データ値（前半） -->
   <tr>
@@ -264,8 +324,8 @@ function exportTable() {
   </tr>
   <!-- 選手データ項目（中段） -->
   <tr>
-    <th colspan="3">ベーステクニック</th>
-    <th colspan="4">推定ベースパワー</th>
+    <th colspan="3" title="実行コマンドで選手が発揮するベーステクニックです">ベーステクニック</th>
+    <th colspan="4" title="ベーステクニックを基に算出されるベースパワーの推定値です">推定ベースパワー</th>
   </tr>
   <!-- 選手データ値（中段） -->
   <tr>
@@ -292,7 +352,7 @@ function exportTable() {
     <th id="movePower" title="最終進化時の必殺技の威力です">最終威力</th>
     <th id="moveElementType" title="必殺技の属性です">属性</th>
     <th id="moveElementMatch" title="必殺技の属性と使用者の属性の相性です">相性</th>
-    <th id="defCollect" title="守備側にのみかかる補正で、ランダムで1.0倍、1.2倍、1.44倍、1.8倍になります&#13;&#10;最も発生率が高い1.2倍で計算しています">守備補正</th>
+    <th id="defCollect" title="守備側にのみかかる補正で、ランダムで1.0倍、1.2倍、1.44倍、1.8倍になります&#13;&#10;最も発生率が高いのは1.2倍です">守備補正</th>
     <th id="skillCollect" title="必殺技を直接強化するスキルによる補正です">スキル補正</th>
     <th id="elementMatchCollect" title="属性相性による補正を含めた最終的な必殺技威力です">属性相性</th>
   </tr>
@@ -308,15 +368,15 @@ function exportTable() {
   </tr>
   <!-- 各種補正項目 -->
   <tr>
-    <th id="konshinCollect" title="スキル「ちょうわざ！」、「こんしん！」による補正です" colspan="3">こんしん！補正</th>
+    <th id="konshinCollect" title="スキル「ちょうわざ！」、「こんしん！」による補正です&#13;&#10;これらは重複しません" colspan="3">こんしん！補正</th>
     <th id="successCollect"
-     title="テクニックによる必殺技の成功、失敗判定によって生じる補正です&#13;&#10;選手のテクニック値を上げれば失敗判定になる確率は下がりますが、GO2以降と異なり失敗する確率を0にすることはできません">失敗補正</th>
+     title="テクニック値による必殺技の成功、失敗判定によって生じる補正です&#13;&#10;選手のテクニック値を上げれば失敗判定になる確率は下がりますが、GO2以降と異なり失敗する確率を0にすることはできません">失敗補正</th>
     <th id="randomCollect"
-     title="乱数によって1.0倍か1.2倍の補正がかかります&#13;&#10;最も発生率が高い1.2倍で計算しています">上振れ</th>
-    <th id="randomCollect"
+     title="乱数によって1.0倍か1.2倍の補正がかかります&#13;&#10;最も発生率が高いのは1.2倍です">上振れ</th>
+    <th id="shootCollect"
      title="シュートの場合のみ、ゴールとの距離によって1.0倍、0.8倍、0.5倍の補正が与えられます">距離補正</th>
     <th id="elementBattle" title="相手選手との属性相性の優劣判定です&#13;&#10;守備側にのみ発生します">相性判定</th>
-    <th id="keshinCollect" title="発動中の化身の現在KPとKAの合計値です">化身補正</th>
+    <th id="keshinCollect" title="選手の発動化身の現在KPとKAの合計値です&#13;&#10;通常必殺技であれば0です">化身補正</th>
     <th id="lvCollect" 
      title="相手とのレベル差があった場合の補正です&#13;&#10;同レベルでの対戦を想定し、1.0倍固定としています">Lv差補正</th>
   </tr>
@@ -334,7 +394,8 @@ function exportTable() {
   <tr>
     <th id="totalTech" colspan="7"
      title="最も発生率が高いトータルテクニックです&#13;&#10;()内の数値はクリティカル発生時のものです" >推定トータルテクニック(クリティカル時)</th>
-    <th colspan="2">クリティカル発生率</th>
+    <th colspan="2"
+     title="クリティカルが発生するおおよその確率です">クリティカル発生率</th>
   </tr>
   <!-- 結果値 -->
   <tr>
@@ -349,7 +410,7 @@ function exportTable() {
 <a href="https://wikiwiki.jp/inazumaelev2/%E3%82%A4%E3%83%8A%E3%82%BA%E3%83%9E%E3%82%A4%E3%83%AC%E3%83%96%E3%83%B3GO1%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6">イナズマイレブンGO1について - 個人用 Wiki*</a>
 <br>
 <select id="AllKeshinDataList" hidden>
-  <option value="なし|なし|0|0|なし|なし|なし|20|0|なし|なし|なし">なし</option>
+  <option value="なし|なし|0|0|なし|無|なし|20|0|なし|なし|なし">なし</option>
   <option value="魔帝グリフォン|火|330|130|ソード・オブ・ファイア|火|SH|250|150|神速の翼|魔帝グリフォン発動者のスピード100UP|460" data-category="FW">魔帝グリフォン</option>
   <option value="聖騎士アーサー|無|320|120|ソードエクスカリバー|無|SH|250|150|聖なる剣|聖騎士アーサー発動者のキック100UP|440" data-category="FW">聖騎士アーサー</option>
   <option value="魔戦士ペンドラゴン|無|200|160|ソウル・ブリンガー|無|SH|200|85|ﾊﾞｰﾆﾝｸﾞﾌｫｰｽ5|チーム全員の全ての能力5UP|360" data-category="FW">魔戦士ペンドラゴン</option>
@@ -407,7 +468,7 @@ function exportTable() {
 </select>
 
 <select id="AllSpecialMove" hidden>
-  <option value="なし|なし|0|0|なし|なし|なし|20|0|なし|なし|なし">なし</option>
+  <option value="なし|なし|0|0|なし|無|なし|20|0|なし|なし|なし">なし</option>
   <option value="なし|なし|0|0|エボリューション|山|SC|220|70|3人(使用者のレベル以上)なし|なし|なし" data-category="FW">エボリューション</option>
   <option value="なし|なし|0|0|ゼロマグナム|無|BS|200|70|2人(自分のレベル-3以上)なし|なし|なし" data-category="FW">ゼロマグナム</option>
   <option value="なし|なし|0|0|トライアングルZZ|火|SH|200|60|3人なし|なし|なし" data-category="FW">トライアングルZZ</option>
@@ -552,62 +613,220 @@ function exportTable() {
 <script>
 // 選手リスト選択による値変更
 document.getElementById("QuickEntryPlayerList").addEventListener("change", function() {
-    if ("白竜" == this.value) {
-      document.getElementById("PlayerName").value = "白竜";
-      document.getElementById("MainPara").value = 492;
-      document.getElementById("tech").value = 39;
-      document.getElementById("luck").value = 147;
-      document.getElementById("PlayerElementList").value = "風";
-    }
-    else if ("シュウ" == this.value) {
-      document.getElementById("PlayerName").value = "シュウ";
-      document.getElementById("MainPara").value = 477;
-      document.getElementById("tech").value = 39;
-      document.getElementById("luck").value = 148;
-      document.getElementById("PlayerElementList").value = "林";
-    }
-    else if ("剣城" == this.value) {
-      document.getElementById("PlayerName").value = "剣城";
-      document.getElementById("MainPara").value = 384;
-      document.getElementById("tech").value = 39;
-      document.getElementById("luck").value = 162;
-      document.getElementById("PlayerElementList").value = "火";
-    }
-    else if ("御門" == this.value) {
-      document.getElementById("PlayerName").value = "御門";
-      document.getElementById("MainPara").value = 443;
-      document.getElementById("tech").value = 39;
-      document.getElementById("luck").value = 146;
-      document.getElementById("PlayerElementList").value = "山";
-    }
-    else if ("ゴンガン" == this.value) {
-      document.getElementById("PlayerName").value = "ゴンガン";
-      document.getElementById("MainPara").value = 460;
-      document.getElementById("tech").value = 39;
-      document.getElementById("luck").value = 159;
-      document.getElementById("PlayerElementList").value = "風";
-    }
-    else if ("カズマ" == this.value) {
-      document.getElementById("PlayerName").value = "カズマ";
-      document.getElementById("MainPara").value = 450;
-      document.getElementById("tech").value = 39;
-      document.getElementById("luck").value = 192;
-      document.getElementById("PlayerElementList").value = "林";
-    }
-    else if ("テンタクル" == this.value) {
-      document.getElementById("PlayerName").value = "テンタクル";
-      document.getElementById("MainPara").value = 460;
-      document.getElementById("tech").value = 39;
-      document.getElementById("luck").value = 177;
-      document.getElementById("PlayerElementList").value = "火";
-    }
-    else if ("円堂" == this.value) {
-      document.getElementById("PlayerName").value = "円堂";
-      document.getElementById("MainPara").value = 480;
-      document.getElementById("tech").value = 39;
-      document.getElementById("luck").value = 169;
-      document.getElementById("PlayerElementList").value = "山";
-    }
+  if ("なし"  == this.value) {
+    document.getElementById("PlayerName").value = "";
+    document.getElementById('PlayerGender').options[0].selected = true;      // 男
+    document.getElementById('PlayerPhysique').options[0].selected = true;    // 普通体系
+    document.getElementById('PlayerElementList').options[0].selected = true; // 風属性
+    document.getElementById("MainPara").value = 1;
+    document.getElementById("TechVal").value = 1;
+    document.getElementById("LuckVal").value = 1;
+    document.getElementById("PlayerElementList").value = "風";
+    document.getElementById('CommandList').options[0].selected = true; // シュート
+    document.getElementById('CommandList').dispatchEvent(new Event('change'));
+    document.getElementById('SkillList1').options[0].selected = true;  // なし
+    document.getElementById('SkillList2').options[0].selected = true;  // なし
+    // PlayersKeshinListの設定と変更実行
+    document.getElementById('PlayersKeshinList').options[0].selected = true; // 化身なし
+    document.getElementById('PlayersKeshinList').dispatchEvent(new Event('change'));
+  }
+  else if ("剣城" == this.value) {
+    document.getElementById("PlayerName").value = "剣城";
+    document.getElementById('PlayerGender').options[0].selected = true;      // 男
+    document.getElementById('PlayerPhysique').options[0].selected = true;    // 普通体系
+    document.getElementById("MainPara").value = 384;
+    document.getElementById("TechVal").value = 39;
+    document.getElementById("LuckVal").value = 207;
+    document.getElementById("PlayerElementList").value = "火";
+    document.getElementById('CommandList').options[0].selected = true; // シュート
+    document.getElementById('CommandList').dispatchEvent(new Event('change'));
+    document.getElementById('SkillList1').options[1].selected = true;  // こんしん！
+    document.getElementById('SkillList2').options[7].selected = true;  // 属性強化
+    // PlayersKeshinListの設定と変更実行
+    document.getElementById('PlayersKeshinList').options[0].selected = true; // 化身なし
+    document.getElementById('PlayersKeshinList').dispatchEvent(new Event('change'));
+    // UseMoveListの設定と変更実行
+    document.getElementById('UseMoveList').options[4].selected = true; // FTDD
+    document.getElementById('UseMoveList').dispatchEvent(new Event('change'));
+  }
+  else if ("白竜" == this.value) {
+    document.getElementById("PlayerName").value = "白竜";
+    document.getElementById('PlayerGender').options[0].selected = true;      // 男
+    document.getElementById('PlayerPhysique').options[0].selected = true;    // 普通体系
+    document.getElementById("MainPara").value = 492;
+    document.getElementById("TechVal").value = 39;
+    document.getElementById("LuckVal").value = 174;
+    document.getElementById("PlayerElementList").value = "風";
+    document.getElementById('CommandList').options[0].selected = true; // シュート
+    document.getElementById('CommandList').dispatchEvent(new Event('change'));
+    document.getElementById('SkillList1').options[1].selected = true;  // こんしん！
+    document.getElementById('SkillList2').options[7].selected = true;  // 属性強化
+    // PlayersKeshinListの設定と変更実行
+    document.getElementById('PlayersKeshinList').options[0].selected = true; // 化身なし
+    document.getElementById('PlayersKeshinList').dispatchEvent(new Event('change'));
+    // UseMoveListの設定と変更実行
+    document.getElementById('UseMoveList').options[5].selected = true; // WH
+    document.getElementById('UseMoveList').dispatchEvent(new Event('change'));
+  }
+  else if ("シュウ" == this.value) {
+    document.getElementById("PlayerName").value = "シュウ";
+    document.getElementById('PlayerGender').options[0].selected = true;      // 男
+    document.getElementById('PlayerPhysique').options[0].selected = true;    // 普通体系
+    document.getElementById("MainPara").value = 477;
+    document.getElementById("TechVal").value = 39;
+    document.getElementById("LuckVal").value = 204;
+    document.getElementById("PlayerElementList").value = "林";
+    document.getElementById('CommandList').options[0].selected = true; // シュート
+    document.getElementById('CommandList').dispatchEvent(new Event('change'));
+    document.getElementById('SkillList1').options[1].selected = true;  // こんしん！
+    document.getElementById('SkillList2').options[7].selected = true;  // 属性強化
+    // PlayersKeshinListの設定と変更実行
+    document.getElementById('PlayersKeshinList').options[0].selected = true; // 化身なし
+    document.getElementById('PlayersKeshinList').dispatchEvent(new Event('change'));
+    // UseMoveListの設定と変更実行
+    document.getElementById('UseMoveList').options[7].selected = true; // BA
+    document.getElementById('UseMoveList').dispatchEvent(new Event('change'));
+  }
+  else if ("ランスロット剣城" == this.value) {
+    document.getElementById("PlayerName").value = "剣城";
+    document.getElementById('PlayerGender').options[0].selected = true;      // 男
+    document.getElementById('PlayerPhysique').options[0].selected = true;    // 普通体系
+    document.getElementById("MainPara").value = 384;
+    document.getElementById("TechVal").value = 39;
+    document.getElementById("LuckVal").value = 207;
+    document.getElementById("PlayerElementList").value = "火";
+    document.getElementById('CommandList').options[0].selected = true; // シュート
+    document.getElementById('CommandList').dispatchEvent(new Event('change'));
+    document.getElementById('SkillList1').options[8].selected = true;  // クリティカル
+    document.getElementById('SkillList2').options[7].selected = true;  // 属性強化
+    // PlayersKeshinListの設定と変更実行
+    document.getElementById('PlayersKeshinList').options[17].selected = true;
+    document.getElementById('PlayersKeshinList').dispatchEvent(new Event('change'));
+  }
+  else if ("シャイニングドラゴン白竜" == this.value) {
+    document.getElementById("PlayerName").value = "白竜";
+    document.getElementById('PlayerGender').options[0].selected = true;      // 男
+    document.getElementById('PlayerPhysique').options[0].selected = true;    // 普通体系
+    document.getElementById("MainPara").value = 492;
+    document.getElementById("TechVal").value = 39;
+    document.getElementById("LuckVal").value = 174;
+    document.getElementById("PlayerElementList").value = "風";
+    document.getElementById('CommandList').options[0].selected = true; // シュート
+    document.getElementById('CommandList').dispatchEvent(new Event('change'));
+    document.getElementById('SkillList1').options[8].selected = true;  // クリティカル
+    document.getElementById('SkillList2').options[7].selected = true;  // 属性強化
+    // PlayersKeshinListの設定と変更実行
+    document.getElementById('PlayersKeshinList').options[5].selected = true;
+    document.getElementById('PlayersKeshinList').dispatchEvent(new Event('change'));
+  }
+  else if ("ダークエクソダスシュウ" == this.value) {
+    document.getElementById("PlayerName").value = "シュウ";
+    document.getElementById("MainPara").value = 477;
+    document.getElementById("TechVal").value = 39;
+    document.getElementById("LuckVal").value = 204;
+    document.getElementById("PlayerElementList").value = "林";
+    document.getElementById('CommandList').options[0].selected = true; // シュート
+    document.getElementById('CommandList').dispatchEvent(new Event('change'));
+    document.getElementById('SkillList1').options[8].selected = true;  // クリティカル
+    document.getElementById('SkillList2').options[7].selected = true;  // 属性強化
+    // PlayersKeshinListの設定と変更実行
+    document.getElementById('PlayersKeshinList').options[6].selected = true;
+    document.getElementById('PlayersKeshinList').dispatchEvent(new Event('change'));
+  }
+  else if ("ムサシ御門" == this.value) {
+    document.getElementById("PlayerName").value = "御門";
+    document.getElementById('PlayerGender').options[0].selected = true;      // 男
+    document.getElementById('PlayerPhysique').options[2].selected = true;    // 大柄体系
+    document.getElementById("MainPara").value = 443;
+    document.getElementById("TechVal").value = 39;
+    document.getElementById("LuckVal").value = 202;
+    document.getElementById("PlayerElementList").value = "山";
+    document.getElementById('CommandList').options[0].selected = true; // シュート
+    document.getElementById('CommandList').dispatchEvent(new Event('change'));
+    document.getElementById('SkillList1').options[8].selected = true;  // クリティカル
+    document.getElementById('SkillList2').options[7].selected = true;  // 属性強化
+    // PlayersKeshinListの設定と変更実行
+    document.getElementById('PlayersKeshinList').options[11].selected = true;
+    document.getElementById('PlayersKeshinList').dispatchEvent(new Event('change'));
+  }
+  else if ("ダークエクソダス吉良" == this.value) {
+    document.getElementById("PlayerName").value = "吉良";
+    document.getElementById('PlayerGender').options[0].selected = true;      // 男
+    document.getElementById('PlayerPhysique').options[0].selected = true;    // 普通体系
+    document.getElementById("MainPara").value = 457;
+    document.getElementById("TechVal").value = 39;
+    document.getElementById("LuckVal").value = 195;
+    document.getElementById("PlayerElementList").value = "火";
+    document.getElementById('CommandList').options[0].selected = true; // シュート
+    document.getElementById('CommandList').dispatchEvent(new Event('change'));
+    document.getElementById('SkillList1').options[8].selected = true;  // クリティカル
+    document.getElementById('SkillList2').options[7].selected = true;  // 属性強化
+    // PlayersKeshinListの設定と変更実行
+    document.getElementById('PlayersKeshinList').options[6].selected = true;
+    document.getElementById('PlayersKeshinList').dispatchEvent(new Event('change'));
+  }
+  else if ("グレイトゴンガン" == this.value) {
+    document.getElementById("PlayerName").value = "ゴンガン";
+    document.getElementById('PlayerGender').options[1].selected = true;      // 女
+    document.getElementById('PlayerPhysique').options[2].selected = true;    // 大柄体系
+    document.getElementById("MainPara").value = 460;
+    document.getElementById("TechVal").value = 39;
+    document.getElementById("LuckVal").value = 158;
+    document.getElementById("PlayerElementList").value = "風";
+    document.getElementById('CommandList').options[3].selected = true; // キャッチ
+    document.getElementById('CommandList').dispatchEvent(new Event('change'));
+    document.getElementById('SkillList1').options[8].selected = true;  // クリティカル
+    document.getElementById('SkillList2').options[5].selected = true;  // 山の心得
+    // PlayersKeshinListの設定と変更実行
+    document.getElementById('PlayersKeshinList').options[1].selected = true;
+    document.getElementById('PlayersKeshinList').dispatchEvent(new Event('change'));
+  }
+  else if ("グレイトカズマ" == this.value) {
+    document.getElementById("PlayerName").value = "カズマ";
+    document.getElementById('PlayerGender').options[0].selected = true;      // 男
+    document.getElementById('PlayerPhysique').options[0].selected = true;    // 普通体系
+    document.getElementById("MainPara").value = 450;
+    document.getElementById("TechVal").value = 39;
+    document.getElementById("LuckVal").value = 192;
+    document.getElementById("PlayerElementList").value = "林";
+    document.getElementById('CommandList').options[3].selected = true; // キャッチ
+    document.getElementById('CommandList').dispatchEvent(new Event('change'));
+    document.getElementById('SkillList1').options[8].selected = true;  // クリティカル
+    document.getElementById('SkillList2').options[5].selected = true;  // 山の心得
+    // PlayersKeshinListの設定と変更実行
+    document.getElementById('PlayersKeshinList').options[1].selected = true;
+    document.getElementById('PlayersKeshinList').dispatchEvent(new Event('change'));
+  }
+    else if ("グレイトテンタクル" == this.value) {
+    document.getElementById("PlayerName").value = "テンタクル";
+    document.getElementById('PlayerGender').options[0].selected = true;      // 男
+    document.getElementById('PlayerPhysique').options[2].selected = true;    // 大柄体系
+    document.getElementById("MainPara").value = 460;
+    document.getElementById("TechVal").value = 39;
+    document.getElementById("LuckVal").value = 177;
+    document.getElementById("PlayerElementList").value = "火";
+    document.getElementById('CommandList').options[3].selected = true; // キャッチ
+    document.getElementById('CommandList').dispatchEvent(new Event('change'));
+    document.getElementById('SkillList1').options[8].selected = true;  // クリティカル
+    document.getElementById('SkillList2').options[5].selected = true;  // 山の心得
+    // PlayersKeshinListの設定と変更実行
+    document.getElementById('PlayersKeshinList').options[1].selected = true;
+    document.getElementById('PlayersKeshinList').dispatchEvent(new Event('change'));
+  }
+  else if ("グレイト円堂" == this.value) {
+    document.getElementById("PlayerName").value = "円堂";
+    document.getElementById("MainPara").value = 480;
+    document.getElementById("TechVal").value = 39;
+    document.getElementById("LuckVal").value = 169;
+    document.getElementById("PlayerElementList").value = "山";
+    document.getElementById('CommandList').options[3].selected = true; // キャッチ
+    document.getElementById('CommandList').dispatchEvent(new Event('change'));
+    document.getElementById('SkillList1').options[8].selected = true;  // クリティカル
+    document.getElementById('SkillList2').options[7].selected = true;  // 属性強化
+    // PlayersKeshinListの設定と変更実行
+    document.getElementById('PlayersKeshinList').options[1].selected = true;
+    document.getElementById('PlayersKeshinList').dispatchEvent(new Event('change'));
+  }
 });
 
 // 化身データ
@@ -662,8 +881,8 @@ document.getElementById("PlayersKeshinList").addEventListener("change", function
       collect: keshinCollect
     };
   document.getElementById("KeshinSkillName1").value = keshinSkillName;
-  document.getElementById("Kp").value = keshinPoint;
-  document.getElementById("Ka").value = keshinAttack;
+  document.getElementById("KpVal").value = keshinPoint;
+  document.getElementById("KaVal").value = keshinAttack;
   document.getElementById("MoveCost").value = keshinMoveCost;
 
   const moveList = document.getElementById("UseMoveList");
@@ -675,6 +894,10 @@ document.getElementById("PlayersKeshinList").addEventListener("change", function
     const moveArray = Array.from(AllSpecialMove.options)
       .filter(opt => opt.dataset.category === sel.value || !opt.dataset.category)
       .map(opt => opt.cloneNode(true));
+    
+    // 必殺技の成否を選択可能にする
+    document.getElementById("MoveFailure").disabled = false;
+    document.getElementById("MoveFailure").selectedIndex = 0;
 
     // UseMoveListの初期化
     moveList.innerHTML = '';
@@ -697,6 +920,10 @@ document.getElementById("PlayersKeshinList").addEventListener("change", function
       moveOption.textContent = selectedKeshin[0].move;
       moveList.appendChild(moveOption);
     }
+    
+    // 必殺技の成否を選択不可にする
+    document.getElementById("MoveFailure").disabled = true;
+    document.getElementById("MoveFailure").selectedIndex = 0;
 
     // 必殺技未使用設定
     const option = document.createElement("option");
@@ -757,21 +984,63 @@ document.getElementById("OtherKeshinList2").addEventListener("change", function(
 // 実行コマンド選択による値変更
 document.getElementById("CommandList").addEventListener("change", function() {
   
+  const shotSelectLabel = document.getElementById("ShotCollectLabel");
+  const shotSelect = document.getElementById("ShotCollectList");
+  const defenceSelectLabel = document.getElementById("DefenseCollectLabel");
+  const defenceSelect = document.getElementById("DefenseCollectList");
+  
   if ("FW" == this.value) {
     document.getElementById("MainParaLabel").textContent  = "キック";
     document.getElementById("MainPara").placeholder = "キック値入力";
+    document.getElementById("cMainPara").textContent  = "キック";
+    document.getElementById("cMainPara").title = "選手のスキル、化身スキルを加味したキック値です";
+    
+    // 距離補正表示、守備補正非表示
+    shotSelectLabel.style.textDecoration = 'none';
+    shotSelect.disabled = false;
+    shotSelect.selectedIndex = 0;
+    defenceSelectLabel.style.textDecoration = 'line-through';
+    defenceSelect.disabled = true;
+    defenceSelect.selectedIndex = 0;
   }
   if ("MF" == this.value) {
     document.getElementById("MainParaLabel").textContent  = "ドリブル";
     document.getElementById("MainPara").placeholder = "ドリブル値入力";
+    document.getElementById("cMainPara").textContent  = "ドリブル";
+    document.getElementById("cMainPara").title = "選手のスキル、化身スキルを加味したドリブル値です";
+    // 距離補正非表示、守備補正非表示
+    shotSelectLabel.style.textDecoration = 'line-through';
+    shotSelect.disabled = true;
+    shotSelect.selectedIndex = 0;
+    defenceSelectLabel.style.textDecoration = 'line-through';
+    defenceSelect.disabled = true;
+    defenceSelect.selectedIndex = 0;
   }
   if ("DF" == this.value) {
     document.getElementById("MainParaLabel").textContent  = "ブロック";
     document.getElementById("MainPara").placeholder = "ブロック値入力";
+    document.getElementById("cMainPara").textContent  = "ブロック";
+    document.getElementById("cMainPara").title = "選手のスキル、化身スキルを加味したブロック値です";
+    // 距離補正非表示、守備補正表示
+    shotSelectLabel.style.textDecoration = 'line-through';
+    shotSelect.disabled = true;
+    shotSelect.selectedIndex = 0;
+    defenceSelectLabel.style.textDecoration = 'none';
+    defenceSelect.disabled = false;
+    defenceSelect.selectedIndex = 1;
   }
   if ("GK" == this.value) {
     document.getElementById("MainParaLabel").textContent  = "キャッチ";
     document.getElementById("MainPara").placeholder = "キャッチ値入力";
+    document.getElementById("cMainPara").textContent  = "キャッチ";
+    document.getElementById("cMainPara").title = "選手のスキル、化身スキルを加味したキャッチ値です";
+    // 距離補正非表示、守備補正表示
+    shotSelectLabel.style.textDecoration = 'line-through';
+    shotSelect.disabled = true;
+    shotSelect.selectedIndex = 0;
+    defenceSelectLabel.style.textDecoration = 'none';
+    defenceSelect.disabled = false;
+    defenceSelect.selectedIndex = 1;
   }
 
   // 必殺技リストにコマンドに合致するもののみ設定
@@ -829,6 +1098,8 @@ function calc() {
   document.getElementById("rKeshinSkill1").textContent = selectedKeshin[0].skillName;
   document.getElementById("rKeshinSkill2").textContent = selectedKeshin[1].skillName;
   document.getElementById("rKeshinSkill3").textContent = selectedKeshin[2].skillName;
+  const selectUseMoveList = document.getElementById('UseMoveList');
+  const textselectUseMoveList = selectUseMoveList.options[selectUseMoveList.selectedIndex].text;
 
   const selectSkillList1 = document.getElementById('SkillList1');
   const textSkillList1 = selectSkillList1.options[selectSkillList1.selectedIndex].text;
@@ -849,11 +1120,11 @@ function calc() {
 
   // ベースパワー計算に用いるステータス取得
   let mainPara = Number(document.getElementById("MainPara").value) || 0;
-  let tech = Number(document.getElementById("tech").value) || 0;
-  let luck = (Number(document.getElementById("luck").value) || 0);
+  let tech = Number(document.getElementById("TechVal").value) || 0;
+  let luck = (Number(document.getElementById("LuckVal").value) || 0);
 
   // パラメータ強化系スキルが参照する情報取得(性別と体格)
-  const playersGendr = document.getElementById('PlayerGendert').value;
+  const playersGendr = document.getElementById('PlayerGender').value;
   const playersPhysique = document.getElementById('PlayerPhysique').value;
 
   // パラメータ強化系の習得スキルを反映
@@ -934,26 +1205,15 @@ function calc() {
 
   let movePower = Number(document.getElementById("MovePower").value) || 0;
   // 技の基本威力
-  if ( "なし" == selectedKeshin[0].name ) {
+  if ( "なし" == selectedKeshin[0].name && !( "なし" == textselectUseMoveList ) ) {
     // 化身必殺技でない場合のみ最終進化次補正で1.5倍
     movePower *= 1.5;
   }
   document.getElementById("rMoveBasePower").textContent = movePower;
   // 守備補正
-  // 守備補正は最も発生率が高い1.2倍を計算対象とする
-  document.getElementById("rDFCollect").textContent = "1.0";
-  document.getElementById("cMainPara").textContent = "キック"
-  if ( "MF" == selectedCommand.value ) {
-    document.getElementById("cMainPara").textContent = "ドリブル"
-  } else if ( "DF" == selectedCommand.value ) {
-    document.getElementById("rDFCollect").textContent = "1.2";
-    document.getElementById("cMainPara").textContent = "ブロック"
-  } else if ( "GK" == selectedCommand.value ) {
-    document.getElementById("rDFCollect").textContent = "1.2";
-    document.getElementById("cMainPara").textContent = "キャッチ"
-  }
-  const dfRandValue = Number(document.getElementById("rDFCollect").textContent) || 1.0;
-  movePower = movePower * dfRandValue
+  const defenceCollect = document.getElementById("DefenseCollectList").value;
+  document.getElementById("rDFCollect").textContent = defenceCollect;
+  movePower = movePower * defenceCollect;
   
   // 選手との属性取得
   const playersElement = document.getElementById('PlayerElementList').value;
@@ -1014,41 +1274,39 @@ function calc() {
       konshinPower = 1.2;
     }
   });
-  document.getElementById("rKonshin").textContent = konshinPower;
+  document.getElementById("rKonshin").textContent = konshinPower.toFixed(1);
 
-  // 失敗補正(化身必殺技の場合のみ失敗なし)
-  let failureVal = 1.0;
-  if ( "なし" == selectedKeshin[0].name ) {
-    failureVal = 0.8;
-  }
+  // 失敗補正
+  let failureVal = document.getElementById("MoveFailure").value;
   document.getElementById("rSuccessCollect").textContent = failureVal;
   
   // 乱数上振れ(発生率が高い1.2倍で計算)
-  let randomValue = 1.2;
+  let randomValue = document.getElementById("RandomValue").value;
   document.getElementById("rRandom").textContent = randomValue;
   
   // 距離補正
-  let distanceCollect = 1.0;
-  document.getElementById("rDistance").textContent = distanceCollect;
+  shotCollect = document.getElementById("ShotCollectList").value;
+  document.getElementById("rDistance").textContent = shotCollect;
 
   // 属性勝負補正(守備側のみの処理)
+  // 攻守補正[互角,有利,不利]
+  let elementCollect = [1.0, 1.0, 1.0];
   document.getElementById("rElementBattle").textContent = "なし";
   if ( "DF" == selectedCommand.value || "GK" == selectedCommand.value ) {
     // ディフェンスの場合、属性勝負補正ありであることを記載
     document.getElementById("rElementBattle").textContent = "あり";
+    elementCollect = [1.0, 1.2, 0.8];
   }
-  // 攻守補正
-  let elementCollect = 1.0;
 
   // 化身補正(KP+KA)
-  const ka = Number(document.getElementById("Ka").value) || 0;
-  const kp = Number(document.getElementById("Kp").value) || 0;
+  const ka = Number(document.getElementById("KaVal").value) || 0;
+  const kp = Number(document.getElementById("KpVal").value) || 0;
 
   document.getElementById("rKPKA").textContent = ka + kp;
 
   // Lv差補正(対戦では補正なしを想定)
   let lvCollect = 1.0;
-  document.getElementById("rLvCollect").textContent = lvCollect;
+  document.getElementById("rLvCollect").textContent = lvCollect.toFixed(1);
 
   // クリティカル率
   let rCriValue = Math.floor( luck / 25 );
@@ -1064,23 +1322,23 @@ function calc() {
 
   // トータルテクニック
   const totalTech =
-    Math.ceil((movePower + basePower) * randomValue * konshinPower * failureVal * elementCollect + ka + kp);
+    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCollect[0] + ka + kp) * shotCollect);
   // トータルテクニック(属性勝ち)
   const totalTechWin =
-    Math.ceil((movePower + basePower) * randomValue * konshinPower * failureVal * elementCollect * 1.2 + ka + kp);
+    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCollect[1] + ka + kp) * shotCollect);
   // トータルテクニック(属性負け)
   const totalTechLose =
-    Math.ceil((movePower + basePower) * randomValue * konshinPower * failureVal * elementCollect * 0.8 + ka + kp);
+    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCollect[2] + ka + kp) * shotCollect);
 
   // クリティカル
   const totalCritical =
-    Math.ceil((movePower + basePower) * randomValue * konshinPower * failureVal * elementCollect * 2 + ka + kp);
+    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCollect[0] + ka + kp) * 2 * shotCollect);
   // クリティカル(属性勝ち)
   const totalCriticalWin =
-    Math.ceil((movePower + basePower) * randomValue * konshinPower * failureVal * elementCollect * 2 * 1.2 + ka + kp);
+    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCollect[1]+ ka + kp) * 2 * shotCollect);
   // クリティカル(属性負け)
   const totalCriticalLose =
-    Math.ceil((movePower + basePower) * randomValue * konshinPower * failureVal * elementCollect * 2 * 0.8 + ka + kp);
+    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCollect[2] + ka + kp) * 2 * shotCollect);
 
   // 出力
   document.getElementById("rName").textContent =
@@ -1093,8 +1351,6 @@ function calc() {
   document.getElementById("rBasePower").textContent =
     basePower.toFixed(6);
 
-  const selectUseMoveList = document.getElementById('UseMoveList');
-  const textselectUseMoveList = selectUseMoveList.options[selectUseMoveList.selectedIndex].text;
   document.getElementById("rMoveName").textContent = textselectUseMoveList;
 
   document.getElementById("rCritical").textContent = 
@@ -1129,8 +1385,19 @@ function resizeTableFonts() {
   document.querySelectorAll("td, th").forEach(autoShrinkCell);
 }
 
+document.addEventListener('keydown', (e) => {
+  // data-integer 属性を持つ input 要素のみ対象
+  if (!e.target.matches('input[type="number"][data-integer]')) return;
+
+  // 小数点、E表記、マイナスの入力をブロック
+  if (['.', ',', 'e', 'E','-','－'].includes(e.key)) {
+    e.preventDefault();
+  }
+});
+
 // ページロード時の処理
 window.addEventListener('DOMContentLoaded', () => {
+
   // CommandListの初期発火
   const commandList = document.getElementById("CommandList");
   commandList.value = 'FW';
