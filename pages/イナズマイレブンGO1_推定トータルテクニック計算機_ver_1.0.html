@@ -47,7 +47,7 @@
     width: 120px;
   }
   #PlayerGender, #PlayerPhysique, #PlayerElementList,
-  #ShotCollectList, #DefenseCollectList, #MoveFailure ,#RandomValue {
+  #ShotCorrectionList, #DefenseCorrectionList, #MoveFailure ,#RandomValue {
     width: 80px;
   }
   
@@ -223,14 +223,14 @@ function exportTable() {
     <option value="DF">ブロック</option>
     <option value="GK">キャッチ</option>
   </select>
-  <label id="ShotCollectLabel">距離補正</label>
-  <select id="ShotCollectList">
+  <label id="ShotCorrectionLabel">距離補正</label>
+  <select id="ShotCorrectionList">
     <option value="1.0" selected>1.0倍</option>
     <option value="0.8">0.8倍</option>
     <option value="0.5">0.5倍</option>
   </select>
-  <label id="DefenseCollectLabel">守備補正</label>
-  <select id="DefenseCollectList">
+  <label id="DefenseCorrectionLabel">守備補正</label>
+  <select id="DefenseCorrectionList">
     <option value="1.0">1倍</option>
     <option value="1.2" selected>1.2倍</option>
     <option value="1.44">1.44倍</option>
@@ -241,6 +241,11 @@ function exportTable() {
   <label>ラッキー</label><input type="number" data-integer id="LuckVal" placeholder="ラッキー値入力" value="1" min="1" step="1">
   <label>習得スキル1</label><select id="SkillList1"></select>
   <label>習得スキル2</label><select id="SkillList2"></select>
+  <label>体調</label>
+  <select id="ConditionList">
+    <option value="1.0" selected>残GPが0でない</option>
+    <option value="0.5">残GPが0</option>
+  </select>
 </div>
 <br><br>
 <label>■化身・使用必殺技入力欄</label><br>
@@ -352,9 +357,9 @@ function exportTable() {
     <th id="movePower" title="最終進化まで成長した際の必殺技の威力です">進化補正</th>
     <th id="moveElementType" title="必殺技の属性です">属性</th>
     <th id="moveElementMatch" title="必殺技の属性と使用者の属性の相性です">相性</th>
-    <th id="defCollect" title="守備側にのみかかる補正で、ランダムで1.0倍、1.2倍、1.44倍、1.8倍になります&#13;&#10;最も発生率が高いのは1.2倍です">守備補正</th>
-    <th id="skillCollect" title="必殺技を直接強化するスキルによる補正です">スキル補正</th>
-    <th id="elementMatchCollect" title="属性相性による補正を含めた最終的な必殺技威力です">属性相性</th>
+    <th id="defCorrection" title="守備側にのみかかる補正で、ランダムで1.0倍、1.2倍、1.44倍、1.8倍になります&#13;&#10;最も発生率が高いのは1.2倍です">守備補正</th>
+    <th id="skillCorrection" title="必殺技を直接強化するスキルによる補正です">スキル補正</th>
+    <th id="elementMatchCorrection" title="属性相性による補正を含めた最終的な必殺技威力です">属性相性</th>
   </tr>
   <!-- 技データ値 -->
   <tr>
@@ -362,33 +367,36 @@ function exportTable() {
     <td id="rMoveBasePower"></td>
     <td id="rMoveElement"></td>
     <td id="rMoveElementMatch"></td>
-    <td id="rDFCollect"></td>
+    <td id="rDFCorrection"></td>
     <td id="rPowerElement"></td>
     <td id="rElementMatch"></td>
   </tr>
   <!-- 各種補正項目 -->
   <tr>
-    <th id="konshinCollect" title="スキル「ちょうわざ！」、「こんしん！」による補正です&#13;&#10;これらは重複しません" colspan="3">こんしん！補正</th>
-    <th id="successCollect"
+    <th id="konshinCorrection" title="スキル「ちょうわざ！」、「こんしん！」による補正です&#13;&#10;これらは重複しません" colspan="2">こんしん！補正</th>
+    <th id="successCorrection"
      title="テクニック値による必殺技の成功、失敗判定によって生じる補正です&#13;&#10;選手のテクニック値を上げれば失敗判定になる確率は下がりますが、GO2以降と異なり失敗する確率を0にすることはできません">失敗補正</th>
-    <th id="randomCollect"
+    <th id="randomCorrection"
      title="乱数によって1.0倍か1.2倍の補正がかかります&#13;&#10;最も発生率が高いのは1.2倍です">上振れ</th>
     <th id="elementBattle" title="相手選手との属性相性の優劣判定です&#13;&#10;守備側にのみ発生します">相性判定</th>
-    <th id="keshinCollect" title="選手の発動化身の現在KPとKAの合計値です&#13;&#10;通常必殺技であれば0です">化身補正</th>
-    <th id="shootCollect"
+    <th id="keshinCorrection" title="選手の発動化身の現在KPとKAの合計値です&#13;&#10;通常必殺技であれば0です">化身補正</th>
+    <th id="shootCorrection"
      title="シュートの場合のみ、ゴールとの距離によって1.0倍、0.8倍、0.5倍の補正が与えられます">距離補正</th>
-    <th id="lvCollect" 
+    <th id="lvCorrection" 
      title="相手とのレベル差があった場合の補正です&#13;&#10;同レベルでの対戦を想定し、1.0倍固定としています">Lv差補正</th>
+    <th id="conditionCorrection"
+     title="GPが0の場合、全てのコマンドバトルに0.5倍の補正がかかります">体調補正</th>
   </tr>
   <!-- 各種補正値 -->
   <tr>
-    <td id="rKonshin" colspan="3"></td>
-    <td id="rSuccessCollect"></td>
+    <td id="rKonshin" colspan="2"></td>
+    <td id="rSuccessCorrection"></td>
     <td id="rRandom"></td>
     <td id="rElementBattle"></td>
     <td id="rKPKA"></td>
     <td id="rDistance"></td>
-    <td id="rLvCollect"></td>
+    <td id="rLvCorrection"></td>
+    <td id="rConditionCorrection"></td>
   </tr>
   <!-- 結果項目 -->
   <tr>
@@ -943,7 +951,7 @@ document.getElementById("UseMoveList").addEventListener("change", function(e) {
   // 必殺技情報取得
   const [keshinName, keshinElement, keshinPoint, keshinAttack, 
          moveName, moveElement, moveType, movePower, moveCost, 
-         keshinSkillName, keshinSkillMoveNote, keshinCollect] = e.target.value.split('|');
+         keshinSkillName, keshinSkillMoveNote, keshinCorrection] = e.target.value.split('|');
 
   // 必殺技情報設定
   document.getElementById("MoveElement").value = moveElement;
@@ -956,7 +964,7 @@ document.getElementById("PlayersKeshinList").addEventListener("change", function
   // 化身情報設定
   const [keshinName, keshinElement, keshinPoint, keshinAttack, 
          keshinMove, keshinMoveElement, keshinMoveType, keshinMovePower, keshinMoveCost, 
-         keshinSkillName, keshinSkillMoveNote, keshinCollect] = e.target.value.split('|');
+         keshinSkillName, keshinSkillMoveNote, keshinCorrection] = e.target.value.split('|');
   selectedKeshin[0] = {
       name: keshinName,
       element: keshinElement,
@@ -969,7 +977,7 @@ document.getElementById("PlayersKeshinList").addEventListener("change", function
       moveCost: keshinMoveCost,
       skillName: keshinSkillName,
       skillMoveNote: keshinSkillMoveNote,
-      collect: keshinCollect
+      collect: keshinCorrection
     };
   document.getElementById("KeshinSkillName1").value = keshinSkillName;
   document.getElementById("KpVal").value = keshinPoint;
@@ -985,6 +993,10 @@ document.getElementById("PlayersKeshinList").addEventListener("change", function
     const moveArray = Array.from(AllSpecialMove.options)
       .filter(opt => opt.dataset.category === sel.value || !opt.dataset.category)
       .map(opt => opt.cloneNode(true));
+    
+    // 体調補正を有効化
+    document.getElementById("ConditionList").disabled = false;
+    document.getElementById("ConditionList").selectedIndex = 0;
     
     // 必殺技の成否を選択可能にする
     document.getElementById("MoveFailure").disabled = false;
@@ -1012,6 +1024,10 @@ document.getElementById("PlayersKeshinList").addEventListener("change", function
       moveList.appendChild(moveOption);
     }
     
+    // 体調補正を有効化
+    document.getElementById("ConditionList").disabled = true;
+    document.getElementById("ConditionList").selectedIndex = 0;
+    
     // 必殺技の成否を選択不可にする
     document.getElementById("MoveFailure").disabled = true;
     document.getElementById("MoveFailure").selectedIndex = 0;
@@ -1033,7 +1049,7 @@ document.getElementById("PlayersKeshinList").addEventListener("change", function
 document.getElementById("OtherKeshinList1").addEventListener("change", function(e) {
   const [keshinName, keshinElement, keshinPoint, keshinAttack, 
          keshinMove, keshinMoveElement, keshinMoveType, keshinMovePower, keshinMoveCost, 
-         keshinSkillName, keshinSkillMoveNote, keshinCollect] = e.target.value.split('|');
+         keshinSkillName, keshinSkillMoveNote, keshinCorrection] = e.target.value.split('|');
   selectedKeshin[1] = {
       name: keshinName,
       element: keshinElement,
@@ -1046,7 +1062,7 @@ document.getElementById("OtherKeshinList1").addEventListener("change", function(
       moveCost: keshinMoveCost,
       skillName: keshinSkillName,
       skillMoveNote: keshinSkillMoveNote,
-      collect: keshinCollect
+      collect: keshinCorrection
     };
   document.getElementById("KeshinSkillName2").value = keshinSkillName;
 });
@@ -1054,7 +1070,7 @@ document.getElementById("OtherKeshinList1").addEventListener("change", function(
 document.getElementById("OtherKeshinList2").addEventListener("change", function(e) {
   const [keshinName, keshinElement, keshinPoint, keshinAttack, 
          keshinMove, keshinMoveElement, keshinMoveType, keshinMovePower, keshinMoveCost, 
-         keshinSkillName, keshinSkillMoveNote, keshinCollect] = e.target.value.split('|');
+         keshinSkillName, keshinSkillMoveNote, keshinCorrection] = e.target.value.split('|');
   selectedKeshin[2] = {
       name: keshinName,
       element: keshinElement,
@@ -1067,7 +1083,7 @@ document.getElementById("OtherKeshinList2").addEventListener("change", function(
       moveCost: keshinMoveCost,
       skillName: keshinSkillName,
       skillMoveNote: keshinSkillMoveNote,
-      collect: keshinCollect
+      collect: keshinCorrection
     };
   document.getElementById("KeshinSkillName3").value = keshinSkillName;
 });
@@ -1075,10 +1091,10 @@ document.getElementById("OtherKeshinList2").addEventListener("change", function(
 // 実行コマンド選択による値変更
 document.getElementById("CommandList").addEventListener("change", function() {
   
-  const shotSelectLabel = document.getElementById("ShotCollectLabel");
-  const shotSelect = document.getElementById("ShotCollectList");
-  const defenceSelectLabel = document.getElementById("DefenseCollectLabel");
-  const defenceSelect = document.getElementById("DefenseCollectList");
+  const shotSelectLabel = document.getElementById("ShotCorrectionLabel");
+  const shotSelect = document.getElementById("ShotCorrectionList");
+  const defenceSelectLabel = document.getElementById("DefenseCorrectionLabel");
+  const defenceSelect = document.getElementById("DefenseCorrectionList");
   
   if ("FW" == this.value) {
     document.getElementById("MainParaLabel").textContent  = "キック";
@@ -1302,9 +1318,9 @@ function calc() {
   }
   document.getElementById("rMoveBasePower").textContent = movePower;
   // 守備補正
-  const defenceCollect = document.getElementById("DefenseCollectList").value;
-  document.getElementById("rDFCollect").textContent = defenceCollect;
-  movePower = movePower * defenceCollect;
+  const defenceCorrection = document.getElementById("DefenseCorrectionList").value;
+  document.getElementById("rDFCorrection").textContent = defenceCorrection;
+  movePower = movePower * defenceCorrection;
   
   // 選手との属性取得
   const playersElement = document.getElementById('PlayerElementList').value;
@@ -1356,9 +1372,13 @@ function calc() {
 
   // こんしん！補正
   let konshinPower = 1;
+  // GP量
+  let GpCorrection = document.getElementById("ConditionList").value;
+  document.getElementById("rConditionCorrection").textContent = GpCorrection;
+  
   // 化身必殺技でない
   calcSkillList.forEach(skill => {
-    if ( ( skill.includes("こんしん！") && "なし" == selectedKeshin[0].name ) ||
+    if ( ( skill.includes("こんしん！") && "なし" == selectedKeshin[0].name && "1.0" == GpCorrection ) ||
          ( skill.includes("ちょうわざ！") && "なし" == selectedKeshin[0].name )
        ) {
       // こんしん！補正
@@ -1369,24 +1389,24 @@ function calc() {
 
   // 失敗補正
   let failureVal = document.getElementById("MoveFailure").value;
-  document.getElementById("rSuccessCollect").textContent = failureVal;
+  document.getElementById("rSuccessCorrection").textContent = failureVal;
   
   // 乱数上振れ(発生率が高い1.2倍で計算)
   let randomValue = document.getElementById("RandomValue").value;
   document.getElementById("rRandom").textContent = randomValue;
   
   // 距離補正
-  shotCollect = document.getElementById("ShotCollectList").value;
-  document.getElementById("rDistance").textContent = shotCollect;
+  shotCorrection = document.getElementById("ShotCorrectionList").value;
+  document.getElementById("rDistance").textContent = shotCorrection;
 
   // 属性勝負補正(守備側のみの処理)
   // 攻守補正[互角,有利,不利]
-  let elementCollect = [1.0, 1.0, 1.0];
+  let elementCorrection = [1.0, 1.0, 1.0];
   document.getElementById("rElementBattle").textContent = "なし";
   if ( "DF" == selectedCommand.value || "GK" == selectedCommand.value ) {
     // ディフェンスの場合、属性勝負補正ありであることを記載
     document.getElementById("rElementBattle").textContent = "あり";
-    elementCollect = [1.0, 1.2, 0.8];
+    elementCorrection = [1.0, 1.2, 0.8];
   }
 
   // 化身補正(KP+KA)
@@ -1396,40 +1416,40 @@ function calc() {
   document.getElementById("rKPKA").textContent = ka + kp;
 
   // Lv差補正(対戦では補正なしを想定)
-  let lvCollect = 1.0;
-  document.getElementById("rLvCollect").textContent = lvCollect.toFixed(1);
+  let lvCorrection = 1.0;
+  document.getElementById("rLvCorrection").textContent = lvCorrection.toFixed(1);
 
   // クリティカル率
   let rCriValue = Math.floor( luck / 25 );
-  let criticalCollect = 1.0;
+  let criticalCorrection = 1.0;
   // 化身必殺技でない
   calcSkillList.forEach(skill => {
     if ( skill.includes("クリティカル！") ) {
       // クリティカル発生率は1.5倍で計算
-      criticalCollect = 1.5;
+      criticalCorrection = 1.5;
     }
   });
-  rCriValue = Math.floor( rCriValue * criticalCollect );
+  rCriValue = Math.floor( rCriValue * criticalCorrection );
 
   // トータルテクニック
   const totalTech =
-    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCollect[0] + ka + kp) * shotCollect);
+    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[0] + ka + kp) * shotCorrection * GpCorrection);
   // トータルテクニック(属性勝ち)
   const totalTechWin =
-    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCollect[1] + ka + kp) * shotCollect);
+    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[1] + ka + kp) * shotCorrection * GpCorrection);
   // トータルテクニック(属性負け)
   const totalTechLose =
-    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCollect[2] + ka + kp) * shotCollect);
+    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[2] + ka + kp) * shotCorrection * GpCorrection);
 
   // クリティカル
   const totalCritical =
-    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCollect[0] + ka + kp) * 2 * shotCollect);
+    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[0] + ka + kp) * 2 * shotCorrection * GpCorrection);
   // クリティカル(属性勝ち)
   const totalCriticalWin =
-    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCollect[1]+ ka + kp) * 2 * shotCollect);
+    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[1]+ ka + kp) * 2 * shotCorrection * GpCorrection);
   // クリティカル(属性負け)
   const totalCriticalLose =
-    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCollect[2] + ka + kp) * 2 * shotCollect);
+    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[2] + ka + kp) * 2 * shotCorrection * GpCorrection);
 
   // 出力
   document.getElementById("rName").textContent =
