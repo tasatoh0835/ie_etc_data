@@ -1302,12 +1302,14 @@ function calc() {
   });
 
   const baseValue = ( mainPara * 8 + tech * 2 ) / 10;
-  const baseTechDisplay = Math.ceil(baseValue);
+// TODO:
+//  const baseTechDisplay = Math.ceil(baseValue);
+  const baseTechDisplay = Math.floor(baseValue);
   
   // ここから特に怪しい部分
   // ベーステクニックから計算する推定ベースパワー
   const basePower =
-     ( ( baseValue * 53 / 100 ) - ( baseValue ** 2 / (3350 + baseValue / 862) ) + 3 / 5 );
+     Math.floor( ( baseValue * 53 / 100 ) - ( baseValue ** 2 / (3350 + baseValue / 862) ) + 3 / 5 );
   // ここまで特に怪しい部分
 
   let movePower = Number(document.getElementById("MovePower").value) || 0;
@@ -1431,25 +1433,44 @@ function calc() {
   });
   rCriValue = Math.floor( rCriValue * criticalCorrection );
 
+//  // トータルテクニック
+//  const totalTech =
+//    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[0] + ka + kp) * shotCorrection * GpCorrection);
+//  // トータルテクニック(属性勝ち)
+//  const totalTechWin =
+//    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[1] + ka + kp) * shotCorrection * GpCorrection);
+//  // トータルテクニック(属性負け)
+//  const totalTechLose =
+//    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[2] + ka + kp) * shotCorrection * GpCorrection);
+//
+//  // クリティカル
+//  const totalCritical =
+//    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[0] + ka + kp) * 2 * shotCorrection * GpCorrection);
+//  // クリティカル(属性勝ち)
+//  const totalCriticalWin =
+//    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[1]+ ka + kp) * 2 * shotCorrection * GpCorrection);
+//  // クリティカル(属性負け)
+//  const totalCriticalLose =
+//    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[2] + ka + kp) * 2 * shotCorrection * GpCorrection);
   // トータルテクニック
   const totalTech =
-    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[0] + ka + kp) * shotCorrection * GpCorrection);
+    Math.floor(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[0] + ka + kp) * shotCorrection * GpCorrection);
   // トータルテクニック(属性勝ち)
   const totalTechWin =
-    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[1] + ka + kp) * shotCorrection * GpCorrection);
+    Math.floor(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[1] + ka + kp) * shotCorrection * GpCorrection);
   // トータルテクニック(属性負け)
   const totalTechLose =
-    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[2] + ka + kp) * shotCorrection * GpCorrection);
+    Math.floor(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[2] + ka + kp) * shotCorrection * GpCorrection);
 
   // クリティカル
   const totalCritical =
-    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[0] + ka + kp) * 2 * shotCorrection * GpCorrection);
+    Math.floor(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[0] + ka + kp) * 2 * shotCorrection * GpCorrection);
   // クリティカル(属性勝ち)
   const totalCriticalWin =
-    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[1]+ ka + kp) * 2 * shotCorrection * GpCorrection);
+    Math.floor(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[1]+ ka + kp) * 2 * shotCorrection * GpCorrection);
   // クリティカル(属性負け)
   const totalCriticalLose =
-    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[2] + ka + kp) * 2 * shotCorrection * GpCorrection);
+    Math.floor(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[2] + ka + kp) * 2 * shotCorrection * GpCorrection);
 
   // 出力
   document.getElementById("rName").textContent =
