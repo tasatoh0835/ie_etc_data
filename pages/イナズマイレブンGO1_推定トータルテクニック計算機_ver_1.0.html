@@ -1379,6 +1379,7 @@ function calc() {
   let konshinPower = 1;
   // GP量から体調補正を取得
   let GpCorrection = document.getElementById("ConditionList").value;
+  let flgKonshin = false;
   // 化身必殺技でなく、ちょうわざ！またはこんしんを習得している場合、こんしん！補正を付与
   calcSkillList.forEach(skill => {
     if ( ( skill.includes("こんしん！") && "なし" == selectedKeshin[0].name && "1.0" == GpCorrection ) ||
@@ -1386,14 +1387,23 @@ function calc() {
        ) {
       // こんしん！補正
       konshinPower = 1.2;
+      flgKonshin = true;
     }
   });
 
   // 失敗補正
   let failureVal = document.getElementById("MoveFailure").value;
+  let flgFailure = false;
+  if ( 1.0 == failureVal ) {
+    let flgFailure = true;
+  }
   
   // 乱数上振れ(発生率が高い1.2倍で計算)
   let randomValue = document.getElementById("RandomValue").value;
+  let flgRandomUp = true;
+  if ( 1.0 == randomValue ) {
+    flgRandomUp = false;
+  }
   
   // 距離補正
   shotCorrection = document.getElementById("ShotCorrectionList").value;
@@ -1431,51 +1441,80 @@ function calc() {
 
   // ---------------------------------------------------------------------------------------------- //
   // トータルテクニック計算共通ロジック
-  function calculateTotalTech(elemCorrStr, isCritical = false) {
-    const elemCorr = Number(elemCorrStr) || 1.0;
-    
-    // (1) ベースパワー + 技威力
+  function calculateTotalTech(options = {}) {
+    const {
+      basePara = 0,
+      tech = 0,
+      movePower = 10, // 技威力(最低値は10)
+      hasKonshin = false,
+      isRandomUp = false, // true: 上振れ(1.2), false: 下振れ(1.0)
+      isFailure = false,
+      isCritical = false,
+      elemCorr = 1.0,
+      ka = 0,
+      kp = 0,
+      shotCorrection = 1.0,
+      GpCorrection = 1.0
+    } = options;
+  
+    // 1. ベーステクニックの算出
+    const baseTech = tech + Math.floor(basePara * 0.8);
+  
+    // 2. ベースパワー算出
+    const basePower = Math.floor(baseTech * 0.5);
+  
+    // 3. 基本パワー (ベースパワー + 技威力)
     let power = basePower + movePower;
-
-    // (2) 基礎補正 (* 1.057)
-    power = Math.floor(power * 1.057);
-
-    // (3) こんしん！補正
-    if (konshinPower > 1.0) {
-      power = Math.ceil(power * konshinPower);
+  
+    // 4. こんしん！補正 (1.2倍・切り捨て)
+    if (hasKonshin) {
+      power = Math.floor(power * 1.2);
     }
-
-    // (4) 失敗補正
-    if (failureVal < 1.0) {
-      power = Math.floor(power * failureVal);
+  
+    // 5. 失敗補正 (0.8倍・切り捨て)
+    if (isFailure) {
+      power = Math.floor(power * 0.8);
     }
-
-    // (5) 乱数補正（下振れ 1.0 / 上振れ 1.2）
-    power = Math.ceil(power * Number(randomValue));
-
-    // (6) 最終調整 (+1)
-    // power = power + 1;
-
-    // (7) クリティカル（2倍）
+  
+    // 6. 乱数補正 (上振れ 1.2倍・切り上げ / 下振れ 1.0倍)
+    if (isRandomUp) {
+      power = Math.ceil(power * 1.2);
+    }
+  
+    // 7. クリティカル (2倍)
     if (isCritical) {
       power = power * 2;
     }
-
-    // (8) 属性勝負・化身加算
-    power = Math.floor(power * elemCorr) + ka + kp;
-
-    // (9) 距離補正・体調（GP）補正
+  
+    // 8. 属性勝負・化身加算
+    power = Math.floor(power * Number(elemCorr)) + ka + kp;
+  
+    // 9. 距離・GP補正
     power = Math.floor(power * Number(shotCorrection));
     power = Math.floor(power * Number(GpCorrection));
-
+  
     return power;
   }
   // トータルテクニック計算共通ロジック
   // ---------------------------------------------------------------------------------------------- //
 
   // 5. 各出力用トータルテクニックの算出
-  // トータルテクニック(クリティカル)
-  const totalTech = calculateTotalTech(elementCorrection[0], false);
+  const baseParams = {
+    basePara: mainPara,
+    tech: tech,
+    movePower: movePower,
+    hasKonshin: flgKonshin,
+    isRandomUp: flgRandomUp,
+    isFailure: flgFailure,
+    ka: ka,
+    kp: kp,
+    shotCorrection: shotCorrection,
+    GpCorrection: GpCorrection
+  };
+
+  // 通常（相性互角）
+  const totalTech = calculateTotalTech({ ...baseParams, elemCorr: elementCorrection[0], isCritical: false });
+  
   const totalCritical = calculateTotalTech(elementCorrection[0], true);
   // 属性有利時のトータルテクニック(クリティカル)
   const totalTechWin = calculateTotalTech(elementCorrection[1], false);
