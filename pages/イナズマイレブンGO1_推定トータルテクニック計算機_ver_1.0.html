@@ -1200,11 +1200,8 @@ document.getElementById("CommandList").addEventListener("change", function() {
 
 // 推定トータルテクニック計算
 function calc() {
-  // 表示情報設定
-  document.getElementById("rKeshinName").textContent = selectedKeshin[0].name;
-  document.getElementById("rKeshinSkill1").textContent = selectedKeshin[0].skillName;
-  document.getElementById("rKeshinSkill2").textContent = selectedKeshin[1].skillName;
-  document.getElementById("rKeshinSkill3").textContent = selectedKeshin[2].skillName;
+  // ---------------------------------------------------------------------------------------------- //
+  // ベーステクニック basePower算出
   const selectUseMoveList = document.getElementById('UseMoveList');
   const textselectUseMoveList = selectUseMoveList.options[selectUseMoveList.selectedIndex].text;
 
@@ -1301,17 +1298,20 @@ function calc() {
     }
   });
 
-  const baseValue = ( mainPara * 8 + tech * 2 ) / 10;
-// TODO:
-//  const baseTechDisplay = Math.ceil(baseValue);
+  const baseValue = Math.floor(( mainPara * 8 + tech * 2 ) / 10);
   const baseTechDisplay = Math.floor(baseValue);
   
   // ここから特に怪しい部分
   // ベーステクニックから計算する推定ベースパワー
-  const basePower =
-     Math.floor( ( baseValue * 53 / 100 ) - ( baseValue ** 2 / (3350 + baseValue / 862) ) + 3 / 5 );
-  // ここまで特に怪しい部分
+  // TODO:
+  const basePower = Math.floor(baseValue * 0.47);
+  //const basePower =
+  //   Math.floor( ( baseValue * 53 / 100 ) - ( baseValue ** 2 / (3350 + baseValue / 862) ) + 3 / 5 );
+  // ベーステクニック basePower算出
+  // ---------------------------------------------------------------------------------------------- //
 
+  // ---------------------------------------------------------------------------------------------- //
+  // 必殺技威力 movePower算出
   let movePower = Number(document.getElementById("MovePower").value) || 0;
   // 技の基本威力
   if ( "なし" == selectedKeshin[0].name && !( "なし" == textselectUseMoveList ) ) {
@@ -1320,9 +1320,10 @@ function calc() {
   }
   document.getElementById("rMoveBasePower").textContent = movePower;
   // 守備補正
+  // 1.0倍、1.2倍、1.44倍、1.8倍のいずれか(小数点以下切り捨て)
   const defenceCorrection = document.getElementById("DefenseCorrectionList").value;
   document.getElementById("rDFCorrection").textContent = defenceCorrection;
-  movePower = movePower * defenceCorrection;
+  movePower = Math.floor(movePower * defenceCorrection);
   
   // 選手との属性取得
   const playersElement = document.getElementById('PlayerElementList').value;
@@ -1371,14 +1372,14 @@ function calc() {
     document.getElementById("rMoveElementMatch").textContent = "不一致";
   }
   document.getElementById("rElementMatch").textContent = movePower;
+  // 必殺技威力 movePower算出
+  // ---------------------------------------------------------------------------------------------- //
 
   // こんしん！補正
   let konshinPower = 1;
-  // GP量
+  // GP量から体調補正を取得
   let GpCorrection = document.getElementById("ConditionList").value;
-  document.getElementById("rConditionCorrection").textContent = GpCorrection;
-  
-  // 化身必殺技でない
+  // 化身必殺技でなく、ちょうわざ！またはこんしんを習得している場合、こんしん！補正を付与
   calcSkillList.forEach(skill => {
     if ( ( skill.includes("こんしん！") && "なし" == selectedKeshin[0].name && "1.0" == GpCorrection ) ||
          ( skill.includes("ちょうわざ！") && "なし" == selectedKeshin[0].name )
@@ -1387,19 +1388,15 @@ function calc() {
       konshinPower = 1.2;
     }
   });
-  document.getElementById("rKonshin").textContent = konshinPower.toFixed(1);
 
   // 失敗補正
   let failureVal = document.getElementById("MoveFailure").value;
-  document.getElementById("rSuccessCorrection").textContent = failureVal;
   
   // 乱数上振れ(発生率が高い1.2倍で計算)
   let randomValue = document.getElementById("RandomValue").value;
-  document.getElementById("rRandom").textContent = randomValue;
   
   // 距離補正
   shotCorrection = document.getElementById("ShotCorrectionList").value;
-  document.getElementById("rDistance").textContent = shotCorrection;
 
   // 属性勝負補正(守備側のみの処理)
   // 攻守補正[互角,有利,不利]
@@ -1419,8 +1416,7 @@ function calc() {
 
   // Lv差補正(対戦では補正なしを想定)
   let lvCorrection = 1.0;
-  document.getElementById("rLvCorrection").textContent = lvCorrection.toFixed(1);
-
+  
   // クリティカル率
   let rCriValue = Math.floor( luck / 25 );
   let criticalCorrection = 1.0;
@@ -1433,60 +1429,94 @@ function calc() {
   });
   rCriValue = Math.floor( rCriValue * criticalCorrection );
 
-//  // トータルテクニック
-//  const totalTech =
-//    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[0] + ka + kp) * shotCorrection * GpCorrection);
-//  // トータルテクニック(属性勝ち)
-//  const totalTechWin =
-//    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[1] + ka + kp) * shotCorrection * GpCorrection);
-//  // トータルテクニック(属性負け)
-//  const totalTechLose =
-//    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[2] + ka + kp) * shotCorrection * GpCorrection);
-//
-//  // クリティカル
-//  const totalCritical =
-//    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[0] + ka + kp) * 2 * shotCorrection * GpCorrection);
-//  // クリティカル(属性勝ち)
-//  const totalCriticalWin =
-//    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[1]+ ka + kp) * 2 * shotCorrection * GpCorrection);
-//  // クリティカル(属性負け)
-//  const totalCriticalLose =
-//    Math.ceil(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[2] + ka + kp) * 2 * shotCorrection * GpCorrection);
-  // トータルテクニック
-  const totalTech =
-    Math.floor(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[0] + ka + kp) * shotCorrection * GpCorrection);
-  // トータルテクニック(属性勝ち)
-  const totalTechWin =
-    Math.floor(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[1] + ka + kp) * shotCorrection * GpCorrection);
-  // トータルテクニック(属性負け)
-  const totalTechLose =
-    Math.floor(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[2] + ka + kp) * shotCorrection * GpCorrection);
+  // ---------------------------------------------------------------------------------------------- //
+  // トータルテクニック計算共通ロジック
+  function calculateTotalTech(elemCorrStr, isCritical = false) {
+    const elemCorr = Number(elemCorrStr) || 1.0;
+    
+    // (1) ベースパワー + 技威力
+    let power = basePower + movePower;
 
-  // クリティカル
-  const totalCritical =
-    Math.floor(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[0] + ka + kp) * 2 * shotCorrection * GpCorrection);
-  // クリティカル(属性勝ち)
-  const totalCriticalWin =
-    Math.floor(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[1]+ ka + kp) * 2 * shotCorrection * GpCorrection);
-  // クリティカル(属性負け)
-  const totalCriticalLose =
-    Math.floor(((movePower + basePower) * randomValue * konshinPower * failureVal * elementCorrection[2] + ka + kp) * 2 * shotCorrection * GpCorrection);
+    // (2) 基礎補正 (* 1.057)
+    power = Math.floor(power * 1.057);
 
-  // 出力
-  document.getElementById("rName").textContent =
-    document.getElementById("PlayerName").value;
+    // (3) こんしん！補正
+    if (konshinPower > 1.0) {
+      power = Math.ceil(power * konshinPower);
+    }
+
+    // (4) 失敗補正
+    if (failureVal < 1.0) {
+      power = Math.floor(power * failureVal);
+    }
+
+    // (5) 乱数補正（下振れ 1.0 / 上振れ 1.2）
+    power = Math.ceil(power * Number(randomValue));
+
+    // (6) 最終調整 (+1)
+    // power = power + 1;
+
+    // (7) クリティカル（2倍）
+    if (isCritical) {
+      power = power * 2;
+    }
+
+    // (8) 属性勝負・化身加算
+    power = Math.floor(power * elemCorr) + ka + kp;
+
+    // (9) 距離補正・体調（GP）補正
+    power = Math.floor(power * Number(shotCorrection));
+    power = Math.floor(power * Number(GpCorrection));
+
+    return power;
+  }
+  // トータルテクニック計算共通ロジック
+  // ---------------------------------------------------------------------------------------------- //
+
+  // 5. 各出力用トータルテクニックの算出
+  // トータルテクニック(クリティカル)
+  const totalTech = calculateTotalTech(elementCorrection[0], false);
+  const totalCritical = calculateTotalTech(elementCorrection[0], true);
+  // 属性有利時のトータルテクニック(クリティカル)
+  const totalTechWin = calculateTotalTech(elementCorrection[1], false);
+  const totalCriticalWin = calculateTotalTech(elementCorrection[1], true);
+  // 属性不利時のトータルテクニック(クリティカル)
+  const totalTechLose = calculateTotalTech(elementCorrection[2], false);
+  const totalCriticalLose = calculateTotalTech(elementCorrection[2], true);
+
+  // ---------------------------------------------------------------------------------------------- //
+  // 情報出力
+  // 選手名
+  document.getElementById("rName").textContent = document.getElementById("PlayerName").value;
+  // ステータス
   document.getElementById("rMainPara").textContent = mainPara;
   document.getElementById("rTech").textContent = tech;
   document.getElementById("rLuck").textContent = luck;
-  
+  // ベーステクニック
   document.getElementById("rBaseTech").textContent = baseTechDisplay;
-  document.getElementById("rBasePower").textContent =
-    basePower.toFixed(6);
-
+  // ベースパワー
+  document.getElementById("rBasePower").textContent = basePower.toFixed(6);
+  // 必殺技名
   document.getElementById("rMoveName").textContent = textselectUseMoveList;
-
-  document.getElementById("rCritical").textContent = 
-    rCriValue + "%";
+  // 化身名
+  document.getElementById("rKeshinName").textContent = selectedKeshin[0].name;
+  document.getElementById("rKeshinSkill1").textContent = selectedKeshin[0].skillName;
+  document.getElementById("rKeshinSkill2").textContent = selectedKeshin[1].skillName;
+  document.getElementById("rKeshinSkill3").textContent = selectedKeshin[2].skillName;
+  // こんしん！補正
+  document.getElementById("rKonshin").textContent = konshinPower.toFixed(1);
+  // 失敗補正
+  document.getElementById("rSuccessCorrection").textContent = failureVal;
+  // 乱数上振れ
+  document.getElementById("rRandom").textContent = randomValue;
+  // 距離補正
+  document.getElementById("rDistance").textContent = shotCorrection;
+  // Lv差補正
+  document.getElementById("rLvCorrection").textContent = lvCorrection.toFixed(1);
+  // 体調補正
+  document.getElementById("rConditionCorrection").textContent = GpCorrection;
+  // クリティカル率
+  document.getElementById("rCritical").textContent = rCriValue + "%"
   // 攻撃側の場合、「トータルテクニック(クリティカル)」を表示
   if ( "なし" == document.getElementById("rElementBattle").textContent ) {
     document.getElementById("rTotal").textContent = 
@@ -1494,9 +1524,13 @@ function calc() {
   } else {
   // 守備側の場合、「トータルテクニック(クリティカル)：属性有利時(クリティカル)：属性不利時(クリティカル)」を表示
     document.getElementById("rTotal").textContent = 
-      totalTech + " ( " + totalCritical + " ) : 属性有利時 " + totalTechWin + " ( " + totalCriticalWin +
-      " ) : 属性不利時 " + totalTechLose + " ( " + totalCriticalLose + " )";
+      totalTech + " ( " + totalCritical + " ) " + 
+      " : 属性有利時 " + totalTechWin + " ( " + totalCriticalWin + " ) " +
+      " : 属性不利時 " + totalTechLose + " ( " + totalCriticalLose + " )";
   }
+  // 情報出力
+  // ---------------------------------------------------------------------------------------------- //
+
 }
 
 function autoShrinkCell(cell) {
