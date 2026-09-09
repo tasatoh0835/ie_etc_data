@@ -329,8 +329,8 @@ function exportTable() {
   </tr>
   <!-- 選手データ項目（中段） -->
   <tr>
-    <th colspan="3" title="実行コマンドで選手が発揮するベーステクニックです">ベーステクニック</th>
-    <th colspan="4" title="ベーステクニックを基に算出されるベースパワーの推定値です">推定ベースパワー</th>
+    <th colspan="3" title="コマンドバトル前に確認できるベーステクニック値です">テクニック(表示値)</th>
+    <th colspan="4" title="コマンドバトルに用いるベースパワーです&#13;&#10;小数点第6位まで表示していますが、実際の処理では小数点以下は全てそのまま扱います">ベースパワー</th>
   </tr>
   <!-- 選手データ値（中段） -->
   <tr>
@@ -353,31 +353,31 @@ function exportTable() {
   </tr>
   <!-- 技データ項目 -->
   <tr>
-    <th id="moveName" title="使用する必殺技名です" colspan="3">必殺技名</th>
-    <th id="movePower" title="最終進化まで成長した際の必殺技の威力です">進化補正</th>
+    <th id="moveName" title="使用する必殺技名です" colspan="2">必殺技名</th>
     <th id="moveElementType" title="必殺技の属性です">属性</th>
-    <th id="moveElementMatch" title="必殺技の属性と使用者の属性の相性です">相性</th>
+    <th id="moveElementMatch" title="必殺技の属性と使用者の属性の相性です">使用相性</th>
+    <th id="movePower" title="最終進化まで成長した際の補正値です">進化補正</th>
     <th id="defCorrection" title="守備側にのみかかる補正で、ランダムで1.0倍、1.2倍、1.44倍、1.8倍になります&#13;&#10;最も発生率が高いのは1.2倍です">守備補正</th>
     <th id="skillCorrection" title="必殺技を直接強化するスキルによる補正です">スキル補正</th>
-    <th id="elementMatchCorrection" title="属性相性による補正を含めた最終的な必殺技威力です">属性相性</th>
+    <th id="elementMatchCorrection" title="属性相性による補正値です">属性相性</th>
+    <th id="totalMovePower" title="最終的な必殺技威力です">必殺技威力</th>
   </tr>
   <!-- 技データ値 -->
   <tr>
-    <td id="rMoveName" colspan="3"></td>
-    <td id="rMoveBasePower"></td>
+    <td id="rMoveName" colspan="2"></td>
     <td id="rMoveElement"></td>
     <td id="rMoveElementMatch"></td>
+    <td id="rMoveBasePower"></td>
     <td id="rDFCorrection"></td>
     <td id="rPowerElement"></td>
     <td id="rElementMatch"></td>
+    <td id="rTotalMovePower"></td>
   </tr>
   <!-- 各種補正項目 -->
   <tr>
     <th id="konshinCorrection" title="スキル「ちょうわざ！」、「こんしん！」による補正です&#13;&#10;これらは重複しません" colspan="2">こんしん！補正</th>
     <th id="successCorrection"
      title="テクニック値による必殺技の成功、失敗判定によって生じる補正です&#13;&#10;選手のテクニック値を上げれば失敗判定になる確率は下がりますが、GO2以降と異なり失敗する確率を0にすることはできません">失敗補正</th>
-    <th id="randomCorrection"
-     title="乱数によって1.0倍か1.2倍の補正がかかります&#13;&#10;最も発生率が高いのは1.2倍です">上振れ</th>
     <th id="elementBattle" title="相手選手との属性相性の優劣判定です&#13;&#10;守備側にのみ発生します">相性判定</th>
     <th id="keshinCorrection" title="選手の発動化身の現在KPとKAの合計値です&#13;&#10;通常必殺技であれば0です">化身補正</th>
     <th id="shootCorrection"
@@ -386,22 +386,24 @@ function exportTable() {
      title="相手とのレベル差があった場合の補正です&#13;&#10;同レベルでの対戦を想定し、1.0倍固定としています">Lv差補正</th>
     <th id="conditionCorrection"
      title="GPが0の場合、全てのコマンドバトルに0.5倍の補正がかかります">体調補正</th>
+    <th id="randomCorrection"
+     title="乱数によって1.0倍か1.2倍の補正がかかります&#13;&#10;最も発生率が高いのは1.2倍です">上振れ</th>
   </tr>
   <!-- 各種補正値 -->
   <tr>
     <td id="rKonshin" colspan="2"></td>
     <td id="rSuccessCorrection"></td>
-    <td id="rRandom"></td>
     <td id="rElementBattle"></td>
     <td id="rKPKA"></td>
     <td id="rDistance"></td>
     <td id="rLvCorrection"></td>
     <td id="rConditionCorrection"></td>
+    <td id="rRandom"></td>
   </tr>
   <!-- 結果項目 -->
   <tr>
     <th id="totalTech" colspan="7"
-     title="最も発生率が高いトータルテクニックです&#13;&#10;()内の数値はクリティカル発生時のものです" >推定トータルテクニック(クリティカル時)</th>
+     title="トータルテクニックです&#13;&#10;()内の数値はクリティカル発生時のものです" >推定トータルテクニック</th>
     <th colspan="2"
      title="クリティカルが発生するおおよその確率です">クリティカル発生率</th>
   </tr>
@@ -417,7 +419,7 @@ function exportTable() {
     <summary>推定トータルテクニック計算式の詳細について</summary>
 大きく6段階に分かれているものとして計算。<br>
 <br>
-> 推定トータルテクニック = ( ( 必殺技のパワー + 推定ベースパワー ) * 各種補正 + 化身補正 ) * 体調補正 * クリティカル補正 * 距離補正 * レベル差補正<br>
+> 推定トータルテクニック = ( ( 必殺技のパワー + ベースパワー ) * 各種補正 + 化身補正 ) * 体調補正 * クリティカル補正 * 距離補正 * レベル差補正<br>
 <br>
 ■必殺技のパワー<br>
 必殺技やそれを強化するスキルによる強化。<br>
@@ -447,17 +449,16 @@ GOシリーズではほとんどの自力習得技を秘伝書で上書きでき
 ■属性相性（選手と技）<br>
 一致：+5<br>
 不利：-5<br>
-一致でも不利でもない：0<br>
+他：0<br>
 <br>
-■推定ベースパワー<br>
-あまり綺麗ではないが、とりあえずこれでそれっぽい数値に。<br>
+■ベースパワー<br>
 <br>
-> ( ( ベーステクニック * 53 / 100 ) - ( ベーステクニックの2乗 / (3350 + ベーステクニック / 862) ) + 3 / 5 )<br>
+> ベーステクニック * 2 / 3 - ( ベーステクニックの2乗 / 1480) + ( ベーステクニック * 40 / 197 ) - (8/17)<br>
 <br>
 ■ベーステクニック<br>
-装備や特訓で変動する部分。<br>
 <br>
-> コマンドで用いられるメインパラメータ(キックまたはドリブルまたはブロックまたはキャッチ) * 0.8 + テクニック * 0.2<br>
+> ( メインステータス * 8 + テクニック * 2 ) / 10 <br>
+コマンド選択時に表示する際には小数点以下を切り捨てるが、トータルテクニック計算時には小数点以下もそのまま扱う。<br>
 <br>
 ■各種補正<br>
 ベースパワーに対してかかる様々な補正。<br>
@@ -491,7 +492,8 @@ GPが0のとき、0.5倍の補正がかかる。<br>
 化身発動中は1固定と考えてよく、とりあえず対戦で枯渇することもないので1固定。<br>
 <br>
 ■クリティカル補正<br>
-1.0倍か2.0倍になる。2.0倍になる確率は推定で「ラッキー値 / 25 (%)」。<br>
+1.0倍か2.0倍になる。やくびょうがみ習得者は4.0倍。<br>
+2.0倍になる確率は推定で「ラッキー値 / 25 (%)」。<br>
 <br>
 ■距離補正<br>
 計算対象のコマンドがシュートの場合のみ、シュート実行者からゴールまでの距離を参考にして0.5倍、0.8倍、1.0倍の補正を与える。<br>
@@ -512,56 +514,56 @@ GPが0のとき、0.5倍の補正がかかる。<br>
   <option value="なし|なし|0|0|なし|無|なし|20|0|なし|なし|なし">なし</option>
   <option value="魔帝グリフォン|火|330|130|ソード・オブ・ファイア|火|SH|250|150|神速の翼|魔帝グリフォン発動者のスピード100UP|460" data-category="FW">魔帝グリフォン</option>
   <option value="聖騎士アーサー|無|320|120|ソードエクスカリバー|無|SH|250|150|聖なる剣|聖騎士アーサー発動者のキック100UP|440" data-category="FW">聖騎士アーサー</option>
-  <option value="魔戦士ペンドラゴン|無|200|160|ソウル・ブリンガー|無|SH|200|85|ﾊﾞｰﾆﾝｸﾞﾌｫｰｽ5|チーム全員の全ての能力5UP|360" data-category="FW">魔戦士ペンドラゴン</option>
-  <option value="魔神ペガサスアーク|風|210|130|ジャスティスウィング|風|SH|200|85|ﾄﾞﾘﾌﾞﾙﾌｫｰｽ10|チーム全員のドリブル10UP|340" data-category="FW">魔神ペガサスアーク</option>
-  <option value="聖獣シャイニングドラゴン|風|220|120|ホワイトブレス|風|SH|200|85|ﾌﾞﾛｯｸﾌｫｰｽ10|チーム全員のブロック10UP|340" data-category="FW">聖獣シャイニングドラゴン</option>
-  <option value="暗黒神ダークエクソダス|林|220|120|魔王の斧|林|SH|200|85|ｷｯｸﾌｫｰｽ10|チーム全員のキック10UP|340" data-category="FW">暗黒神ダークエクソダス</option>
-  <option value="魔女クィーンレディアB|林|200|120|チェックメイト|林|SH|200|85|女神のｴｰﾙ|チームメンバーの女性は全てのステータス30UP|320" data-category="FW">魔女クィーンレディアB</option>
-  <option value="魔女クィーンレディアW|林|200|120|チェックメイト|林|SH|200|85|女神のｴｰﾙ|チームメンバーの女性は全てのステータス30UP|320" data-category="FW">魔女クィーンレディアW</option>
+  <option value="魔戦士ペンドラゴン|無|200|160|ソウル・ブリンガー|無|SH|200|85|バーニングフォース5|チーム全員の全ての能力5UP|360" data-category="FW">魔戦士ペンドラゴン</option>
+  <option value="魔神ペガサスアーク|風|210|130|ジャスティスウィング|風|SH|200|85|ドリブルフォース10|チーム全員のドリブル10UP|340" data-category="FW">魔神ペガサスアーク</option>
+  <option value="聖獣シャイニングドラゴン|風|220|120|ホワイトブレス|風|SH|200|85|ブロックフォース10|チーム全員のブロック10UP|340" data-category="FW">聖獣シャイニングドラゴン</option>
+  <option value="暗黒神ダークエクソダス|林|220|120|魔王の斧|林|SH|200|85|キックフォース10|チーム全員のキック10UP|340" data-category="FW">暗黒神ダークエクソダス</option>
+  <option value="魔女クィーンレディアB|林|200|120|チェックメイト|林|SH|200|85|女神のエール|チームメンバーの女性は全てのステータス30UP|320" data-category="FW">魔女クィーンレディアB</option>
+  <option value="魔女クィーンレディアW|林|200|120|チェックメイト|林|SH|200|85|女神のエール|チームメンバーの女性は全てのステータス30UP|320" data-category="FW">魔女クィーンレディアW</option>
   <option value="太陽神アポロ|火|180|90|サンシャインフォース|火|SH|180|75|火の雄叫び|チーム全員の火必殺技の威力20UP|270" data-category="FW">太陽神アポロ</option>
   <option value="炎魔ガザード|火|210|60|爆熱ストーム|火|SH|180|75|火の雄叫び|チーム全員の火必殺技の威力20UP|270" data-category="FW">炎魔ガザード</option>
   <option value="戦国武神ムサシ|山|155|115|武神連斬|山|SH|180|75|山の雄叫び|チーム全員の山必殺技の威力20UP|270" data-category="FW">戦国武神ムサシ</option>
-  <option value="豪雪のサイア|風|150|110|アイシクルロード|風|SH|180|75|ｱﾝﾁｽﾘｯﾌﾟ|チーム全員が雪のフィールドで滑らなくなる|260" data-category="FW">豪雪のサイア</option>
-  <option value="海王ポセイドン|風|160|90|ヘヴィアクアランス|風|SH|180|75|ｷｯｸﾌｫｰｽ5|チーム全員のキック5UP|250" data-category="FW">海王ポセイドン</option>
-  <option value="海帝ネプチューン|風|170|80|ヘヴィアクアランス|風|SH|180|75|ｷｯｸﾌｫｰｽ5|チーム全員のキック5UP|250" data-category="FW">海帝ネプチューン</option>
+  <option value="豪雪のサイア|風|150|110|アイシクルロード|風|SH|180|75|アンチスリップ|チーム全員が雪のフィールドで滑らなくなる|260" data-category="FW">豪雪のサイア</option>
+  <option value="海王ポセイドン|風|160|90|ヘヴィアクアランス|風|SH|180|75|キックフォース5|チーム全員のキック5UP|250" data-category="FW">海王ポセイドン</option>
+  <option value="海帝ネプチューン|風|170|80|ヘヴィアクアランス|風|SH|180|75|キックフォース5|チーム全員のキック5UP|250" data-category="FW">海帝ネプチューン</option>
   <option value="奏者マエストロ|林|140|70|ハーモニクス|林|SH|160|55|林の雄叫び|チーム全員の林必殺技の威力20UP|210" data-category="FW">奏者マエストロ</option>
-  <option value="蒼きリューク|風|150|50|レイジングクロウ|山|SH|160|55|ｽﾋﾟｰﾄﾞﾌｫｰｽ5|チーム全員のスピード5UP|200" data-category="FW">蒼きリューク</option>
+  <option value="蒼きリューク|風|150|50|レイジングクロウ|山|SH|160|55|スピードフォース5|チーム全員のスピード5UP|200" data-category="FW">蒼きリューク</option>
   <option value="剣聖ランスロット|火|150|50|ロストエンジェル|火|SH|160|55|火の雄叫び|チーム全員の火必殺技の威力20UP|200" data-category="FW">剣聖ランスロット</option>
-  <option value="黒き翼レイブン|山|140|70|レイジングクロウ|山|SH|160|55|ｽﾋﾟｰﾄﾞﾌｫｰｽ5|チーム全員のスピード5UP|210" data-category="FW">黒き翼レイブン</option>
-  <option value="鉄騎兵ナイトB|山|160|30|ギャロップバスター|山|SH|160|55|ﾄﾞﾘﾌﾞﾙﾌｫｰｽ5|チーム全員のドリブル5UP|190" data-category="FW">鉄騎兵ナイトB</option>
-  <option value="鉄騎兵ナイトW|山|160|30|ギャロップバスター|山|SH|160|55|ﾄﾞﾘﾌﾞﾙﾌｫｰｽ5|チーム全員のドリブル5UP|190" data-category="FW">鉄騎兵ナイトW</option>
-  <option value="紅きメガホーク|火|195|55|ファルコ・ウィング|風|SH|140|45|ｷｯｸﾌｫｰｽ5|チーム全員のキック5UP|250" data-category="FW">紅きメガホーク</option>
-  <option value="道化師ファンタム|林|140|70|マジシャンズボックス|林|SH|140|45|ﾗｯｷｰﾌｫｰｽ5|チーム全員のラッキー5UP|210" data-category="FW">道化師ファンタム</option>
-  <option value="夢紳士ドリームアンクル|林|155|55|マジシャンズボックス|林|SH|140|45|ｱﾝﾁﾍﾟﾅﾙﾃｨ|チーム全員がファウルを取られなくなる|210" data-category="FW">夢紳士ドリームアンクル</option>
-  <option value="鳥人ファルコ|風|90|50|ファルコ・ウィング|風|SH|140|45|ｷｯｸﾌｫｰｽ5|チーム全員のキック5UP|140" data-category="FW">鳥人ファルコ</option>
-  <option value="奇術魔ピューリム|林|100|40|マジシャンズボックス|林|SH|140|45|ﾃｸﾆｼｬﾝ|チーム全員の必殺技の成功率UP|140" data-category="FW">奇術魔ピューリム</option>
-  <option value="魔宰相ビショップB|林|200|110|ダークスペース|林|DR|180|35|ﾄﾞﾘﾌﾞﾙﾌｫｰｽ10|チーム全員のドリブル10UP|310" data-category="MF">魔宰相ビショップB</option>
-  <option value="魔宰相ビショップW|林|180|130|ダークスペース|林|DR|180|35|ﾄﾞﾘﾌﾞﾙﾌｫｰｽ10|チーム全員のドリブル10UP|310" data-category="MF">魔宰相ビショップW</option>
-  <option value="獣王レオン|山|200|90|スクラッチレイド|山|DR|180|35|ﾌｨｰﾙﾄﾞの守護神|チーム全員のプレスに向かうスピードがあがる|290" data-category="MF">獣王レオン</option>
+  <option value="黒き翼レイブン|山|140|70|レイジングクロウ|山|SH|160|55|スピードフォース5|チーム全員のスピード5UP|210" data-category="FW">黒き翼レイブン</option>
+  <option value="鉄騎兵ナイトB|山|160|30|ギャロップバスター|山|SH|160|55|ドリブルフォース5|チーム全員のドリブル5UP|190" data-category="FW">鉄騎兵ナイトB</option>
+  <option value="鉄騎兵ナイトW|山|160|30|ギャロップバスター|山|SH|160|55|ドリブルフォース5|チーム全員のドリブル5UP|190" data-category="FW">鉄騎兵ナイトW</option>
+  <option value="紅きメガホーク|火|195|55|ファルコ・ウィング|風|SH|140|45|キックフォース5|チーム全員のキック5UP|250" data-category="FW">紅きメガホーク</option>
+  <option value="道化師ファンタム|林|140|70|マジシャンズボックス|林|SH|140|45|ラッキーフォース5|チーム全員のラッキー5UP|210" data-category="FW">道化師ファンタム</option>
+  <option value="夢紳士ドリームアンクル|林|155|55|マジシャンズボックス|林|SH|140|45|アンチペナルティ|チーム全員がファウルを取られなくなる|210" data-category="FW">夢紳士ドリームアンクル</option>
+  <option value="鳥人ファルコ|風|90|50|ファルコ・ウィング|風|SH|140|45|キックフォース5|チーム全員のキック5UP|140" data-category="FW">鳥人ファルコ</option>
+  <option value="奇術魔ピューリム|林|100|40|マジシャンズボックス|林|SH|140|45|テクニシャン|チーム全員の必殺技の成功率UP|140" data-category="FW">奇術魔ピューリム</option>
+  <option value="魔宰相ビショップB|林|200|110|ダークスペース|林|DR|180|35|ドリブルフォース10|チーム全員のドリブル10UP|310" data-category="MF">魔宰相ビショップB</option>
+  <option value="魔宰相ビショップW|林|180|130|ダークスペース|林|DR|180|35|ドリブルフォース10|チーム全員のドリブル10UP|310" data-category="MF">魔宰相ビショップW</option>
+  <option value="獣王レオン|山|200|90|スクラッチレイド|山|DR|180|35|フィールドの守護神|チーム全員のプレスに向かうスピードがあがる|290" data-category="MF">獣王レオン</option>
   <option value="魔神ペガサス|風|160|110|ペガサスブレイク|風|DR|160|25|風の雄叫び|チーム全員の風必殺技の威力20UP|270" data-category="MF">魔神ペガサス</option>
-  <option value="幻影のダラマンガラス|林|160|100|ダンシングゴースト|林|DR|160|25|ｽﾀﾐﾅﾌｫｰｽ5|チーム全員のスタミナ5UP|260" data-category="DF">幻影のダラマンガラス</option>
-  <option value="魅惑のダラマンローズ|火|160|100|ダンシングゴースト|林|DR|160|25|ﾄﾞﾘﾌﾞﾙﾌｫｰｽ5|チーム全員のドリブル5UP|260" data-category="MF">魅惑のダラマンローズ</option>
+  <option value="幻影のダラマンガラス|林|160|100|ダンシングゴースト|林|DR|160|25|スタミナフォース5|チーム全員のスタミナ5UP|260" data-category="DF">幻影のダラマンガラス</option>
+  <option value="魅惑のダラマンローズ|火|160|100|ダンシングゴースト|林|DR|160|25|ドリブルフォース5|チーム全員のドリブル5UP|260" data-category="MF">魅惑のダラマンローズ</option>
   <option value="精鋭兵ポーンB|火|120|110|マシンガンビート|火|DR|160|25|身軽な身体|チームメンバーの小柄な選手は全てのステータス30UP|230" data-category="MF">精鋭兵ポーンB</option>
   <option value="精鋭兵ポーンW|火|120|110|マシンガンビート|火|DR|160|25|身軽な身体|チームメンバーの小柄な選手は全てのステータス30UP|230" data-category="MF">精鋭兵ポーンW</option>
-  <option value="光速のマキシム|火|165|75|オーバードライブ|風|DR|140|20|ｽﾋﾟｰﾄﾞﾌｫｰｽ10|チーム全員のスピード10UP|240" data-category="MF">光速のマキシム</option>
-  <option value="音速のバリウス|風|140|60|オーバードライブ|風|DR|140|20|ｽﾋﾟｰﾄﾞﾌｫｰｽ5|チーム全員のスピード5UP|200" data-category="MF">音速のバリウス</option>
-  <option value="破壊神デスロス|火|190|110|破壊弾幕|火|BL|140|200|破壊のｵｰﾗ|チームメンバーの発動している化身のアタック力UP|300" data-category="DF">破壊神デスロス</option>
-  <option value="神官ジャッジ|林|205|165|ブラッディアンコール|林|BL|180|35|ﾊﾞｰﾆﾝｸﾞﾌｫｰｽ10|チーム全員の全て10UP|370" data-category="DF">神官ジャッジ</option>
+  <option value="光速のマキシム|火|165|75|オーバードライブ|風|DR|140|20|スピードフォース10|チーム全員のスピード10UP|240" data-category="MF">光速のマキシム</option>
+  <option value="音速のバリウス|風|140|60|オーバードライブ|風|DR|140|20|スピードフォース5|チーム全員のスピード5UP|200" data-category="MF">音速のバリウス</option>
+  <option value="破壊神デスロス|火|190|110|破壊弾幕|火|BL|140|200|破壊のオーラ|チームメンバーの発動している化身のアタック力UP|300" data-category="DF">破壊神デスロス</option>
+  <option value="神官ジャッジ|林|205|165|ブラッディアンコール|林|BL|180|35|バーニングフォース10|チーム全員の全て10UP|370" data-category="DF">神官ジャッジ</option>
   <option value="番人の塔ルークB|山|210|100|ストロングタワー|山|BL|180|35|山の雄叫び|チーム全員の山必殺技の威力20UP|310" data-category="DF">番人の塔ルークB</option>
   <option value="番人の塔ルークW|山|195|115|ストロングタワー|山|BL|180|35|山の雄叫び|チーム全員の山必殺技の威力20UP|310" data-category="DF">番人の塔ルークW</option>
   <option value="狂戦士ディアベル|林|160|100|ドラゴンストーム|風|BL|140|20|林の雄叫び|チーム全員の林必殺技の威力20UP|260" data-category="DF">狂戦士ディアベル</option>
-  <option value="竜騎士テディス|風|120|70|ドラゴンストーム|風|BL|140|20|ﾌﾞﾛｯｸﾌｫｰｽ5|チーム全員のブロック5UP|190" data-category="DF">竜騎士テディス</option>
-  <option value="魔神グレイト|山|235|105|グレイト・ザ・ハンド|山|CA|200|80|ｽﾀﾐﾅﾌｫｰｽ10|チーム全員のスタミナ10UP|340" data-category="GK">魔神グレイト</option>
+  <option value="竜騎士テディス|風|120|70|ドラゴンストーム|風|BL|140|20|ブロックフォース5|チーム全員のブロック5UP|190" data-category="DF">竜騎士テディス</option>
+  <option value="魔神グレイト|山|235|105|グレイト・ザ・ハンド|山|CA|200|80|スタミナフォース10|チーム全員のスタミナ10UP|340" data-category="GK">魔神グレイト</option>
   <option value="賢王キングバーンB|火|190|120|キングファイア|火|CA|200|80|戦士の気合|チームメンバーの男性は全てのステータス30UP|310" data-category="GK">賢王キングバーンB</option>
   <option value="賢王キングバーンW|火|195|115|キングファイア|火|CA|200|80|戦士の気合|チームメンバーの男性は全てのステータス30UP|310" data-category="GK">賢王キングバーンW</option>
-  <option value="護星神タイタニアス|山|180|130|マジン・ザ・ハンド|山|CA|200|80|ﾃｸﾆｯｸﾌｫｰｽ10|チーム全員のテクニック10UP|310" data-category="GK">護星神タイタニアス</option>
-  <option value="魔王ギラーゼ|林|190|60|ヘルズフィスト|林|P2|200|80|守りのﾍﾞｰﾙ|チームメンバーの発動している化身のダメージ量が軽減される|250" data-category="GK">魔王ギラーゼ</option>
-  <option value="鉄壁のギガドーン|山|190|50|ギガンティックボム|山|CA|180|70|ｱﾝﾁｻｲｸﾛﾝ|チーム全員が竜巻でふっとばされなくなる|240" data-category="GK">鉄壁のギガドーン</option>
-  <option value="龍神コロガオン|火|210|10|クリムゾンスフィア|火|CA|180|70|ﾈﾊﾞｰｷﾞﾌﾞｱｯﾌﾟ|負けているときチーム全員の能力があがる|220" data-category="GK">龍神コロガオン</option>
-  <option value="巨神ギガンテス|山|171|40|ギガンティックボム|山|CA|180|70|ｱﾝﾁｻｲｸﾛﾝ|チーム全員が竜巻でふっとばされなくなる|211" data-category="GK">巨神ギガンテス</option>
-  <option value="灼熱のレッドダイス|火|155|85|ラッキーダイス|林|CA|160|50|みんなｲｹｲｹ!|試合中の得点の勝ち負けに応じてチーム全員の能力が上下|240" data-category="GK">灼熱のレッドダイス</option>
-  <option value="幸運のラストベガ|風|180|50|ラッキーダイス|林|CA|160|50|ﾗｯｷｰﾌｫｰｽ10|チーム全員のラッキー10UP|230" data-category="GK">幸運のラストベガ</option>
-  <option value="勝負師ダイスマン|山|146|58|ラッキーダイス|林|CA|160|50|ﾗｯｷｰﾌｫｰｽ5|チーム全員のラッキー5UP|204" data-category="GK">勝負師ダイスマン</option>
+  <option value="護星神タイタニアス|山|180|130|マジン・ザ・ハンド|山|CA|200|80|テクニックフォース10|チーム全員のテクニック10UP|310" data-category="GK">護星神タイタニアス</option>
+  <option value="魔王ギラーゼ|林|190|60|ヘルズフィスト|林|P2|200|80|守りのベール|チームメンバーの発動している化身のダメージ量が軽減される|250" data-category="GK">魔王ギラーゼ</option>
+  <option value="鉄壁のギガドーン|山|190|50|ギガンティックボム|山|CA|180|70|アンチサイクロン|チーム全員が竜巻でふっとばされなくなる|240" data-category="GK">鉄壁のギガドーン</option>
+  <option value="龍神コロガオン|火|210|10|クリムゾンスフィア|火|CA|180|70|ネバーギブアップ|負けているときチーム全員の能力があがる|220" data-category="GK">龍神コロガオン</option>
+  <option value="巨神ギガンテス|山|171|40|ギガンティックボム|山|CA|180|70|アンチサイクロン|チーム全員が竜巻でふっとばされなくなる|211" data-category="GK">巨神ギガンテス</option>
+  <option value="灼熱のレッドダイス|火|155|85|ラッキーダイス|林|CA|160|50|みんなイケイケ!|試合中の得点の勝ち負けに応じてチーム全員の能力が上下|240" data-category="GK">灼熱のレッドダイス</option>
+  <option value="幸運のラストベガ|風|180|50|ラッキーダイス|林|CA|160|50|ラッキーフォース10|チーム全員のラッキー10UP|230" data-category="GK">幸運のラストベガ</option>
+  <option value="勝負師ダイスマン|山|146|58|ラッキーダイス|林|CA|160|50|ラッキーフォース5|チーム全員のラッキー5UP|204" data-category="GK">勝負師ダイスマン</option>
   <option value="重機兵バロン|山|140|60|ガーディアンシールド|風|CA|140|40|偉大な貫禄|チームメンバーの大柄な選手は全てのステータス30UP|200" data-category="GK">重機兵バロン</option>
   <option value="機械兵ガレウス|風|120|40|ガーディアンシールド|風|CA|140|40|偉大な貫禄|チームメンバーの大柄な選手は全てのステータス30UP|160" data-category="GK">機械兵ガレウス</option>
 </select>
@@ -676,24 +678,24 @@ GPが0のとき、0.5倍の補正がかかる。<br>
   <option value="なし|なし|0|0|無の心得|なし|SK|なし|なし|無属性の必殺技の威力がちょっとだけ強くなる|なし|なし|なし" data-category="SK">無の心得</option>
   <option value="なし|なし|0|0|属性強化|なし|SK|なし|なし|得意な属性の相手に対して有利になる|なし|なし|なし" data-category="SK">属性強化</option>
   <option value="なし|なし|0|0|クリティカル！|なし|SK|なし|なし|たまにコマンド技の威力があがる|なし|なし|なし" data-category="SK">クリティカル！</option>
-  <option value="なし|なし|0|0|GPﾌﾟﾗｽ20|なし|SK|なし|なし|GPが20アップ|なし|なし|なし" data-category="SK">GPﾌﾟﾗｽ20</option>
-  <option value="なし|なし|0|0|TPﾌﾟﾗｽ20|なし|SK|なし|なし|TPが20アップ|なし|なし|なし" data-category="SK">TPﾌﾟﾗｽ20</option>
-  <option value="なし|なし|0|0|ｷｯｸﾌﾟﾗｽ20|なし|SK|なし|なし|キックのステータス値が20アップ|なし|なし|なし" data-category="SK">ｷｯｸﾌﾟﾗｽ20</option>
-  <option value="なし|なし|0|0|ﾄﾞﾘﾌﾞﾙﾌﾟﾗｽ20|なし|SK|なし|なし|ドリブルのステータス値が20アップ|なし|なし|なし" data-category="SK">ﾄﾞﾘﾌﾞﾙﾌﾟﾗｽ20</option>
-  <option value="なし|なし|0|0|ﾌﾞﾛｯｸﾌﾟﾗｽ20|なし|SK|なし|なし|ブロックのステータス値が20アップ|なし|なし|なし" data-category="SK">ﾌﾞﾛｯｸﾌﾟﾗｽ20</option>
-  <option value="なし|なし|0|0|ｷｬｯﾁﾌﾟﾗｽ20|なし|SK|なし|なし|キャッチのステータス値が20アップ|なし|なし|なし" data-category="SK">ｷｬｯﾁﾌﾟﾗｽ20</option>
-  <option value="なし|なし|0|0|ﾃｸﾆｯｸﾌﾟﾗｽ20|なし|SK|なし|なし|テクニックのステータス値が20アップ|なし|なし|なし" data-category="SK">ﾃｸﾆｯｸﾌﾟﾗｽ20</option>
-  <option value="なし|なし|0|0|ﾗｯｷｰﾌﾟﾗｽ20|なし|SK|なし|なし|ラッキーのステータス値が20アップ|なし|なし|なし" data-category="SK">ﾗｯｷｰﾌﾟﾗｽ20</option>
-  <option value="なし|なし|0|0|ｽﾋﾟｰﾄﾞﾌﾟﾗｽ20|なし|SK|なし|なし|スピードのステータス値が20アップ|なし|なし|なし" data-category="SK">ｽﾋﾟｰﾄﾞﾌﾟﾗｽ20</option>
-  <option value="なし|なし|0|0|GPﾌﾟﾗｽ10|なし|SK|なし|なし|GPが10アップ|なし|なし|なし" data-category="SK">GPﾌﾟﾗｽ10</option>
-  <option value="なし|なし|0|0|TPﾌﾟﾗｽ10|なし|SK|なし|なし|TPが10アップ|なし|なし|なし" data-category="SK">TPﾌﾟﾗｽ10</option>
-  <option value="なし|なし|0|0|ｷｯｸﾌﾟﾗｽ10|なし|SK|なし|なし|キックのステータス値が10アップ|なし|なし|なし" data-category="SK">ｷｯｸﾌﾟﾗｽ10</option>
-  <option value="なし|なし|0|0|ﾄﾞﾘﾌﾞﾙﾌﾟﾗｽ10|なし|SK|なし|なし|ドリブルのステータス値が10アップ|なし|なし|なし" data-category="SK">ﾄﾞﾘﾌﾞﾙﾌﾟﾗｽ10</option>
-  <option value="なし|なし|0|0|ﾌﾞﾛｯｸﾌﾟﾗｽ10|なし|SK|なし|なし|ブロックのステータス値が10アップ|なし|なし|なし" data-category="SK">ﾌﾞﾛｯｸﾌﾟﾗｽ10</option>
-  <option value="なし|なし|0|0|ｷｬｯﾁﾌﾟﾗｽ10|なし|SK|なし|なし|キャッチのステータス値が10アップ|なし|なし|なし" data-category="SK">ｷｬｯﾁﾌﾟﾗｽ10</option>
-  <option value="なし|なし|0|0|ﾃｸﾆｯｸﾌﾟﾗｽ10|なし|SK|なし|なし|テクニックのステータス値が10アップ|なし|なし|なし" data-category="SK">ﾃｸﾆｯｸﾌﾟﾗｽ10</option>
-  <option value="なし|なし|0|0|ﾗｯｷｰﾌﾟﾗｽ10|なし|SK|なし|なし|ラッキーのステータス値が10アップ|なし|なし|なし" data-category="SK">ﾗｯｷｰﾌﾟﾗｽ10</option>
-  <option value="なし|なし|0|0|ｽﾋﾟｰﾄﾞﾌﾟﾗｽ10|なし|SK|なし|なし|スピードのステータス値が10アップ|なし|なし|なし" data-category="SK">ｽﾋﾟｰﾄﾞﾌﾟﾗｽ10</option>
+  <option value="なし|なし|0|0|GPプラス20|なし|SK|なし|なし|GPが20アップ|なし|なし|なし" data-category="SK">GPプラス20</option>
+  <option value="なし|なし|0|0|TPプラス20|なし|SK|なし|なし|TPが20アップ|なし|なし|なし" data-category="SK">TPプラス20</option>
+  <option value="なし|なし|0|0|キックプラス20|なし|SK|なし|なし|キックのステータス値が20アップ|なし|なし|なし" data-category="SK">キックプラス20</option>
+  <option value="なし|なし|0|0|ドリブルプラス20|なし|SK|なし|なし|ドリブルのステータス値が20アップ|なし|なし|なし" data-category="SK">ドリブルプラス20</option>
+  <option value="なし|なし|0|0|ブロックプラス20|なし|SK|なし|なし|ブロックのステータス値が20アップ|なし|なし|なし" data-category="SK">ブロックプラス20</option>
+  <option value="なし|なし|0|0|キャッチプラス20|なし|SK|なし|なし|キャッチのステータス値が20アップ|なし|なし|なし" data-category="SK">キャッチプラス20</option>
+  <option value="なし|なし|0|0|テクニックプラス20|なし|SK|なし|なし|テクニックのステータス値が20アップ|なし|なし|なし" data-category="SK">テクニックプラス20</option>
+  <option value="なし|なし|0|0|ラッキープラス20|なし|SK|なし|なし|ラッキーのステータス値が20アップ|なし|なし|なし" data-category="SK">ラッキープラス20</option>
+  <option value="なし|なし|0|0|スピードプラス20|なし|SK|なし|なし|スピードのステータス値が20アップ|なし|なし|なし" data-category="SK">スピードプラス20</option>
+  <option value="なし|なし|0|0|GPプラス10|なし|SK|なし|なし|GPが10アップ|なし|なし|なし" data-category="SK">GPプラス10</option>
+  <option value="なし|なし|0|0|TPプラス10|なし|SK|なし|なし|TPが10アップ|なし|なし|なし" data-category="SK">TPプラス10</option>
+  <option value="なし|なし|0|0|キックプラス10|なし|SK|なし|なし|キックのステータス値が10アップ|なし|なし|なし" data-category="SK">キックプラス10</option>
+  <option value="なし|なし|0|0|ドリブルプラス10|なし|SK|なし|なし|ドリブルのステータス値が10アップ|なし|なし|なし" data-category="SK">ドリブルプラス10</option>
+  <option value="なし|なし|0|0|ブロックプラス10|なし|SK|なし|なし|ブロックのステータス値が10アップ|なし|なし|なし" data-category="SK">ブロックプラス10</option>
+  <option value="なし|なし|0|0|キャッチプラス10|なし|SK|なし|なし|キャッチのステータス値が10アップ|なし|なし|なし" data-category="SK">キャッチプラス10</option>
+  <option value="なし|なし|0|0|テクニックプラス10|なし|SK|なし|なし|テクニックのステータス値が10アップ|なし|なし|なし" data-category="SK">テクニックプラス10</option>
+  <option value="なし|なし|0|0|ラッキープラス10|なし|SK|なし|なし|ラッキーのステータス値が10アップ|なし|なし|なし" data-category="SK">ラッキープラス10</option>
+  <option value="なし|なし|0|0|スピードプラス10|なし|SK|なし|なし|スピードのステータス値が10アップ|なし|なし|なし" data-category="SK">スピードプラス10</option>
   <option value="なし|なし|0|0|ちょうわざ！|なし|SK|なし|なし|TPと引き換えに技を強化できる(消費TP1.5倍)|なし|なし|なし" data-category="SK">ちょうわざ！</option>
   <option value="なし|なし|0|0|やくびょうがみ|なし|SK|なし|なし|たまにコマンド技の威力がさがるが、あがる事もある|なし|なし|なし" data-category="SK">やくびょうがみ</option>
   <option value="なし|なし|0|0|イケメンUP！|なし|SK|なし|なし|相手の選手が女の子のときコマンドバトルで有利になる|なし|なし|なし" data-category="SK">イケメンUP！</option>
@@ -1233,51 +1235,51 @@ function calc() {
 
   // パラメータ強化系の習得スキルを反映
   calcSkillList.forEach(skill => {
-    if ( ( skill.includes("ｷｯｸﾌﾟﾗｽ20") && "FW" == selectedCommand.value ) || 
-         ( skill.includes("ﾄﾞﾘﾌﾞﾙﾌﾟﾗｽ20") && "MF" == selectedCommand.value ) || 
-         ( skill.includes("ﾌﾞﾛｯｸﾌﾟﾗｽ20") && "DF" == selectedCommand.value ) || 
-         ( skill.includes("ｷｬｯﾁﾌﾟﾗｽ20") && "GK" == selectedCommand.value )
+    if ( ( skill.includes("キックプラス20") && "FW" == selectedCommand.value ) || 
+         ( skill.includes("ドリブルプラス20") && "MF" == selectedCommand.value ) || 
+         ( skill.includes("ブロックプラス20") && "DF" == selectedCommand.value ) || 
+         ( skill.includes("キャッチプラス20") && "GK" == selectedCommand.value )
        ) {
       mainPara += 20;
     }
-    if ( skill.includes("ﾃｸﾆｯｸﾌﾟﾗｽ20") ) {
+    if ( skill.includes("テクニックプラス20") ) {
       tech += 20;
     }
-    if ( ( skill.includes("ｷｯｸﾌﾟﾗｽ10") && "FW" == selectedCommand.value ) || 
-         ( skill.includes("ﾄﾞﾘﾌﾞﾙﾌﾟﾗｽ10") && "MF" == selectedCommand.value ) || 
-         ( skill.includes("ﾌﾞﾛｯｸﾌﾟﾗｽ10") && "DF" == selectedCommand.value ) || 
-         ( skill.includes("ｷｬｯﾁﾌﾟﾗｽ10") && "GK" == selectedCommand.value ) || 
-         ( skill.includes("ｷｯｸﾌｫｰｽ10") && "FW" == selectedCommand.value ) || 
-         ( skill.includes("ﾄﾞﾘﾌﾞﾙﾌｫｰｽ10") && "MF" == selectedCommand.value ) || 
-         ( skill.includes("ﾌﾞﾛｯｸﾌｫｰｽ10") && "DF" == selectedCommand.value ) || 
-         ( skill.includes("ｷｬｯﾁﾌｫｰｽ10") && "GF" == selectedCommand.value )
+    if ( ( skill.includes("キックプラス10") && "FW" == selectedCommand.value ) || 
+         ( skill.includes("ドリブルプラス10") && "MF" == selectedCommand.value ) || 
+         ( skill.includes("ブロックプラス10") && "DF" == selectedCommand.value ) || 
+         ( skill.includes("キャッチプラス10") && "GK" == selectedCommand.value ) || 
+         ( skill.includes("キックフォース10") && "FW" == selectedCommand.value ) || 
+         ( skill.includes("ドリブルフォース10") && "MF" == selectedCommand.value ) || 
+         ( skill.includes("ブロックフォース10") && "DF" == selectedCommand.value ) || 
+         ( skill.includes("キャッチフォース10") && "GK" == selectedCommand.value )
        ) {
       mainPara += 10;
     }
-    if ( skill.includes("ﾃｸﾆｯｸﾌﾟﾗｽ10") || skill.includes("ﾃｸﾆｯｸﾌｫｰｽ10") ) {
+    if ( skill.includes("テクニックプラス10") || skill.includes("テクニックフォース10") ) {
       tech += 10;
     }
-    if ( ( skill.includes("ｷｯｸﾌｫｰｽ5") && "FW" == selectedCommand.value ) || 
-         ( skill.includes("ﾄﾞﾘﾌﾞﾙﾌｫｰｽ5") && "MF" == selectedCommand.value ) || 
-         ( skill.includes("ﾌﾞﾛｯｸﾌｫｰｽ5") && "DF" == selectedCommand.value ) || 
-         ( skill.includes("ｷｬｯﾁﾌｫｰｽ5") && "GK" == selectedCommand.value )
+    if ( ( skill.includes("キックフォース5") && "FW" == selectedCommand.value ) || 
+         ( skill.includes("ドリブルフォース5") && "MF" == selectedCommand.value ) || 
+         ( skill.includes("ブロックフォース5") && "DF" == selectedCommand.value ) || 
+         ( skill.includes("キャッチフォース5") && "GK" == selectedCommand.value )
        ) {
       mainPara += 5;
     }
-    if ( skill.includes("ﾃｸﾆｯｸﾌｫｰｽ5") ) {
+    if ( skill.includes("テクニックフォース5") ) {
       tech += 5;
     }
-    if ( skill.includes("ﾗｯｷｰﾌﾟﾗｽ20") ) {
+    if ( skill.includes("ラッキープラス20") ) {
       luck += 20;
     }
-    if ( skill.includes("ﾗｯｷｰﾌﾟﾗｽ10") || skill.includes("ﾗｯｷｰﾌｫｰｽ10") ) {
+    if ( skill.includes("ラッキープラス10") || skill.includes("ラッキーフォース10") ) {
       luck += 10;
     }
-    if ( skill.includes("ﾗｯｷｰﾌｫｰｽ5") ) {
+    if ( skill.includes("ラッキーフォース5") ) {
       luck += 5;
     }
     if ( ( skill.includes("戦士の気合") && "男" == playersGendr ) || 
-         ( skill.includes("女神のｴｰﾙ")  && "女" == playersGendr ) || 
+         ( skill.includes("女神のエール")  && "女" == playersGendr ) || 
          ( skill.includes("身軽な身体") && "小柄" == playersPhysique ) || 
          ( skill.includes("偉大な貫禄") && "大柄" == playersPhysique )
        ) {
@@ -1286,50 +1288,51 @@ function calc() {
       tech += 30;
       luck += 30;
     }
-    if ( skill.includes("ﾊﾞｰﾆﾝｸﾞﾌｫｰｽ5") ) {
+    if ( skill.includes("バーニングフォース5") ) {
       // 全能力+5
       mainPara += 5;
       tech += 5;
       luck += 5;
     }
     if ( skill.includes("聖なる剣") && "FW" == selectedCommand.value ) {
-      // ｷｯｸ+100
+      // キック+100
       mainPara += 100;
     }
   });
 
-  const baseValue = Math.floor(( mainPara * 8 + tech * 2 ) / 10);
-  const baseTechDisplay = Math.floor(baseValue);
-  
-  // ここから特に怪しい部分
-  // ベーステクニックから計算する推定ベースパワー
-  // TODO:
-  const basePower = Math.floor(baseValue * 0.47);
-  //const basePower =
-  //   Math.floor( ( baseValue * 53 / 100 ) - ( baseValue ** 2 / (3350 + baseValue / 862) ) + 3 / 5 );
+  // 表示用ベーステクニック
+  const displayBaseTechnique = Math.floor(calcBaseTechnique(mainPara, tech));
+
   // ベーステクニック basePower算出
   // ---------------------------------------------------------------------------------------------- //
 
   // ---------------------------------------------------------------------------------------------- //
   // 必殺技威力 movePower算出
   let movePower = Number(document.getElementById("MovePower").value) || 0;
+  document.getElementById("rMoveBasePower").textContent = "1.0";
   // 技の基本威力
   if ( "なし" == selectedKeshin[0].name && !( "なし" == textselectUseMoveList ) ) {
     // 化身必殺技でない場合のみ最終進化次補正で1.5倍
     movePower *= 1.5;
+    document.getElementById("rMoveBasePower").textContent = "1.5";
   }
-  document.getElementById("rMoveBasePower").textContent = movePower;
+  
   // 守備補正
   // 1.0倍、1.2倍、1.44倍、1.8倍のいずれか(小数点以下切り捨て)
   const defenceCorrection = document.getElementById("DefenseCorrectionList").value;
   document.getElementById("rDFCorrection").textContent = defenceCorrection;
-  movePower = Math.floor(movePower * defenceCorrection);
+  movePower = movePower * defenceCorrection;
   
   // 選手との属性取得
   const playersElement = document.getElementById('PlayerElementList').value;
+  // 技の属性取得
+  document.getElementById("rMoveElement").textContent = document.getElementById("MoveElement").value;
 
   // スキルとの属性相性
   // パラメータ強化系の習得スキルを反映
+  let skillAddValue = 0;
+  let hasKokoroe = false; // 心得系
+  let hasOtakebi = false;  // 雄叫び系
   calcSkillList.forEach(skill => {
     if ( ( skill.includes("風の心得") && "風" == document.getElementById("MoveElement").value ) ||
          ( skill.includes("林の心得") && "林" == document.getElementById("MoveElement").value ) ||
@@ -1338,27 +1341,33 @@ function calc() {
          ( skill.includes("無の心得") && "無" == document.getElementById("MoveElement").value ) ||
          ( skill.includes("属性強化") &&  playersElement == document.getElementById("MoveElement").value ) 
        ) {
-      // 必殺技威力+10
-      movePower += 10;
+       hasKokoroe = true;
     }
     if ( ( skill.includes("風の雄叫び") && "風" == document.getElementById("MoveElement").value ) ||
          ( skill.includes("林の雄叫び") && "林" == document.getElementById("MoveElement").value ) ||
          ( skill.includes("火の雄叫び") && "火" == document.getElementById("MoveElement").value ) ||
          ( skill.includes("山の雄叫び") && "山" == document.getElementById("MoveElement").value )
        ) {
-      // 必殺技威力+20
-      movePower += 20;
+       hasOtakebi = true;
     }
   });
-  // 技の属性
-  document.getElementById("rMoveElement").textContent = document.getElementById("MoveElement").value;
+  // 属性一致の心得あり
+  if (hasKokoroe) {
+    skillAddValue += 10;
+  }
+  // 属性一致の雄叫びあり
+  if (hasOtakebi) {
+    skillAddValue += 20;
+  }
+  movePower += skillAddValue;
   // スキル補正を含めた技威力
-  document.getElementById("rPowerElement").textContent = movePower;
+  document.getElementById("rPowerElement").textContent = skillAddValue;
   
   // 属性相性
   if ( playersElement == document.getElementById("MoveElement").value ) {
     movePower += 5;
     document.getElementById("rMoveElementMatch").textContent = "一致";
+    document.getElementById("rElementMatch").textContent = "+5";
   }
   // 苦手
   else if ( "風" == playersElement && "林" == document.getElementById("MoveElement").value || 
@@ -1367,11 +1376,14 @@ function calc() {
             "山" == playersElement && "風" == document.getElementById("MoveElement").value ) {
     movePower -= 5;
     document.getElementById("rMoveElementMatch").textContent = "苦手";
+    document.getElementById("rElementMatch").textContent = "-5";
   }
   else {
     document.getElementById("rMoveElementMatch").textContent = "不一致";
+    document.getElementById("rElementMatch").textContent = 0;
   }
-  document.getElementById("rElementMatch").textContent = movePower;
+  
+  document.getElementById("rTotalMovePower").textContent = movePower;
   // 必殺技威力 movePower算出
   // ---------------------------------------------------------------------------------------------- //
 
@@ -1380,28 +1392,36 @@ function calc() {
   // GP量から体調補正を取得
   let GpCorrection = document.getElementById("ConditionList").value;
   let flgKonshin = false;
-  // 化身必殺技でなく、ちょうわざ！またはこんしんを習得している場合、こんしん！補正を付与
+  // 化身必殺技でなく、ちょうわざ！またはこんしんを習得している場合、こんしんフラグを立てる
   calcSkillList.forEach(skill => {
     if ( ( skill.includes("こんしん！") && "なし" == selectedKeshin[0].name && "1.0" == GpCorrection ) ||
          ( skill.includes("ちょうわざ！") && "なし" == selectedKeshin[0].name )
        ) {
-      // こんしん！補正
-      konshinPower = 1.2;
       flgKonshin = true;
     }
   });
 
+  // やくびょうがみフラグ
+  let flgYakuByouGami = false;
+  // やくびょうがみを習得している場合、やくびょうがみフラグをtrueに
+  calcSkillList.forEach(skill => {
+    if ( skill.includes("やくびょうがみ") ) {
+      flgYakuByouGami = true;
+    }
+  });
+  
   // 失敗補正
   let failureVal = document.getElementById("MoveFailure").value;
   let flgFailure = false;
-  if ( 1.0 == failureVal ) {
-    let flgFailure = true;
+  // 失敗選択または化身発動状態でない状態かつ、やくびょうがみフラグがtrueのとき、失敗補正を設定
+  if ( 1.0 > failureVal || ( flgYakuByouGami  && "なし" == selectedKeshin[0].name ) ) {
+    flgFailure = true;
   }
   
   // 乱数上振れ(発生率が高い1.2倍で計算)
   let randomValue = document.getElementById("RandomValue").value;
   let flgRandomUp = true;
-  if ( 1.0 == randomValue ) {
+  if ( 1.2 > randomValue ) {
     flgRandomUp = false;
   }
   
@@ -1421,107 +1441,144 @@ function calc() {
   // 化身補正(KP+KA)
   const ka = Number(document.getElementById("KaVal").value) || 0;
   const kp = Number(document.getElementById("KpVal").value) || 0;
-
-  document.getElementById("rKPKA").textContent = ka + kp;
+  
+  let kpkaStr = "0"
+  if ( 0 < ka + kp ) {
+    kpkaStr = "+" + (ka + kp);
+  }
+  document.getElementById("rKPKA").textContent = kpkaStr;
 
   // Lv差補正(対戦では補正なしを想定)
   let lvCorrection = 1.0;
   
   // クリティカル率
-  let rCriValue = Math.floor( luck / 25 );
+  let rCriValue = luck / 25;
   let criticalCorrection = 1.0;
   // 化身必殺技でない
   calcSkillList.forEach(skill => {
     if ( skill.includes("クリティカル！") ) {
-      // クリティカル発生率は1.5倍で計算
-      criticalCorrection = 1.5;
+      // GO2以降のスキル「クリティカル」によるクリティカル率補正は1.2倍だそうなので、とりあえずそれで計算
+      criticalCorrection = 1.2;
     }
   });
-  rCriValue = Math.floor( rCriValue * criticalCorrection );
+  rCriValue = ( rCriValue * criticalCorrection ).toFixed(2);
 
   // ---------------------------------------------------------------------------------------------- //
+  // ベーステクニックの計算
+  function calcBaseTechnique(mainPara, tech) {
+    return ( mainPara * 8 + tech * 2 ) / 10;
+  }
+
+  // ベースパワーの計算
+  function calcBasePower(mainPara, tech) {
+    // ベーステクニックに補正を付与
+    const basePower = calcBaseTechnique(mainPara, tech) * 2 / 3;
+    // 減衰項
+    const damping = ((basePower * basePower) / 1480) + basePower * (40 / 197) - (8 / 17)
+    // ベースパワー = ベーステクニック - 減衰項
+    return basePower - damping;
+  }
+
   // トータルテクニック計算共通ロジック
-  function calculateTotalTech(options = {}) {
+  function calcTotalTech(options = {}) {
     const {
-      basePara = 0,
-      tech = 0,
-      movePower = 10, // 技威力(最低値は10)
+      mainPara = 1.0,
+      tech = 1.0,
+      movePower = 20, // 技威力(最低値は10)
       hasKonshin = false,
       isRandomUp = false, // true: 上振れ(1.2), false: 下振れ(1.0)
       isFailure = false,
       isCritical = false,
+      isYakuByouGami = false,
       elemCorr = 1.0,
       ka = 0,
       kp = 0,
       shotCorrection = 1.0,
       GpCorrection = 1.0
     } = options;
-  
-    // 1. ベーステクニックの算出
-    const baseTech = tech + Math.floor(basePara * 0.8);
-  
-    // 2. ベースパワー算出
-    const basePower = Math.floor(baseTech * 0.5);
-  
-    // 3. 基本パワー (ベースパワー + 技威力)
+    
+    // basePower の算出
+    const basePower = calcBasePower(mainPara, tech);
+    
+    // 基本パワー (ベースパワー + 技威力)
     let power = basePower + movePower;
-  
-    // 4. こんしん！補正 (1.2倍・切り捨て)
+
+    // こんしん！補正 (0.2倍した値を加算)
     if (hasKonshin) {
-      power = Math.floor(power * 1.2);
+      power = power * 1.2;
     }
-  
-    // 5. 失敗補正 (0.8倍・切り捨て)
+    
+    // 失敗補正 (0.8倍にして切り捨て)
     if (isFailure) {
-      power = Math.floor(power * 0.8);
+      power = power * 0.8;
     }
-  
-    // 6. 乱数補正 (上振れ 1.2倍・切り上げ / 下振れ 1.0倍)
-    if (isRandomUp) {
-      power = Math.ceil(power * 1.2);
-    }
-  
-    // 7. クリティカル (2倍)
+
+    // 化身補正
+    power += ( ka + kp );
+
+    // クリティカル (2倍)
     if (isCritical) {
       power = power * 2;
+      // やくびょうがみ(クリティカル)
+      if (isYakuByouGami) {
+        power = power * 2;
+      }
     }
   
-    // 8. 属性勝負・化身加算
-    power = Math.floor(power * Number(elemCorr)) + ka + kp;
-  
-    // 9. 距離・GP補正
-    power = Math.floor(power * Number(shotCorrection));
-    power = Math.floor(power * Number(GpCorrection));
-  
-    return power;
+    // 乱数補正 (上振れ 1.2倍)
+    if (isRandomUp) {
+      power = Math.floor(power) * 1.2;
+    }
+    
+    // 属性勝負
+    power = power * Number(elemCorr) 
+    // 距離・GP補正
+    power = power * Number(shotCorrection);
+    power = power * Number(GpCorrection);
+    
+    return Math.floor(power);
   }
   // トータルテクニック計算共通ロジック
   // ---------------------------------------------------------------------------------------------- //
 
   // 5. 各出力用トータルテクニックの算出
   const baseParams = {
-    basePara: mainPara,
+    mainPara: mainPara,
     tech: tech,
     movePower: movePower,
     hasKonshin: flgKonshin,
     isRandomUp: flgRandomUp,
     isFailure: flgFailure,
+    isYakuByouGami: flgYakuByouGami,
+    isCritical: false,
     ka: ka,
     kp: kp,
     shotCorrection: shotCorrection,
     GpCorrection: GpCorrection
   };
 
-  // 通常（相性互角）
-  const totalTech = calculateTotalTech({ ...baseParams, elemCorr: elementCorrection[0], isCritical: false });
-  
-  const totalCritical = calculateTotalTech(elementCorrection[0], true);
-  // 属性有利時のトータルテクニック(クリティカル)
-  const totalTechWin = calculateTotalTech(elementCorrection[1], false);
-  const totalCriticalWin = calculateTotalTech(elementCorrection[1], true);
-  // 属性不利時のトータルテクニック(クリティカル)
-  const totalTechLose = calculateTotalTech(elementCorrection[2], false);
-  const totalCriticalLose = calculateTotalTech(elementCorrection[2], true);
+  // 相性判定なし時のトータルテクニック
+  // 通常
+  baseParams.isCritical = false;
+  const totalTech = calcTotalTech({ ...baseParams, elemCorr: elementCorrection[0] });
+  // クリティカル発生時
+  baseParams.isCritical = true;
+  const totalCritical = calcTotalTech({ ...baseParams, elemCorr: elementCorrection[0] });
+
+  // 属性有利時のトータルテクニック
+  // 通常
+  baseParams.isCritical = false;
+  const advantageousTotalTech = calcTotalTech({ ...baseParams, elemCorr: elementCorrection[1] });
+  // クリティカル発生時
+  baseParams.isCritical = true;
+  const advantageousTotalTechCritical = calcTotalTech({ ...baseParams, elemCorr: elementCorrection[1] });
+  // 属性不利時のトータルテクニック
+  // 通常
+  baseParams.isCritical = false;
+  const disadvantageTtotalTech = calcTotalTech({ ...baseParams, elemCorr: elementCorrection[2] });
+  // クリティカル発生時
+  baseParams.isCritical = true;
+  const disadvantageTotalCritical = calcTotalTech({ ...baseParams, elemCorr: elementCorrection[2] });
 
   // ---------------------------------------------------------------------------------------------- //
   // 情報出力
@@ -1532,9 +1589,9 @@ function calc() {
   document.getElementById("rTech").textContent = tech;
   document.getElementById("rLuck").textContent = luck;
   // ベーステクニック
-  document.getElementById("rBaseTech").textContent = baseTechDisplay;
+  document.getElementById("rBaseTech").textContent = displayBaseTechnique;
   // ベースパワー
-  document.getElementById("rBasePower").textContent = basePower.toFixed(6);
+  document.getElementById("rBasePower").textContent = (calcBaseTechnique(mainPara, tech) * 2 / 3).toFixed(6);
   // 必殺技名
   document.getElementById("rMoveName").textContent = textselectUseMoveList;
   // 化身名
@@ -1564,8 +1621,8 @@ function calc() {
   // 守備側の場合、「トータルテクニック(クリティカル)：属性有利時(クリティカル)：属性不利時(クリティカル)」を表示
     document.getElementById("rTotal").textContent = 
       totalTech + " ( " + totalCritical + " ) " + 
-      " : 属性有利時 " + totalTechWin + " ( " + totalCriticalWin + " ) " +
-      " : 属性不利時 " + totalTechLose + " ( " + totalCriticalLose + " )";
+      " : 属性有利時 " + advantageousTotalTech + " ( " + advantageousTotalTechCritical + " ) " +
+      " : 属性不利時 " + disadvantageTtotalTech + " ( " + disadvantageTotalCritical + " )";
   }
   // 情報出力
   // ---------------------------------------------------------------------------------------------- //
@@ -1576,7 +1633,7 @@ function autoShrinkCell(cell) {
   const max = 20;
   const min = 10;
 
-  let size = max;
+  let size = 15;
   cell.style.fontSize = size + "px";
 
   // はみ出している間フォントを下げる
