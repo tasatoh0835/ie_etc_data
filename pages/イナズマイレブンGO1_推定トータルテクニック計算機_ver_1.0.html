@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>イナズマイレブンGO1 推定トータルテクニック計算機 ver 1.1</title>
+<title>イナズマイレブンGO1 推定トータルテクニック簡易計算機 ver 1.1</title>
 <style>
   body {
     font-family: sans-serif;
@@ -16,6 +16,15 @@
 
     border: 2px solid black;
     padding: 10px;
+    font-weight: bold;
+  }
+  /* 最後の行を補足説明用に使う */
+  .playerData .full-row {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-size: 12px;
   }
   .keshiAndMoveData {
     display: inline-grid; 
@@ -25,6 +34,7 @@
 
     border: 2px solid black;
     padding: 10px;
+    font-weight: bold;
   }
   .moveData {
     display: inline-grid; 
@@ -36,6 +46,7 @@
 
     grid-column: 1 / -1;
     width: fit-content;
+    font-weight: bold;
   }
   .checks {
     display: grid;
@@ -44,7 +55,7 @@
     align-items: center;
   }
   #PlayerName, #CommandList {
-    width: 120px;
+    width: 140px;
   }
   #PlayerGender, #PlayerPhysique, #PlayerElementList,
   #ShotCorrectionList, #DefenseCorrectionList, #MoveFailure ,#RandomValue {
@@ -55,7 +66,7 @@
     width: 120px;
   }
   #SkillList1, #SkillList2 {
-    width: 140px;
+    width: 150px;
   }
   #PlayersKeshinList, #KeshinSkillName1, 
   #OtherKeshinList1, #KeshinSkillName2, 
@@ -133,41 +144,10 @@
   }
 
 </style>
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-<script>
-// pngファイル出力処理
-function exportTable() {
-  const table = document.querySelector("table");
-
-  html2canvas(table, {
-    backgroundColor: "#000",
-    scale: 1   // 等倍
-  }).then(canvas => {
-
-    // 縮小用canvas(scaleを0.5にすれば0.5倍)
-    const scale = 1;
-    const smallCanvas = document.createElement("canvas");
-    smallCanvas.width = canvas.width * scale;
-    smallCanvas.height = canvas.height * scale;
-
-    const ctx = smallCanvas.getContext("2d");
-    ctx.drawImage(
-      canvas,
-      0, 0, canvas.width, canvas.height,
-      0, 0, smallCanvas.width, smallCanvas.height
-    );
-
-    const link = document.createElement("a");
-    link.download = "result_table_50pct.png";
-    link.href = smallCanvas.toDataURL("image/png");
-    link.click();
-  });
-}
-</script>
 </head>
 <body>
 
-<h2>イナズマイレブンGO1 推定トータルテクニック計算機  ver 1.0</h2>
+<h1>イナズマイレブンGO1 推定トータルテクニック簡易計算機  ver 1.0</h1>
 <strong>あくまでも推定なので間違いもあるかと思われます。</strong><br>
 <div>
   <p>
@@ -186,6 +166,7 @@ function exportTable() {
       <option value="グレイトゴンガン">ゴンガン(グレイト)</option>
       <option value="グレイトカズマ">カズマ(グレイト)</option>
       <option value="グレイトテンタクル">テンタクル(グレイト)</option>
+      <option value="キングバーンテンタクル">テンタクル(キングB)</option>
       <option value="グレイト円堂">円堂(グレイト)</option>
       </select>
   </details>
@@ -193,7 +174,7 @@ function exportTable() {
 </div>
 
 <!-- テキストボックス -->
-<label>■選手情報入力欄</label><br>
+<label><b>■選手情報入力欄</b></label><br>
 <div class="playerData">
   <label>選手名</label><input type="text" id="PlayerName" placeholder="選手名を入力" value="">
   <div></div><div></div><div></div><div></div>
@@ -218,7 +199,7 @@ function exportTable() {
   </select>
   <label>実行コマンド</label>
   <select id="CommandList">
-    <option value="FW">シュート</option>
+    <option value="FW" selected>シュート</option>
     <option value="MF">ドリブル</option>
     <option value="DF">ブロック</option>
     <option value="GK">キャッチ</option>
@@ -246,11 +227,15 @@ function exportTable() {
     <option value="1.0" selected>残GPが0でない</option>
     <option value="0.5">残GPが0</option>
   </select>
+  <div class="full-row">
+※ステータスはステータス画面に表示されている値をそのまま入力してください。<br>
+例)キックプラス10を習得した選手はステータス画面の時点でプラス10されています。増加分を減算する必要はありません。<br>
+  </div>
 </div>
 <br><br>
-<label>■化身・使用必殺技入力欄</label><br>
+<label><b>■化身・使用必殺技入力欄</b></label><br>
 <div class="keshiAndMoveData">
-  <label>選手の発動化身</label>
+  <label>選手の発動化身(零式)</label>
   <select id="PlayersKeshinList"></select>
   <label>化身スキル</label>
   <input type="text" id="KeshinSkillName1" value="なし">
@@ -265,11 +250,11 @@ function exportTable() {
       <label>必殺技名</label>
       <select id="UseMoveList"></select>
       <label>属性</label>
-      <input type="text" id="MoveElement" placeholder="必殺技の属性" value="無">
+      <input type="text" id="MoveElement" placeholder="必殺技の属性" value="無" readonly>
       <label>威力</label>
-      <input type="number" data-integer id="MovePower" placeholder="必殺技威力" value="20" min="0" step="1">
+      <input type="number" data-integer id="MovePower" placeholder="必殺技威力" value="20" readonly>
       <label>コスト</label>
-      <input type="number" data-integer id="MoveCost" placeholder="必殺技のコスト" value="0" min="0" step="1">
+      <input type="number" data-integer id="MoveCost" placeholder="必殺技のコスト" value="0" readonly>
     </div>
   <label>味方が発動中の化身1</label>
   <select id="OtherKeshinList1"></select>
@@ -293,7 +278,7 @@ function exportTable() {
   </select>
 </div>
 <br><br>
-<button onclick="calc()">計算実行</button>
+<button onclick="calcTotalForm()">計算実行</button>
 <button onclick="exportTable()">PNGとして保存</button>
 
 <!-- 結果テーブル -->
@@ -453,7 +438,7 @@ GOシリーズではほとんどの自力習得技を秘伝書で上書きでき
 <br>
 ■ベースパワー<br>
 <br>
-> ベーステクニック * 2 / 3 - ( ベーステクニックの2乗 / 1480) + ( ベーステクニック * 40 / 197 ) - (8/17)<br>
+> ベーステクニック * 2 / 3 - ( ベーステクニックの2乗 / 1480) + ( ベーステクニック * 25 / 123 ) - (8/17)<br>
 <br>
 ■ベーステクニック<br>
 <br>
@@ -510,702 +495,683 @@ GPが0のとき、0.5倍の補正がかかる。<br>
 <br>
 <a href="https://wikiwiki.jp/inazumaelev2/%E3%82%A4%E3%83%8A%E3%82%BA%E3%83%9E%E3%82%A4%E3%83%AC%E3%83%96%E3%83%B3GO1%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6">イナズマイレブンGO1について - 個人用 Wiki*</a>
 <br>
-<select id="AllKeshinDataList" hidden>
-  <option value="なし|なし|0|0|なし|無|なし|20|0|なし|なし|なし">なし</option>
-  <option value="魔帝グリフォン|火|330|130|ソード・オブ・ファイア|火|SH|250|150|神速の翼|魔帝グリフォン発動者のスピード100UP|460" data-category="FW">魔帝グリフォン</option>
-  <option value="聖騎士アーサー|無|320|120|ソードエクスカリバー|無|SH|250|150|聖なる剣|聖騎士アーサー発動者のキック100UP|440" data-category="FW">聖騎士アーサー</option>
-  <option value="魔戦士ペンドラゴン|無|200|160|ソウル・ブリンガー|無|SH|200|85|バーニングフォース5|チーム全員の全ての能力5UP|360" data-category="FW">魔戦士ペンドラゴン</option>
-  <option value="魔神ペガサスアーク|風|210|130|ジャスティスウィング|風|SH|200|85|ドリブルフォース10|チーム全員のドリブル10UP|340" data-category="FW">魔神ペガサスアーク</option>
-  <option value="聖獣シャイニングドラゴン|風|220|120|ホワイトブレス|風|SH|200|85|ブロックフォース10|チーム全員のブロック10UP|340" data-category="FW">聖獣シャイニングドラゴン</option>
-  <option value="暗黒神ダークエクソダス|林|220|120|魔王の斧|林|SH|200|85|キックフォース10|チーム全員のキック10UP|340" data-category="FW">暗黒神ダークエクソダス</option>
-  <option value="魔女クィーンレディアB|林|200|120|チェックメイト|林|SH|200|85|女神のエール|チームメンバーの女性は全てのステータス30UP|320" data-category="FW">魔女クィーンレディアB</option>
-  <option value="魔女クィーンレディアW|林|200|120|チェックメイト|林|SH|200|85|女神のエール|チームメンバーの女性は全てのステータス30UP|320" data-category="FW">魔女クィーンレディアW</option>
-  <option value="太陽神アポロ|火|180|90|サンシャインフォース|火|SH|180|75|火の雄叫び|チーム全員の火必殺技の威力20UP|270" data-category="FW">太陽神アポロ</option>
-  <option value="炎魔ガザード|火|210|60|爆熱ストーム|火|SH|180|75|火の雄叫び|チーム全員の火必殺技の威力20UP|270" data-category="FW">炎魔ガザード</option>
-  <option value="戦国武神ムサシ|山|155|115|武神連斬|山|SH|180|75|山の雄叫び|チーム全員の山必殺技の威力20UP|270" data-category="FW">戦国武神ムサシ</option>
-  <option value="豪雪のサイア|風|150|110|アイシクルロード|風|SH|180|75|アンチスリップ|チーム全員が雪のフィールドで滑らなくなる|260" data-category="FW">豪雪のサイア</option>
-  <option value="海王ポセイドン|風|160|90|ヘヴィアクアランス|風|SH|180|75|キックフォース5|チーム全員のキック5UP|250" data-category="FW">海王ポセイドン</option>
-  <option value="海帝ネプチューン|風|170|80|ヘヴィアクアランス|風|SH|180|75|キックフォース5|チーム全員のキック5UP|250" data-category="FW">海帝ネプチューン</option>
-  <option value="奏者マエストロ|林|140|70|ハーモニクス|林|SH|160|55|林の雄叫び|チーム全員の林必殺技の威力20UP|210" data-category="FW">奏者マエストロ</option>
-  <option value="蒼きリューク|風|150|50|レイジングクロウ|山|SH|160|55|スピードフォース5|チーム全員のスピード5UP|200" data-category="FW">蒼きリューク</option>
-  <option value="剣聖ランスロット|火|150|50|ロストエンジェル|火|SH|160|55|火の雄叫び|チーム全員の火必殺技の威力20UP|200" data-category="FW">剣聖ランスロット</option>
-  <option value="黒き翼レイブン|山|140|70|レイジングクロウ|山|SH|160|55|スピードフォース5|チーム全員のスピード5UP|210" data-category="FW">黒き翼レイブン</option>
-  <option value="鉄騎兵ナイトB|山|160|30|ギャロップバスター|山|SH|160|55|ドリブルフォース5|チーム全員のドリブル5UP|190" data-category="FW">鉄騎兵ナイトB</option>
-  <option value="鉄騎兵ナイトW|山|160|30|ギャロップバスター|山|SH|160|55|ドリブルフォース5|チーム全員のドリブル5UP|190" data-category="FW">鉄騎兵ナイトW</option>
-  <option value="紅きメガホーク|火|195|55|ファルコ・ウィング|風|SH|140|45|キックフォース5|チーム全員のキック5UP|250" data-category="FW">紅きメガホーク</option>
-  <option value="道化師ファンタム|林|140|70|マジシャンズボックス|林|SH|140|45|ラッキーフォース5|チーム全員のラッキー5UP|210" data-category="FW">道化師ファンタム</option>
-  <option value="夢紳士ドリームアンクル|林|155|55|マジシャンズボックス|林|SH|140|45|アンチペナルティ|チーム全員がファウルを取られなくなる|210" data-category="FW">夢紳士ドリームアンクル</option>
-  <option value="鳥人ファルコ|風|90|50|ファルコ・ウィング|風|SH|140|45|キックフォース5|チーム全員のキック5UP|140" data-category="FW">鳥人ファルコ</option>
-  <option value="奇術魔ピューリム|林|100|40|マジシャンズボックス|林|SH|140|45|テクニシャン|チーム全員の必殺技の成功率UP|140" data-category="FW">奇術魔ピューリム</option>
-  <option value="魔宰相ビショップB|林|200|110|ダークスペース|林|DR|180|35|ドリブルフォース10|チーム全員のドリブル10UP|310" data-category="MF">魔宰相ビショップB</option>
-  <option value="魔宰相ビショップW|林|180|130|ダークスペース|林|DR|180|35|ドリブルフォース10|チーム全員のドリブル10UP|310" data-category="MF">魔宰相ビショップW</option>
-  <option value="獣王レオン|山|200|90|スクラッチレイド|山|DR|180|35|フィールドの守護神|チーム全員のプレスに向かうスピードがあがる|290" data-category="MF">獣王レオン</option>
-  <option value="魔神ペガサス|風|160|110|ペガサスブレイク|風|DR|160|25|風の雄叫び|チーム全員の風必殺技の威力20UP|270" data-category="MF">魔神ペガサス</option>
-  <option value="幻影のダラマンガラス|林|160|100|ダンシングゴースト|林|DR|160|25|スタミナフォース5|チーム全員のスタミナ5UP|260" data-category="DF">幻影のダラマンガラス</option>
-  <option value="魅惑のダラマンローズ|火|160|100|ダンシングゴースト|林|DR|160|25|ドリブルフォース5|チーム全員のドリブル5UP|260" data-category="MF">魅惑のダラマンローズ</option>
-  <option value="精鋭兵ポーンB|火|120|110|マシンガンビート|火|DR|160|25|身軽な身体|チームメンバーの小柄な選手は全てのステータス30UP|230" data-category="MF">精鋭兵ポーンB</option>
-  <option value="精鋭兵ポーンW|火|120|110|マシンガンビート|火|DR|160|25|身軽な身体|チームメンバーの小柄な選手は全てのステータス30UP|230" data-category="MF">精鋭兵ポーンW</option>
-  <option value="光速のマキシム|火|165|75|オーバードライブ|風|DR|140|20|スピードフォース10|チーム全員のスピード10UP|240" data-category="MF">光速のマキシム</option>
-  <option value="音速のバリウス|風|140|60|オーバードライブ|風|DR|140|20|スピードフォース5|チーム全員のスピード5UP|200" data-category="MF">音速のバリウス</option>
-  <option value="破壊神デスロス|火|190|110|破壊弾幕|火|BL|140|200|破壊のオーラ|チームメンバーの発動している化身のアタック力UP|300" data-category="DF">破壊神デスロス</option>
-  <option value="神官ジャッジ|林|205|165|ブラッディアンコール|林|BL|180|35|バーニングフォース10|チーム全員の全て10UP|370" data-category="DF">神官ジャッジ</option>
-  <option value="番人の塔ルークB|山|210|100|ストロングタワー|山|BL|180|35|山の雄叫び|チーム全員の山必殺技の威力20UP|310" data-category="DF">番人の塔ルークB</option>
-  <option value="番人の塔ルークW|山|195|115|ストロングタワー|山|BL|180|35|山の雄叫び|チーム全員の山必殺技の威力20UP|310" data-category="DF">番人の塔ルークW</option>
-  <option value="狂戦士ディアベル|林|160|100|ドラゴンストーム|風|BL|140|20|林の雄叫び|チーム全員の林必殺技の威力20UP|260" data-category="DF">狂戦士ディアベル</option>
-  <option value="竜騎士テディス|風|120|70|ドラゴンストーム|風|BL|140|20|ブロックフォース5|チーム全員のブロック5UP|190" data-category="DF">竜騎士テディス</option>
-  <option value="魔神グレイト|山|235|105|グレイト・ザ・ハンド|山|CA|200|80|スタミナフォース10|チーム全員のスタミナ10UP|340" data-category="GK">魔神グレイト</option>
-  <option value="賢王キングバーンB|火|190|120|キングファイア|火|CA|200|80|戦士の気合|チームメンバーの男性は全てのステータス30UP|310" data-category="GK">賢王キングバーンB</option>
-  <option value="賢王キングバーンW|火|195|115|キングファイア|火|CA|200|80|戦士の気合|チームメンバーの男性は全てのステータス30UP|310" data-category="GK">賢王キングバーンW</option>
-  <option value="護星神タイタニアス|山|180|130|マジン・ザ・ハンド|山|CA|200|80|テクニックフォース10|チーム全員のテクニック10UP|310" data-category="GK">護星神タイタニアス</option>
-  <option value="魔王ギラーゼ|林|190|60|ヘルズフィスト|林|P2|200|80|守りのベール|チームメンバーの発動している化身のダメージ量が軽減される|250" data-category="GK">魔王ギラーゼ</option>
-  <option value="鉄壁のギガドーン|山|190|50|ギガンティックボム|山|CA|180|70|アンチサイクロン|チーム全員が竜巻でふっとばされなくなる|240" data-category="GK">鉄壁のギガドーン</option>
-  <option value="龍神コロガオン|火|210|10|クリムゾンスフィア|火|CA|180|70|ネバーギブアップ|負けているときチーム全員の能力があがる|220" data-category="GK">龍神コロガオン</option>
-  <option value="巨神ギガンテス|山|171|40|ギガンティックボム|山|CA|180|70|アンチサイクロン|チーム全員が竜巻でふっとばされなくなる|211" data-category="GK">巨神ギガンテス</option>
-  <option value="灼熱のレッドダイス|火|155|85|ラッキーダイス|林|CA|160|50|みんなイケイケ!|試合中の得点の勝ち負けに応じてチーム全員の能力が上下|240" data-category="GK">灼熱のレッドダイス</option>
-  <option value="幸運のラストベガ|風|180|50|ラッキーダイス|林|CA|160|50|ラッキーフォース10|チーム全員のラッキー10UP|230" data-category="GK">幸運のラストベガ</option>
-  <option value="勝負師ダイスマン|山|146|58|ラッキーダイス|林|CA|160|50|ラッキーフォース5|チーム全員のラッキー5UP|204" data-category="GK">勝負師ダイスマン</option>
-  <option value="重機兵バロン|山|140|60|ガーディアンシールド|風|CA|140|40|偉大な貫禄|チームメンバーの大柄な選手は全てのステータス30UP|200" data-category="GK">重機兵バロン</option>
-  <option value="機械兵ガレウス|風|120|40|ガーディアンシールド|風|CA|140|40|偉大な貫禄|チームメンバーの大柄な選手は全てのステータス30UP|160" data-category="GK">機械兵ガレウス</option>
-</select>
-
-<select id="AllSpecialMove" hidden>
-  <option value="なし|なし|0|0|なし|無|なし|20|0|なし|なし|なし">なし</option>
-  <option value="なし|なし|0|0|エボリューション|山|SC|220|70|3人(使用者のレベル以上)なし|なし|なし" data-category="FW">エボリューション</option>
-  <option value="なし|なし|0|0|ゼロマグナム|無|BS|200|70|2人(自分のレベル-3以上)なし|なし|なし" data-category="FW">ゼロマグナム</option>
-  <option value="なし|なし|0|0|トライアングルZZ|火|SH|200|60|3人なし|なし|なし" data-category="FW">トライアングルZZ</option>
-  <option value="なし|なし|0|0|ファイアトルネードDD|火|SH|200|70|2人(使用者のレベル以上)なし|なし|なし" data-category="FW">ファイアトルネードDD</option>
-  <option value="なし|なし|0|0|ホワイトハリケーン|風|BS|180|70|なし|なし|なし" data-category="FW">ホワイトハリケーン</option>
-  <option value="なし|なし|0|0|ジョーカーレインズ|林|SH|180|60|2人(自分のレベル-3以上)なし|なし|なし" data-category="FW">ジョーカーレインズ</option>
-  <option value="なし|なし|0|0|ブラックアッシュ|林|SH|180|70|なし|なし|なし" data-category="FW">ブラックアッシュ</option>
-  <option value="なし|なし|0|0|デビルバースト|火|SH|180|70|なし|なし|なし" data-category="FW">デビルバースト</option>
-  <option value="なし|なし|0|0|皇帝ペンギン2号|林|SC|160|50|3人(自分のレベル-3以上)なし|なし|なし" data-category="FW">皇帝ペンギン2号</option>
-  <option value="なし|なし|0|0|風林火山デストロイヤー|無|SC|160|60|なし|なし|なし" data-category="FW">風林火山デストロイヤー</option>
-  <option value="なし|なし|0|0|伝来宝刀|山|SH|160|60|なし|なし|なし" data-category="FW">伝来宝刀</option>
-  <option value="なし|なし|0|0|サウザンドアロー|無|SH|160|60|なし|なし|なし" data-category="FW">サウザンドアロー</option>
-  <option value="なし|なし|0|0|皇帝ペンギン7|風|LS|140|60|なし|なし|なし" data-category="FW">皇帝ペンギン7</option>
-  <option value="なし|なし|0|0|バリスタショット|山|LS|140|60|なし|なし|なし" data-category="FW">バリスタショット</option>
-  <option value="なし|なし|0|0|デスドロップ|火|SC|140|55|なし|なし|なし" data-category="FW">デスドロップ</option>
-  <option value="なし|なし|0|0|パンサーブリザード|風|SH|140|55|なし|なし|なし" data-category="FW">パンサーブリザード</option>
-  <option value="なし|なし|0|0|流星ブレード|火|BS|120|50|なし|なし|なし" data-category="FW">流星ブレード</option>
-  <option value="なし|なし|0|0|エターナルブリザード|風|SH|120|50|なし|なし|なし" data-category="FW">エターナルブリザード</option>
-  <option value="なし|なし|0|0|エクステンドゾーン|林|SH|120|55|なし|なし|なし" data-category="FW">エクステンドゾーン</option>
-  <option value="なし|なし|0|0|マボロシショット|林|SH|120|50|なし|なし|なし" data-category="FW">マボロシショット</option>
-  <option value="なし|なし|0|0|ロケットヘッド|火|SH|120|40|2人なし|なし|なし" data-category="FW">ロケットヘッド</option>
-  <option value="なし|なし|0|0|ドラゴンズテイル|山|SH|120|50|なし|なし|なし" data-category="FW">ドラゴンズテイル</option>
-  <option value="なし|なし|0|0|フライングフィッシュ|風|LS|100|45|なし|なし|なし" data-category="FW">フライングフィッシュ</option>
-  <option value="なし|なし|0|0|レインボーバブルショット|林|LS|100|45|なし|なし|なし" data-category="FW">レインボーバブルショット</option>
-  <option value="なし|なし|0|0|フォルテシモ|林|SC|100|40|なし|なし|なし" data-category="FW">フォルテシモ</option>
-  <option value="なし|なし|0|0|ファイアトルネード|火|SC|100|40|なし|なし|なし" data-category="FW">ファイアトルネード</option>
-  <option value="なし|なし|0|0|ダイナソーブレイク|山|SC|100|40|なし|なし|なし" data-category="FW">ダイナソーブレイク</option>
-  <option value="なし|なし|0|0|マッハウィンド|風|SC|80|35|なし|なし|なし" data-category="FW">マッハウィンド</option>
-  <option value="なし|なし|0|0|サイドワインダー|山|SC|80|35|なし|なし|なし" data-category="FW">サイドワインダー</option>
-  <option value="なし|なし|0|0|ぶっとびジャンプ|山|BS|80|35|なし|なし|なし" data-category="FW">ぶっとびジャンプ</option>
-  <option value="なし|なし|0|0|デスソード|火|SH|80|35|なし|なし|なし" data-category="FW">デスソード</option>
-  <option value="なし|なし|0|0|ソニックショット|風|SH|80|35|なし|なし|なし" data-category="FW">ソニックショット</option>
-  <option value="なし|なし|0|0|ヘッドバズーカ|火|SH|60|30|なし|なし|なし" data-category="FW">ヘッドバズーカ</option>
-  <option value="なし|なし|0|0|バウンドフレイム|火|SH|60|30|なし|なし|なし" data-category="FW">バウンドフレイム</option>
-  <option value="なし|なし|0|0|パーフェクトコース|林|SH|40|25|なし|なし|なし" data-category="FW">パーフェクトコース</option>
-  <option value="なし|なし|0|0|オリンポスハーモニー|林|DR|180|50|なし|なし|なし" data-category="MF">オリンポスハーモニー</option>
-  <option value="なし|なし|0|0|スプリントワープ|無|DR|180|50|なし|なし|なし" data-category="MF">スプリントワープ</option>
-  <option value="なし|なし|0|0|ラウンドスパーク|火|DR|160|45|なし|なし|なし" data-category="MF">ラウンドスパーク</option>
-  <option value="なし|なし|0|0|昇り龍|山|DR|160|45|なし|なし|なし" data-category="MF">昇り龍</option>
-  <option value="なし|なし|0|0|ホワイトブレード|風|DR|140|36|なし|なし|なし" data-category="MF">ホワイトブレード</option>
-  <option value="なし|なし|0|0|メロディウェイブ|林|DR|140|40|なし|なし|なし" data-category="MF">メロディウェイブ</option>
-  <option value="なし|なし|0|0|ブリタニアクロス|火|DR|140|36|2人なし|なし|なし" data-category="MF">ブリタニアクロス</option>
-  <option value="なし|なし|0|0|エンドレスサマー|火|DR|140|36|なし|なし|なし" data-category="MF">エンドレスサマー</option>
-  <option value="なし|なし|0|0|スカイウォーク|山|DR|140|40|なし|なし|なし" data-category="MF">スカイウォーク</option>
-  <option value="なし|なし|0|0|風神の舞|風|DR|120|36|なし|なし|なし" data-category="MF">風神の舞</option>
-  <option value="なし|なし|0|0|トリックボール|林|DR|120|36|なし|なし|なし" data-category="MF">トリックボール</option>
-  <option value="なし|なし|0|0|クレイモア|山|DR|120|32|なし|なし|なし" data-category="MF">クレイモア</option>
-  <option value="なし|なし|0|0|アクロバットキープ|山|DR|120|36|なし|なし|なし" data-category="MF">アクロバットキープ</option>
-  <option value="なし|なし|0|0|ゼロヨン|風|DR|100|32|なし|なし|なし" data-category="MF">ゼロヨン</option>
-  <option value="なし|なし|0|0|疾風ダッシュ|風|DR|100|32|なし|なし|なし" data-category="MF">疾風ダッシュ</option>
-  <option value="なし|なし|0|0|イリュージョンボール|林|DR|100|32|なし|なし|なし" data-category="MF">イリュージョンボール</option>
-  <option value="なし|なし|0|0|プレストターン|林|DR|100|32|なし|なし|なし" data-category="MF">プレストターン</option>
-  <option value="なし|なし|0|0|ザ・スタンプ|山|DR|100|28|なし|なし|なし" data-category="MF">ザ・スタンプ</option>
-  <option value="なし|なし|0|0|そよかぜステップ|風|DR|80|28|なし|なし|なし" data-category="MF">そよかぜステップ</option>
-  <option value="なし|なし|0|0|バーニングサマー|火|DR|80|24|なし|なし|なし" data-category="MF">バーニングサマー</option>
-  <option value="なし|なし|0|0|ブーメランフェイント|山|DR|80|28|なし|なし|なし" data-category="MF">ブーメランフェイント</option>
-  <option value="なし|なし|0|0|なみのりピエロ|風|DR|60|24|なし|なし|なし" data-category="MF">なみのりピエロ</option>
-  <option value="なし|なし|0|0|マッドジャグラー|火|DR|60|20|なし|なし|なし" data-category="MF">マッドジャグラー</option>
-  <option value="なし|なし|0|0|フューチャー・アイ|林|DR|40|20|なし|なし|なし" data-category="MF">フューチャー・アイ</option>
-  <option value="なし|なし|0|0|アトランティスウォール|山|BB|180|50|なし|なし|なし" data-category="DF">アトランティスウォール</option>
-  <option value="なし|なし|0|0|バニシングカット|無|BL|180|50|なし|なし|なし" data-category="DF">バニシングカット</option>
-  <option value="なし|なし|0|0|エアーバレット|風|BB|160|40|なし|なし|なし" data-category="DF">エアーバレット</option>
-  <option value="なし|なし|0|0|クレイジーサンライト|火|BL|160|45|なし|なし|なし" data-category="DF">クレイジーサンライト</option>
-  <option value="なし|なし|0|0|ビッグシザース|火|BL|160|36|2人なし|なし|なし" data-category="DF">ビッグシザース</option>
-  <option value="なし|なし|0|0|最強さん召喚|無|BL|160|40|なし|なし|なし" data-category="DF">最強さん召喚</option>
-  <option value="なし|なし|0|0|ディープミスト|林|BB|140|40|なし|なし|なし" data-category="DF">ディープミスト</option>
-  <option value="なし|なし|0|0|ディメンションカット|林|BL|140|40|なし|なし|なし" data-category="DF">ディメンションカット</option>
-  <option value="なし|なし|0|0|ハンターズネット|林|BB|140|40|なし|なし|なし" data-category="DF">ハンターズネット</option>
-  <option value="なし|なし|0|0|かっとびディフェンス|山|BB|140|36|2人なし|なし|なし" data-category="DF">かっとびディフェンス</option>
-  <option value="なし|なし|0|0|サルガッソー|風|BL|140|36|2人(自分のレベル-3以上)なし|なし|なし" data-category="DF">サルガッソー</option>
-  <option value="なし|なし|0|0|アイスグランド|風|BL|120|36|なし|なし|なし" data-category="DF">アイスグランド</option>
-  <option value="なし|なし|0|0|ツインミキサー|火|BL|120|32|2人なし|なし|なし" data-category="DF">ツインミキサー</option>
-  <option value="なし|なし|0|0|旋風陣|風|BB|100|32|なし|なし|なし" data-category="DF">旋風陣</option>
-  <option value="なし|なし|0|0|ビバ！万里の長城|山|BB|100|32|なし|なし|なし" data-category="DF">ビバ！万里の長城</option>
-  <option value="なし|なし|0|0|キラーホエール|風|BL|100|32|なし|なし|なし" data-category="DF">キラーホエール</option>
-  <option value="なし|なし|0|0|ザ・ミスト|林|BL|100|32|なし|なし|なし" data-category="DF">ザ・ミスト</option>
-  <option value="なし|なし|0|0|カードスプラッシュ|火|BL|100|32|なし|なし|なし" data-category="DF">カードスプラッシュ</option>
-  <option value="なし|なし|0|0|エレファントプレス|山|BL|100|24|2人なし|なし|なし" data-category="DF">エレファントプレス</option>
-  <option value="なし|なし|0|0|ザ・ウォール|山|BB|80|28|なし|なし|なし" data-category="DF">ザ・ウォール</option>
-  <option value="なし|なし|0|0|スパイラルドロー|風|BL|80|28|なし|なし|なし" data-category="DF">スパイラルドロー</option>
-  <option value="なし|なし|0|0|ダッシュトレイン|火|BL|60|20|なし|なし|なし" data-category="DF">ダッシュトレイン</option>
-  <option value="なし|なし|0|0|シーフ・アイ|林|BL|40|20|なし|なし|なし" data-category="DF">シーフ・アイ</option>
-  <option value="なし|なし|0|0|キルブリッジ|風|CA|180|55|なし|なし|なし" data-category="GK">キルブリッジ</option>
-  <option value="なし|なし|0|0|グラビティポイント|林|CA|180|55|なし|なし|なし" data-category="GK">グラビティポイント</option>
-  <option value="なし|なし|0|0|無頼ハンド|火|CA|180|55|なし|なし|なし" data-category="GK">無頼ハンド</option>
-  <option value="なし|なし|0|0|ゴッドハンドV|山|CA|180|55|なし|なし|なし" data-category="GK">ゴッドハンドV</option>
-  <option value="なし|なし|0|0|サーペントファング|山|CA|160|50|なし|なし|なし" data-category="GK">サーペントファング</option>
-  <option value="なし|なし|0|0|かげつかみ|林|CA|140|45|なし|なし|なし" data-category="GK">かげつかみ</option>
-  <option value="なし|なし|0|0|スターリフレクション|風|P2|140|40|なし|なし|なし" data-category="GK">スターリフレクション</option>
-  <option value="なし|なし|0|0|フェンス・オブ・ガイア|山|P2|140|40|なし|なし|なし" data-category="GK">フェンス・オブ・ガイア</option>
-  <option value="なし|なし|0|0|シュートブレイク|火|P1|140|45|なし|なし|なし" data-category="GK">シュートブレイク</option>
-  <option value="なし|なし|0|0|クリスタルバリア|風|CA|120|40|なし|なし|なし" data-category="GK">クリスタルバリア</option>
-  <option value="なし|なし|0|0|カウンタードライブ|火|CA|120|40|なし|なし|なし" data-category="GK">カウンタードライブ</option>
-  <option value="なし|なし|0|0|パワースパイク|火|CA|100|35|なし|なし|なし" data-category="GK">パワースパイク</option>
-  <option value="なし|なし|0|0|ハイドロアンカー|風|P1|100|30|なし|なし|なし" data-category="GK">ハイドロアンカー</option>
-  <option value="なし|なし|0|0|バットアタック|林|CA|80|30|なし|なし|なし" data-category="GK">バットアタック</option>
-  <option value="なし|なし|0|0|ゴッドハンド|山|CA|80|30|なし|なし|なし" data-category="GK">ゴッドハンド</option>
-  <option value="なし|なし|0|0|バーニングキャッチ|火|CA|60|25|なし|なし|なし" data-category="GK">バーニングキャッチ</option>
-  <option value="なし|なし|0|0|ラピッドウィップ|風|P1|60|20|なし|なし|なし" data-category="GK">ラピッドウィップ</option>
-  <option value="なし|なし|0|0|ムーンサルトスタンプ|風|CA|40|20|なし|なし|なし" data-category="GK">ムーンサルトスタンプ</option>
-  <option value="なし|なし|0|0|こんしん！|なし|SK|なし|なし|コマンド技の威力が強化されるが、試合中にGPが減りやすくなる|なし|なし|なし" data-category="SK">こんしん！</option>
-  <option value="なし|なし|0|0|風の心得|なし|SK|なし|なし|風属性の必殺技の威力がちょっとだけ強くなる|なし|なし|なし" data-category="SK">風の心得</option>
-  <option value="なし|なし|0|0|林の心得|なし|SK|なし|なし|林属性の必殺技の威力がちょっとだけ強くなる|なし|なし|なし" data-category="SK">林の心得</option>
-  <option value="なし|なし|0|0|火の心得|なし|SK|なし|なし|火属性の必殺技の威力がちょっとだけ強くなる|なし|なし|なし" data-category="SK">火の心得</option>
-  <option value="なし|なし|0|0|山の心得|なし|SK|なし|なし|山属性の必殺技の威力がちょっとだけ強くなる|なし|なし|なし" data-category="SK">山の心得</option>
-  <option value="なし|なし|0|0|無の心得|なし|SK|なし|なし|無属性の必殺技の威力がちょっとだけ強くなる|なし|なし|なし" data-category="SK">無の心得</option>
-  <option value="なし|なし|0|0|属性強化|なし|SK|なし|なし|得意な属性の相手に対して有利になる|なし|なし|なし" data-category="SK">属性強化</option>
-  <option value="なし|なし|0|0|クリティカル！|なし|SK|なし|なし|たまにコマンド技の威力があがる|なし|なし|なし" data-category="SK">クリティカル！</option>
-  <option value="なし|なし|0|0|GPプラス20|なし|SK|なし|なし|GPが20アップ|なし|なし|なし" data-category="SK">GPプラス20</option>
-  <option value="なし|なし|0|0|TPプラス20|なし|SK|なし|なし|TPが20アップ|なし|なし|なし" data-category="SK">TPプラス20</option>
-  <option value="なし|なし|0|0|キックプラス20|なし|SK|なし|なし|キックのステータス値が20アップ|なし|なし|なし" data-category="SK">キックプラス20</option>
-  <option value="なし|なし|0|0|ドリブルプラス20|なし|SK|なし|なし|ドリブルのステータス値が20アップ|なし|なし|なし" data-category="SK">ドリブルプラス20</option>
-  <option value="なし|なし|0|0|ブロックプラス20|なし|SK|なし|なし|ブロックのステータス値が20アップ|なし|なし|なし" data-category="SK">ブロックプラス20</option>
-  <option value="なし|なし|0|0|キャッチプラス20|なし|SK|なし|なし|キャッチのステータス値が20アップ|なし|なし|なし" data-category="SK">キャッチプラス20</option>
-  <option value="なし|なし|0|0|テクニックプラス20|なし|SK|なし|なし|テクニックのステータス値が20アップ|なし|なし|なし" data-category="SK">テクニックプラス20</option>
-  <option value="なし|なし|0|0|ラッキープラス20|なし|SK|なし|なし|ラッキーのステータス値が20アップ|なし|なし|なし" data-category="SK">ラッキープラス20</option>
-  <option value="なし|なし|0|0|スピードプラス20|なし|SK|なし|なし|スピードのステータス値が20アップ|なし|なし|なし" data-category="SK">スピードプラス20</option>
-  <option value="なし|なし|0|0|GPプラス10|なし|SK|なし|なし|GPが10アップ|なし|なし|なし" data-category="SK">GPプラス10</option>
-  <option value="なし|なし|0|0|TPプラス10|なし|SK|なし|なし|TPが10アップ|なし|なし|なし" data-category="SK">TPプラス10</option>
-  <option value="なし|なし|0|0|キックプラス10|なし|SK|なし|なし|キックのステータス値が10アップ|なし|なし|なし" data-category="SK">キックプラス10</option>
-  <option value="なし|なし|0|0|ドリブルプラス10|なし|SK|なし|なし|ドリブルのステータス値が10アップ|なし|なし|なし" data-category="SK">ドリブルプラス10</option>
-  <option value="なし|なし|0|0|ブロックプラス10|なし|SK|なし|なし|ブロックのステータス値が10アップ|なし|なし|なし" data-category="SK">ブロックプラス10</option>
-  <option value="なし|なし|0|0|キャッチプラス10|なし|SK|なし|なし|キャッチのステータス値が10アップ|なし|なし|なし" data-category="SK">キャッチプラス10</option>
-  <option value="なし|なし|0|0|テクニックプラス10|なし|SK|なし|なし|テクニックのステータス値が10アップ|なし|なし|なし" data-category="SK">テクニックプラス10</option>
-  <option value="なし|なし|0|0|ラッキープラス10|なし|SK|なし|なし|ラッキーのステータス値が10アップ|なし|なし|なし" data-category="SK">ラッキープラス10</option>
-  <option value="なし|なし|0|0|スピードプラス10|なし|SK|なし|なし|スピードのステータス値が10アップ|なし|なし|なし" data-category="SK">スピードプラス10</option>
-  <option value="なし|なし|0|0|ちょうわざ！|なし|SK|なし|なし|TPと引き換えに技を強化できる(消費TP1.5倍)|なし|なし|なし" data-category="SK">ちょうわざ！</option>
-  <option value="なし|なし|0|0|やくびょうがみ|なし|SK|なし|なし|たまにコマンド技の威力がさがるが、あがる事もある|なし|なし|なし" data-category="SK">やくびょうがみ</option>
-  <option value="なし|なし|0|0|イケメンUP！|なし|SK|なし|なし|相手の選手が女の子のときコマンドバトルで有利になる|なし|なし|なし" data-category="SK">イケメンUP！</option>
-  <option value="なし|なし|0|0|おいろけUP！|なし|SK|なし|なし|相手の選手が男の子のときコマンドバトルで有利になる|なし|なし|なし" data-category="SK">おいろけUP！</option>
-  <option value="なし|なし|0|0|アシスト！|なし|SK|なし|なし|仲間のコマンドバトルに参加すると有利になる|なし|なし|なし" data-category="SK">アシスト！</option>
-  <option value="なし|なし|0|0|ノーペナルティ！|なし|SK|なし|なし|自分のファウルがとられにくくなる|なし|なし|なし" data-category="SK">ノーペナルティ！</option>
-  <option value="なし|なし|0|0|イカサマ！|なし|SK|なし|なし|相手のファウルをさそいやすくなる|なし|なし|なし" data-category="SK">イカサマ！</option>
-  <option value="なし|なし|0|0|リカバリー|なし|SK|なし|なし|体勢が崩れたときの立て直しが早くなる|なし|なし|なし" data-category="SK">リカバリー</option>
-  <option value="なし|なし|0|0|セツヤク！|なし|SK|なし|なし|必殺技を使うときに必要なTPが少なくなる(消費TP4/5になる)|なし|なし|なし" data-category="SK">セツヤク！</option>
-  <option value="なし|なし|0|0|がくしゅう|なし|SK|なし|なし|取得できる経験値が2倍になる|なし|なし|なし" data-category="SK">がくしゅう</option>
-  <option value="なし|なし|0|0|なまける|なし|SK|なし|なし|試合やミニバトルに参加した場合に自身の取得分の経験値を他の選手に分配する(詳しい効果と自力習得者)|なし|なし|なし" data-category="SK">なまける</option>
-  <option value="なし|なし|0|0|かねもち|なし|SK|なし|なし|ねっけつポイントが２倍はいる(詳しい効果と自力習得者)|なし|なし|なし" data-category="SK">かねもち</option>
-  <option value="なし|なし|0|0|ゆうじょう|なし|SK|なし|なし|ゆうじょうポイントが２倍入る(詳しい効果と自力習得者)|なし|なし|なし" data-category="SK">ゆうじょう</option>
-</select>
-
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
-// 選手リスト選択による値変更
-document.getElementById("QuickEntryPlayerList").addEventListener("change", function() {
-  if ("なし"  == this.value) {
-    document.getElementById("PlayerName").value = "";
-    document.getElementById('PlayerGender').options[0].selected = true;      // 男
-    document.getElementById('PlayerPhysique').options[0].selected = true;    // 普通体系
-    document.getElementById('PlayerElementList').options[0].selected = true; // 風属性
-    document.getElementById("MainPara").value = 1;
-    document.getElementById("TechVal").value = 1;
-    document.getElementById("LuckVal").value = 1;
-    document.getElementById("PlayerElementList").value = "風";
-    document.getElementById('CommandList').options[0].selected = true; // シュート
-    document.getElementById('CommandList').dispatchEvent(new Event('change'));
-    document.getElementById('SkillList1').options[0].selected = true;  // なし
-    document.getElementById('SkillList2').options[0].selected = true;  // なし
-    // PlayersKeshinListの設定と変更実行
-    document.getElementById('PlayersKeshinList').options[0].selected = true; // 化身なし
-    document.getElementById('PlayersKeshinList').dispatchEvent(new Event('change'));
-  }
-  else if ("剣城" == this.value) {
-    document.getElementById("PlayerName").value = "剣城";
-    document.getElementById('PlayerGender').options[0].selected = true;      // 男
-    document.getElementById('PlayerPhysique').options[0].selected = true;    // 普通体系
-    document.getElementById("MainPara").value = 384;
-    document.getElementById("TechVal").value = 39;
-    document.getElementById("LuckVal").value = 207;
-    document.getElementById("PlayerElementList").value = "火";
-    document.getElementById('CommandList').options[0].selected = true; // シュート
-    document.getElementById('CommandList').dispatchEvent(new Event('change'));
-    document.getElementById('SkillList1').options[1].selected = true;  // こんしん！
-    document.getElementById('SkillList2').options[7].selected = true;  // 属性強化
-    // PlayersKeshinListの設定と変更実行
-    document.getElementById('PlayersKeshinList').options[0].selected = true; // 化身なし
-    document.getElementById('PlayersKeshinList').dispatchEvent(new Event('change'));
-    // UseMoveListの設定と変更実行
-    document.getElementById('UseMoveList').options[4].selected = true; // FTDD
-    document.getElementById('UseMoveList').dispatchEvent(new Event('change'));
-  }
-  else if ("白竜" == this.value) {
-    document.getElementById("PlayerName").value = "白竜";
-    document.getElementById('PlayerGender').options[0].selected = true;      // 男
-    document.getElementById('PlayerPhysique').options[0].selected = true;    // 普通体系
-    document.getElementById("MainPara").value = 492;
-    document.getElementById("TechVal").value = 39;
-    document.getElementById("LuckVal").value = 174;
-    document.getElementById("PlayerElementList").value = "風";
-    document.getElementById('CommandList').options[0].selected = true; // シュート
-    document.getElementById('CommandList').dispatchEvent(new Event('change'));
-    document.getElementById('SkillList1').options[1].selected = true;  // こんしん！
-    document.getElementById('SkillList2').options[7].selected = true;  // 属性強化
-    // PlayersKeshinListの設定と変更実行
-    document.getElementById('PlayersKeshinList').options[0].selected = true; // 化身なし
-    document.getElementById('PlayersKeshinList').dispatchEvent(new Event('change'));
-    // UseMoveListの設定と変更実行
-    document.getElementById('UseMoveList').options[5].selected = true; // WH
-    document.getElementById('UseMoveList').dispatchEvent(new Event('change'));
-  }
-  else if ("シュウ" == this.value) {
-    document.getElementById("PlayerName").value = "シュウ";
-    document.getElementById('PlayerGender').options[0].selected = true;      // 男
-    document.getElementById('PlayerPhysique').options[0].selected = true;    // 普通体系
-    document.getElementById("MainPara").value = 477;
-    document.getElementById("TechVal").value = 39;
-    document.getElementById("LuckVal").value = 204;
-    document.getElementById("PlayerElementList").value = "林";
-    document.getElementById('CommandList').options[0].selected = true; // シュート
-    document.getElementById('CommandList').dispatchEvent(new Event('change'));
-    document.getElementById('SkillList1').options[1].selected = true;  // こんしん！
-    document.getElementById('SkillList2').options[7].selected = true;  // 属性強化
-    // PlayersKeshinListの設定と変更実行
-    document.getElementById('PlayersKeshinList').options[0].selected = true; // 化身なし
-    document.getElementById('PlayersKeshinList').dispatchEvent(new Event('change'));
-    // UseMoveListの設定と変更実行
-    document.getElementById('UseMoveList').options[7].selected = true; // BA
-    document.getElementById('UseMoveList').dispatchEvent(new Event('change'));
-  }
-  else if ("ランスロット剣城" == this.value) {
-    document.getElementById("PlayerName").value = "剣城";
-    document.getElementById('PlayerGender').options[0].selected = true;      // 男
-    document.getElementById('PlayerPhysique').options[0].selected = true;    // 普通体系
-    document.getElementById("MainPara").value = 384;
-    document.getElementById("TechVal").value = 39;
-    document.getElementById("LuckVal").value = 207;
-    document.getElementById("PlayerElementList").value = "火";
-    document.getElementById('CommandList').options[0].selected = true; // シュート
-    document.getElementById('CommandList').dispatchEvent(new Event('change'));
-    document.getElementById('SkillList1').options[8].selected = true;  // クリティカル
-    document.getElementById('SkillList2').options[7].selected = true;  // 属性強化
-    // PlayersKeshinListの設定と変更実行
-    document.getElementById('PlayersKeshinList').options[17].selected = true;
-    document.getElementById('PlayersKeshinList').dispatchEvent(new Event('change'));
-  }
-  else if ("シャイニングドラゴン白竜" == this.value) {
-    document.getElementById("PlayerName").value = "白竜";
-    document.getElementById('PlayerGender').options[0].selected = true;      // 男
-    document.getElementById('PlayerPhysique').options[0].selected = true;    // 普通体系
-    document.getElementById("MainPara").value = 492;
-    document.getElementById("TechVal").value = 39;
-    document.getElementById("LuckVal").value = 174;
-    document.getElementById("PlayerElementList").value = "風";
-    document.getElementById('CommandList').options[0].selected = true; // シュート
-    document.getElementById('CommandList').dispatchEvent(new Event('change'));
-    document.getElementById('SkillList1').options[8].selected = true;  // クリティカル
-    document.getElementById('SkillList2').options[7].selected = true;  // 属性強化
-    // PlayersKeshinListの設定と変更実行
-    document.getElementById('PlayersKeshinList').options[5].selected = true;
-    document.getElementById('PlayersKeshinList').dispatchEvent(new Event('change'));
-  }
-  else if ("ダークエクソダスシュウ" == this.value) {
-    document.getElementById("PlayerName").value = "シュウ";
-    document.getElementById("MainPara").value = 477;
-    document.getElementById("TechVal").value = 39;
-    document.getElementById("LuckVal").value = 204;
-    document.getElementById("PlayerElementList").value = "林";
-    document.getElementById('CommandList').options[0].selected = true; // シュート
-    document.getElementById('CommandList').dispatchEvent(new Event('change'));
-    document.getElementById('SkillList1').options[8].selected = true;  // クリティカル
-    document.getElementById('SkillList2').options[7].selected = true;  // 属性強化
-    // PlayersKeshinListの設定と変更実行
-    document.getElementById('PlayersKeshinList').options[6].selected = true;
-    document.getElementById('PlayersKeshinList').dispatchEvent(new Event('change'));
-  }
-  else if ("ムサシ御門" == this.value) {
-    document.getElementById("PlayerName").value = "御門";
-    document.getElementById('PlayerGender').options[0].selected = true;      // 男
-    document.getElementById('PlayerPhysique').options[2].selected = true;    // 大柄体系
-    document.getElementById("MainPara").value = 443;
-    document.getElementById("TechVal").value = 39;
-    document.getElementById("LuckVal").value = 202;
-    document.getElementById("PlayerElementList").value = "山";
-    document.getElementById('CommandList').options[0].selected = true; // シュート
-    document.getElementById('CommandList').dispatchEvent(new Event('change'));
-    document.getElementById('SkillList1').options[8].selected = true;  // クリティカル
-    document.getElementById('SkillList2').options[7].selected = true;  // 属性強化
-    // PlayersKeshinListの設定と変更実行
-    document.getElementById('PlayersKeshinList').options[11].selected = true;
-    document.getElementById('PlayersKeshinList').dispatchEvent(new Event('change'));
-  }
-  else if ("ダークエクソダス吉良" == this.value) {
-    document.getElementById("PlayerName").value = "吉良";
-    document.getElementById('PlayerGender').options[0].selected = true;      // 男
-    document.getElementById('PlayerPhysique').options[0].selected = true;    // 普通体系
-    document.getElementById("MainPara").value = 457;
-    document.getElementById("TechVal").value = 39;
-    document.getElementById("LuckVal").value = 195;
-    document.getElementById("PlayerElementList").value = "火";
-    document.getElementById('CommandList').options[0].selected = true; // シュート
-    document.getElementById('CommandList').dispatchEvent(new Event('change'));
-    document.getElementById('SkillList1').options[8].selected = true;  // クリティカル
-    document.getElementById('SkillList2').options[7].selected = true;  // 属性強化
-    // PlayersKeshinListの設定と変更実行
-    document.getElementById('PlayersKeshinList').options[6].selected = true;
-    document.getElementById('PlayersKeshinList').dispatchEvent(new Event('change'));
-  }
-  else if ("グレイトゴンガン" == this.value) {
-    document.getElementById("PlayerName").value = "ゴンガン";
-    document.getElementById('PlayerGender').options[1].selected = true;      // 女
-    document.getElementById('PlayerPhysique').options[2].selected = true;    // 大柄体系
-    document.getElementById("MainPara").value = 460;
-    document.getElementById("TechVal").value = 39;
-    document.getElementById("LuckVal").value = 158;
-    document.getElementById("PlayerElementList").value = "風";
-    document.getElementById('CommandList').options[3].selected = true; // キャッチ
-    document.getElementById('CommandList').dispatchEvent(new Event('change'));
-    document.getElementById('SkillList1').options[8].selected = true;  // クリティカル
-    document.getElementById('SkillList2').options[5].selected = true;  // 山の心得
-    // PlayersKeshinListの設定と変更実行
-    document.getElementById('PlayersKeshinList').options[1].selected = true;
-    document.getElementById('PlayersKeshinList').dispatchEvent(new Event('change'));
-  }
-  else if ("グレイトカズマ" == this.value) {
-    document.getElementById("PlayerName").value = "カズマ";
-    document.getElementById('PlayerGender').options[0].selected = true;      // 男
-    document.getElementById('PlayerPhysique').options[0].selected = true;    // 普通体系
-    document.getElementById("MainPara").value = 450;
-    document.getElementById("TechVal").value = 39;
-    document.getElementById("LuckVal").value = 192;
-    document.getElementById("PlayerElementList").value = "林";
-    document.getElementById('CommandList').options[3].selected = true; // キャッチ
-    document.getElementById('CommandList').dispatchEvent(new Event('change'));
-    document.getElementById('SkillList1').options[8].selected = true;  // クリティカル
-    document.getElementById('SkillList2').options[5].selected = true;  // 山の心得
-    // PlayersKeshinListの設定と変更実行
-    document.getElementById('PlayersKeshinList').options[1].selected = true;
-    document.getElementById('PlayersKeshinList').dispatchEvent(new Event('change'));
-  }
-    else if ("グレイトテンタクル" == this.value) {
-    document.getElementById("PlayerName").value = "テンタクル";
-    document.getElementById('PlayerGender').options[0].selected = true;      // 男
-    document.getElementById('PlayerPhysique').options[2].selected = true;    // 大柄体系
-    document.getElementById("MainPara").value = 460;
-    document.getElementById("TechVal").value = 39;
-    document.getElementById("LuckVal").value = 177;
-    document.getElementById("PlayerElementList").value = "火";
-    document.getElementById('CommandList').options[3].selected = true; // キャッチ
-    document.getElementById('CommandList').dispatchEvent(new Event('change'));
-    document.getElementById('SkillList1').options[8].selected = true;  // クリティカル
-    document.getElementById('SkillList2').options[5].selected = true;  // 山の心得
-    // PlayersKeshinListの設定と変更実行
-    document.getElementById('PlayersKeshinList').options[1].selected = true;
-    document.getElementById('PlayersKeshinList').dispatchEvent(new Event('change'));
-  }
-  else if ("グレイト円堂" == this.value) {
-    document.getElementById("PlayerName").value = "円堂";
-    document.getElementById("MainPara").value = 480;
-    document.getElementById("TechVal").value = 39;
-    document.getElementById("LuckVal").value = 169;
-    document.getElementById("PlayerElementList").value = "山";
-    document.getElementById('CommandList').options[3].selected = true; // キャッチ
-    document.getElementById('CommandList').dispatchEvent(new Event('change'));
-    document.getElementById('SkillList1').options[8].selected = true;  // クリティカル
-    document.getElementById('SkillList2').options[7].selected = true;  // 属性強化
-    // PlayersKeshinListの設定と変更実行
-    document.getElementById('PlayersKeshinList').options[1].selected = true;
-    document.getElementById('PlayersKeshinList').dispatchEvent(new Event('change'));
-  }
-});
+// 定数、グローバル変数-----------------------------------------------------------------------------------------
+// 化身情報
+const KESHIN_DATA = [
+  { keshinName: "なし", keshinElement: "なし", KP: 0, KA: 0, moveName: "なし", moveElement: "なし",  commandType: "なし", movePower: 20, moveCost: 0, skillName: "なし", skillDetail: "", category: "なし" },
+  { keshinName: "魔帝グリフォン", keshinElement: "火", KP: 330, KA: 130, moveName: "ソード・オブ・ファイア", moveElement: "火", commandType: "SH", movePower: 250, moveCost: 150, skillName: "神速の翼", skillDetail: "魔帝グリフォン発動者のスピード100UP", category: "FW" },
+  { keshinName: "聖騎士アーサー", keshinElement: "無", KP: 320, KA: 120, moveName: "ソードエクスカリバー", moveElement: "無", commandType: "SH", movePower: 250, moveCost: 150, skillName: "聖なる剣", skillDetail: "聖騎士アーサー発動者のキック100UP", category: "FW" },
+  { keshinName: "魔戦士ペンドラゴン", keshinElement: "無", KP: 200, KA: 160, moveName: "ソウル・ブリンガー", moveElement: "無", commandType: "SH", movePower: 200, moveCost: 85, skillName: "バーニングフォース5", skillDetail: "チーム全員の全ての能力5UP", category: "FW" },
+  { keshinName: "魔神ペガサスアーク", keshinElement: "風", KP: 210, KA: 130, moveName: "ジャスティスウィング", moveElement: "風", commandType: "SH", movePower: 200, moveCost: 85, skillName: "ドリブルフォース10", skillDetail: "チーム全員のドリブル10UP", category: "FW" },
+  { keshinName: "聖獣シャイニングドラゴン", keshinElement: "風", KP: 220, KA: 120, moveName: "ホワイトブレス", moveElement: "風", commandType: "SH", movePower: 200, moveCost: 85, skillName: "ブロックフォース10", skillDetail: "チーム全員のブロック10UP", category: "FW" },
+  { keshinName: "暗黒神ダークエクソダス", keshinElement: "林", KP: 220, KA: 120, moveName: "魔王の斧", moveElement: "林", commandType: "SH", movePower: 200, moveCost: 85, skillName: "キックフォース10", skillDetail: "チーム全員のキック10UP", category: "FW" },
+  { keshinName: "魔女クィーンレディアB", keshinElement: "林", KP: 200, KA: 120, moveName: "チェックメイト", moveElement: "林", commandType: "SH", movePower: 200, moveCost: 85, skillName: "女神のエール", skillDetail: "チームメンバーの女性は全てのステータス30UP", category: "FW" },
+  { keshinName: "魔女クィーンレディアW", keshinElement: "林", KP: 200, KA: 120, moveName: "チェックメイト", moveElement: "林", commandType: "SH", movePower: 200, moveCost: 85, skillName: "女神のエール", skillDetail: "チームメンバーの女性は全てのステータス30UP", category: "FW" },
+  { keshinName: "太陽神アポロ", keshinElement: "火", KP: 180, KA: 90, moveName: "サンシャインフォース", moveElement: "火", commandType: "SH", movePower: 180, moveCost: 75, skillName: "火の雄叫び", skillDetail: "チーム全員の火必殺技の威力20UP", category: "FW" },
+  { keshinName: "炎魔ガザード", keshinElement: "火", KP: 210, KA: 60, moveName: "爆熱ストーム", moveElement: "火", commandType: "SH", movePower: 180, moveCost: 75, skillName: "火の雄叫び", skillDetail: "チーム全員の火必殺技の威力20UP", category: "FW" },
+  { keshinName: "戦国武神ムサシ", keshinElement: "山", KP: 155, KA: 115, moveName: "武神連斬", moveElement: "山", commandType: "SH", movePower: 180, moveCost: 75, skillName: "山の雄叫び", skillDetail: "チーム全員の山必殺技の威力20UP", category: "FW" },
+  { keshinName: "豪雪のサイア", keshinElement: "風", KP: 150, KA: 110, moveName: "アイシクルロード", moveElement: "風", commandType: "SH", movePower: 180, moveCost: 75, skillName: "アンチスリップ", skillDetail: "チーム全員が雪のフィールドで滑らなくなる", category: "FW" },
+  { keshinName: "海王ポセイドン", keshinElement: "風", KP: 160, KA: 90, moveName: "ヘヴィアクアランス", moveElement: "風", commandType: "SH", movePower: 180, moveCost: 75, skillName: "キックフォース5", skillDetail: "チーム全員のキック5UP", category: "FW" },
+  { keshinName: "海帝ネプチューン", keshinElement: "風", KP: 170, KA: 80, moveName: "ヘヴィアクアランス", moveElement: "風", commandType: "SH", movePower: 180, moveCost: 75, skillName: "キックフォース5", skillDetail: "チーム全員のキック5UP", category: "FW" },
+  { keshinName: "奏者マエストロ", keshinElement: "林", KP: 140, KA: 70, moveName: "ハーモニクス", moveElement: "林", commandType: "SH", movePower: 160, moveCost: 55, skillName: "林の雄叫び", skillDetail: "チーム全員の林必殺技の威力20UP", category: "FW" },
+  { keshinName: "蒼きリューク", keshinElement: "風", KP: 150, KA: 50, moveName: "レイジングクロウ", moveElement: "山", commandType: "SH", movePower: 160, moveCost: 55, skillName: "スピードフォース5", skillDetail: "チーム全員のスピード5UP", category: "FW" },
+  { keshinName: "剣聖ランスロット", keshinElement: "火", KP: 150, KA: 50, moveName: "ロストエンジェル", moveElement: "火", commandType: "SH", movePower: 160, moveCost: 55, skillName: "火の雄叫び", skillDetail: "チーム全員の火必殺技の威力20UP", category: "FW" },
+  { keshinName: "黒き翼レイブン", keshinElement: "山", KP: 140, KA: 70, moveName: "レイジングクロウ", moveElement: "山", commandType: "SH", movePower: 160, moveCost: 55, skillName: "スピードフォース5", skillDetail: "チーム全員のスピード5UP", category: "FW" },
+  { keshinName: "鉄騎兵ナイトB", keshinElement: "山", KP: 160, KA: 30, moveName: "ギャロップバスター", moveElement: "山", commandType: "SH", movePower: 160, moveCost: 55, skillName: "ドリブルフォース5", skillDetail: "チーム全員のドリブル5UP", category: "FW" },
+  { keshinName: "鉄騎兵ナイトW", keshinElement: "山", KP: 160, KA: 30, moveName: "ギャロップバスター", moveElement: "山", commandType: "SH", movePower: 160, moveCost: 55, skillName: "ドリブルフォース5", skillDetail: "チーム全員のドリブル5UP", category: "FW" },
+  { keshinName: "紅きメガホーク", keshinElement: "火", KP: 195, KA: 55, moveName: "ファルコ・ウィング", moveElement: "風", commandType: "SH", movePower: 140, moveCost: 45, skillName: "キックフォース5", skillDetail: "チーム全員のキック5UP", category: "FW" },
+  { keshinName: "道化師ファンタム", keshinElement: "林", KP: 140, KA: 70, moveName: "マジシャンズボックス", moveElement: "林", commandType: "SH", movePower: 140, moveCost: 45, skillName: "ラッキーフォース5", skillDetail: "チーム全員のラッキー5UP", category: "FW" },
+  { keshinName: "夢紳士ドリームアンクル", keshinElement: "林", KP: 155, KA: 55, moveName: "マジシャンズボックス", moveElement: "林", commandType: "SH", movePower: 140, moveCost: 45, skillName: "アンチペナルティ", skillDetail: "チーム全員がファウルを取られなくなる", category: "FW" },
+  { keshinName: "鳥人ファルコ", keshinElement: "風", KP: 90, KA: 50, moveName: "ファルコ・ウィング", moveElement: "風", commandType: "SH", movePower: 140, moveCost: 45, skillName: "キックフォース5", skillDetail: "チーム全員のキック5UP", category: "FW" },
+  { keshinName: "奇術魔ピューリム", keshinElement: "林", KP: 100, KA: 40, moveName: "マジシャンズボックス", moveElement: "林", commandType: "SH", movePower: 140, moveCost: 45, skillName: "テクニシャン", skillDetail: "チーム全員の必殺技の成功率UP", category: "FW" },
+  { keshinName: "魔宰相ビショップB", keshinElement: "林", KP: 200, KA: 110, moveName: "ダークスペース", moveElement: "林", commandType: "DR", movePower: 180, moveCost: 35, skillName: "ドリブルフォース10", skillDetail: "チーム全員のドリブル10UP", category: "MF" },
+  { keshinName: "魔宰相ビショップW", keshinElement: "林", KP: 180, KA: 130, moveName: "ダークスペース", moveElement: "林", commandType: "DR", movePower: 180, moveCost: 35, skillName: "ドリブルフォース10", skillDetail: "チーム全員のドリブル10UP", category: "MF" },
+  { keshinName: "獣王レオン", keshinElement: "山", KP: 200, KA: 90, moveName: "スクラッチレイド", moveElement: "山", commandType: "DR", movePower: 180, moveCost: 35, skillName: "フィールドの守護神", skillDetail: "チーム全員のプレスに向かうスピードがあがる", category: "MF" },
+  { keshinName: "魔神ペガサス", keshinElement: "風", KP: 160, KA: 110, moveName: "ペガサスブレイク", moveElement: "風", commandType: "DR", movePower: 160, moveCost: 25, skillName: "風の雄叫び", skillDetail: "チーム全員の風必殺技の威力20UP", category: "MF" },
+  { keshinName: "幻影のダラマンガラス", keshinElement: "林", KP: 160, KA: 100, moveName: "ダンシングゴースト", moveElement: "林", commandType: "DR", movePower: 160, moveCost: 25, skillName: "スタミナフォース5", skillDetail: "チーム全員のスタミナ5UP", category: "DF" },
+  { keshinName: "魅惑のダラマンローズ", keshinElement: "火", KP: 160, KA: 100, moveName: "ダンシングゴースト", moveElement: "林", commandType: "DR", movePower: 160, moveCost: 25, skillName: "ドリブルフォース5", skillDetail: "チーム全員のドリブル5UP", category: "MF" },
+  { keshinName: "精鋭兵ポーンB", keshinElement: "火", KP: 120, KA: 110, moveName: "マシンガンビート", moveElement: "火", commandType: "DR", movePower: 160, moveCost: 25, skillName: "身軽な身体", skillDetail: "チームメンバーの小柄な選手は全てのステータス30UP", category: "MF" },
+  { keshinName: "精鋭兵ポーンW", keshinElement: "火", KP: 120, KA: 110, moveName: "マシンガンビート", moveElement: "火", commandType: "DR", movePower: 160, moveCost: 25, skillName: "身軽な身体", skillDetail: "チームメンバーの小柄な選手は全てのステータス30UP", category: "MF" },
+  { keshinName: "光速のマキシム", keshinElement: "火", KP: 165, KA: 75, moveName: "オーバードライブ", moveElement: "風", commandType: "DR", movePower: 140, moveCost: 20, skillName: "スピードフォース10", skillDetail: "チーム全員のスピード10UP", category: "MF" },
+  { keshinName: "音速のバリウス", keshinElement: "風", KP: 140, KA: 60, moveName: "オーバードライブ", moveElement: "風", commandType: "DR", movePower: 140, moveCost: 20, skillName: "スピードフォース5", skillDetail: "チーム全員のスピード5UP", category: "MF" },
+  { keshinName: "破壊神デスロス", keshinElement: "火", KP: 190, KA: 110, moveName: "破壊弾幕", moveElement: "火", commandType: "BL", movePower: 140, moveCost: 200, skillName: "破壊のオーラ", skillDetail: "チームメンバーの発動している化身のアタック力UP", category: "DF" },
+  { keshinName: "神官ジャッジ", keshinElement: "林", KP: 205, KA: 165, moveName: "ブラッディアンコール", moveElement: "林", commandType: "BL", movePower: 180, moveCost: 35, skillName: "バーニングフォース10", skillDetail: "チーム全員の全て10UP", category: "DF" },
+  { keshinName: "番人の塔ルークB", keshinElement: "山", KP: 210, KA: 100, moveName: "ストロングタワー", moveElement: "山", commandType: "BL", movePower: 180, moveCost: 35, skillName: "山の雄叫び", skillDetail: "チーム全員の山必殺技の威力20UP", category: "DF" },
+  { keshinName: "番人の塔ルークW", keshinElement: "山", KP: 195, KA: 115, moveName: "ストロングタワー", moveElement: "山", commandType: "BL", movePower: 180, moveCost: 35, skillName: "山の雄叫び", skillDetail: "チーム全員の山必殺技の威力20UP", category: "DF" },
+  { keshinName: "狂戦士ディアベル", keshinElement: "林", KP: 160, KA: 100, moveName: "ドラゴンストーム", moveElement: "風", commandType: "BL", movePower: 140, moveCost: 20, skillName: "林の雄叫び", skillDetail: "チーム全員の林必殺技の威力20UP", category: "DF" },
+  { keshinName: "竜騎士テディス", keshinElement: "風", KP: 120, KA: 70, moveName: "ドラゴンストーム", moveElement: "風", commandType: "BL", movePower: 140, moveCost: 20, skillName: "ブロックフォース5", skillDetail: "チーム全員のブロック5UP", category: "DF" },
+  { keshinName: "魔神グレイト", keshinElement: "山", KP: 235, KA: 105, moveName: "グレイト・ザ・ハンド", moveElement: "山", commandType: "CA", movePower: 200, moveCost: 80, skillName: "スタミナフォース10", skillDetail: "チーム全員のスタミナ10UP", category: "GK" },
+  { keshinName: "賢王キングバーンB", keshinElement: "火", KP: 190, KA: 120, moveName: "キングファイア", moveElement: "火", commandType: "CA", movePower: 200, moveCost: 80, skillName: "戦士の気合", skillDetail: "チームメンバーの男性は全てのステータス30UP", category: "GK" },
+  { keshinName: "賢王キングバーンW", keshinElement: "火", KP: 195, KA: 115, moveName: "キングファイア", moveElement: "火", commandType: "CA", movePower: 200, moveCost: 80, skillName: "戦士の気合", skillDetail: "チームメンバーの男性は全てのステータス30UP", category: "GK" },
+  { keshinName: "護星神タイタニアス", keshinElement: "山", KP: 180, KA: 130, moveName: "マジン・ザ・ハンド", moveElement: "山", commandType: "CA", movePower: 200, moveCost: 80, skillName: "テクニックフォース10", skillDetail: "チーム全員のテクニック10UP", category: "GK" },
+  { keshinName: "魔王ギラーゼ", keshinElement: "林", KP: 190, KA: 60, moveName: "ヘルズフィスト", moveElement: "林", commandType: "P2", movePower: 200, moveCost: 80, skillName: "守りのベール", skillDetail: "チームメンバーの発動している化身のダメージ量が軽減される", category: "GK" },
+  { keshinName: "鉄壁のギガドーン", keshinElement: "山", KP: 190, KA: 50, moveName: "ギガンティックボム", moveElement: "山", commandType: "CA", movePower: 180, moveCost: 70, skillName: "アンチサイクロン", skillDetail: "チーム全員が竜巻でふっとばされなくなる", category: "GK" },
+  { keshinName: "龍神コロガオン", keshinElement: "火", KP: 210, KA: 10, moveName: "クリムゾンスフィア", moveElement: "火", commandType: "CA", movePower: 180, moveCost: 70, skillName: "ネバーギブアップ", skillDetail: "負けているときチーム全員の能力があがる", category: "GK" },
+  { keshinName: "巨神ギガンテス", keshinElement: "山", KP: 171, KA: 40, moveName: "ギガンティックボム", moveElement: "山", commandType: "CA", movePower: 180, moveCost: 70, skillName: "アンチサイクロン", skillDetail: "チーム全員が竜巻でふっとばされなくなる", category: "GK" },
+  { keshinName: "灼熱のレッドダイス", keshinElement: "火", KP: 155, KA: 85, moveName: "ラッキーダイス", moveElement: "林", commandType: "CA", movePower: 160, moveCost: 50, skillName: "みんなイケイケ!", skillDetail: "試合中の得点の勝ち負けに応じてチーム全員の能力が上下", category: "GK" },
+  { keshinName: "幸運のラストベガ", keshinElement: "風", KP: 180, KA: 50, moveName: "ラッキーダイス", moveElement: "林", commandType: "CA", movePower: 160, moveCost: 50, skillName: "ラッキーフォース10", skillDetail: "チーム全員のラッキー10UP", category: "GK" },
+  { keshinName: "勝負師ダイスマン", keshinElement: "山", KP: 146, KA: 58, moveName: "ラッキーダイス", moveElement: "林", commandType: "CA", movePower: 160, moveCost: 50, skillName: "ラッキーフォース5", skillDetail: "チーム全員のラッキー5UP", category: "GK" },
+  { keshinName: "重機兵バロン", keshinElement: "山", KP: 140, KA: 60, moveName: "ガーディアンシールド", moveElement: "風", commandType: "CA", movePower: 140, moveCost: 40, skillName: "偉大な貫禄", skillDetail: "チームメンバーの大柄な選手は全てのステータス30UP", category: "GK" },
+  { keshinName: "機械兵ガレウス", keshinElement: "風", KP: 120, KA: 40, moveName: "ガーディアンシールド", moveElement: "風", commandType: "CA", movePower: 140, moveCost: 40, skillName: "偉大な貫禄", skillDetail: "チームメンバーの大柄な選手は全てのステータス30UP", category: "GK" }
+];
 
-// 化身データ
-const createDefaultKeshin = () => ({
-  name: "なし",
-  element: "なし",
-  point: 0,
-  attack: 0,
-  move: "なし",
-  moveElement: "無",
-  moveType: "なし",
-  movePower: 20,
-  moveCost: 0,
-  skillName: "なし",
-  skillMoveNote: "なし",
-  collect: "なし"
-});
+// 必殺技情報
+const MOVE_DATA = [
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "なし", moveElement: "なし", commandType: "なし", movePower:20, moveCost:0, skillName: "", skillDetail: "", category: "なし" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "エボリューション", moveElement: "山", commandType: "SC", movePower:220, moveCost:70, skillName: "", skillDetail: "3人(使用者のレベル以上)", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ゼロマグナム", moveElement: "無", commandType: "BS", movePower:200, moveCost:70, skillName: "", skillDetail: "2人(自分のレベル-3以上)", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "トライアングルZZ", moveElement: "火", commandType: "SH", movePower:200, moveCost:60, skillName: "", skillDetail: "3人", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ファイアトルネードDD", moveElement: "火", commandType: "SH", movePower:200, moveCost:70, skillName: "", skillDetail: "2人(使用者のレベル以上)", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ホワイトハリケーン", moveElement: "風", commandType: "BS", movePower:180, moveCost:70, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ジョーカーレインズ", moveElement: "林", commandType: "SH", movePower:180, moveCost:60, skillName: "", skillDetail: "2人(自分のレベル-3以上)", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ブラックアッシュ", moveElement: "林", commandType: "SH", movePower:180, moveCost:70, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "デビルバースト", moveElement: "火", commandType: "SH", movePower:180, moveCost:70, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "皇帝ペンギン2号", moveElement: "林", commandType: "SC", movePower:160, moveCost:50, skillName: "", skillDetail: "3人(自分のレベル-3以上)", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "風林火山デストロイヤー", moveElement: "無", commandType: "SC", movePower:160, moveCost:60, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "伝来宝刀", moveElement: "山", commandType: "SH", movePower:160, moveCost:60, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "サウザンドアロー", moveElement: "無", commandType: "SH", movePower:160, moveCost:60, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "皇帝ペンギン7", moveElement: "風", commandType: "LS", movePower:140, moveCost:60, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "バリスタショット", moveElement: "山", commandType: "LS", movePower:140, moveCost:60, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "デスドロップ", moveElement: "火", commandType: "SC", movePower:140, moveCost:55, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "パンサーブリザード", moveElement: "風", commandType: "SH", movePower:140, moveCost:55, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "流星ブレード", moveElement: "火", commandType: "BS", movePower:120, moveCost:50, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "エターナルブリザード", moveElement: "風", commandType: "SH", movePower:120, moveCost:50, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "エクステンドゾーン", moveElement: "林", commandType: "SH", movePower:120, moveCost:55, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "マボロシショット", moveElement: "林", commandType: "SH", movePower:120, moveCost:50, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ロケットヘッド", moveElement: "火", commandType: "SH", movePower:120, moveCost:40, skillName: "", skillDetail: "2人", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ドラゴンズテイル", moveElement: "山", commandType: "SH", movePower:120, moveCost:50, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "フライングフィッシュ", moveElement: "風", commandType: "LS", movePower:100, moveCost:45, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "レインボーバブルショット", moveElement: "林", commandType: "LS", movePower:100, moveCost:45, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "フォルテシモ", moveElement: "林", commandType: "SC", movePower:100, moveCost:40, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ファイアトルネード", moveElement: "火", commandType: "SC", movePower:100, moveCost:40, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ダイナソーブレイク", moveElement: "山", commandType: "SC", movePower:100, moveCost:40, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "マッハウィンド", moveElement: "風", commandType: "SC", movePower:80, moveCost:35, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "サイドワインダー", moveElement: "山", commandType: "SC", movePower:80, moveCost:35, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ぶっとびジャンプ", moveElement: "山", commandType: "BS", movePower:80, moveCost:35, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "デスソード", moveElement: "火", commandType: "SH", movePower:80, moveCost:35, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ソニックショット", moveElement: "風", commandType: "SH", movePower:80, moveCost:35, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ヘッドバズーカ", moveElement: "火", commandType: "SH", movePower:60, moveCost:30, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "バウンドフレイム", moveElement: "火", commandType: "SH", movePower:60, moveCost:30, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "パーフェクトコース", moveElement: "林", commandType: "SH", movePower:40, moveCost:25, skillName: "", skillDetail: "", category: "FW" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "オリンポスハーモニー", moveElement: "林", commandType: "DR", movePower:180, moveCost:50, skillName: "", skillDetail: "", category: "MF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "スプリントワープ", moveElement: "無", commandType: "DR", movePower:180, moveCost:50, skillName: "", skillDetail: "", category: "MF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ラウンドスパーク", moveElement: "火", commandType: "DR", movePower:160, moveCost:45, skillName: "", skillDetail: "", category: "MF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "昇り龍", moveElement: "山", commandType: "DR", movePower:160, moveCost:45, skillName: "", skillDetail: "", category: "MF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ホワイトブレード", moveElement: "風", commandType: "DR", movePower:140, moveCost:36, skillName: "", skillDetail: "", category: "MF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "メロディウェイブ", moveElement: "林", commandType: "DR", movePower:140, moveCost:40, skillName: "", skillDetail: "", category: "MF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ブリタニアクロス", moveElement: "火", commandType: "DR", movePower:140, moveCost:36, skillName: "", skillDetail: "2人", category: "MF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "エンドレスサマー", moveElement: "火", commandType: "DR", movePower:140, moveCost:36, skillName: "", skillDetail: "", category: "MF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "スカイウォーク", moveElement: "山", commandType: "DR", movePower:140, moveCost:40, skillName: "", skillDetail: "", category: "MF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "風神の舞", moveElement: "風", commandType: "DR", movePower:120, moveCost:36, skillName: "", skillDetail: "", category: "MF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "トリックボール", moveElement: "林", commandType: "DR", movePower:120, moveCost:36, skillName: "", skillDetail: "", category: "MF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "クレイモア", moveElement: "山", commandType: "DR", movePower:120, moveCost:32, skillName: "", skillDetail: "", category: "MF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "アクロバットキープ", moveElement: "山", commandType: "DR", movePower:120, moveCost:36, skillName: "", skillDetail: "", category: "MF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ゼロヨン", moveElement: "風", commandType: "DR", movePower:100, moveCost:32, skillName: "", skillDetail: "", category: "MF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "疾風ダッシュ", moveElement: "風", commandType: "DR", movePower:100, moveCost:32, skillName: "", skillDetail: "", category: "MF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "イリュージョンボール", moveElement: "林", commandType: "DR", movePower:100, moveCost:32, skillName: "", skillDetail: "", category: "MF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "プレストターン", moveElement: "林", commandType: "DR", movePower:100, moveCost:32, skillName: "", skillDetail: "", category: "MF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ザ・スタンプ", moveElement: "山", commandType: "DR", movePower:100, moveCost:28, skillName: "", skillDetail: "", category: "MF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "そよかぜステップ", moveElement: "風", commandType: "DR", movePower:80, moveCost:28, skillName: "", skillDetail: "", category: "MF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "バーニングサマー", moveElement: "火", commandType: "DR", movePower:80, moveCost:24, skillName: "", skillDetail: "", category: "MF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ブーメランフェイント", moveElement: "山", commandType: "DR", movePower:80, moveCost:28, skillName: "", skillDetail: "", category: "MF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "なみのりピエロ", moveElement: "風", commandType: "DR", movePower:60, moveCost:24, skillName: "", skillDetail: "", category: "MF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "マッドジャグラー", moveElement: "火", commandType: "DR", movePower:60, moveCost:20, skillName: "", skillDetail: "", category: "MF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "フューチャー・アイ", moveElement: "林", commandType: "DR", movePower:40, moveCost:20, skillName: "", skillDetail: "", category: "MF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "アトランティスウォール", moveElement: "山", commandType: "BB", movePower:180, moveCost:50, skillName: "", skillDetail: "", category: "DF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "バニシングカット", moveElement: "無", commandType: "BL", movePower:180, moveCost:50, skillName: "", skillDetail: "", category: "DF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "エアーバレット", moveElement: "風", commandType: "BB", movePower:160, moveCost:40, skillName: "", skillDetail: "", category: "DF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "クレイジーサンライト", moveElement: "火", commandType: "BL", movePower:160, moveCost:45, skillName: "", skillDetail: "", category: "DF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ビッグシザース", moveElement: "火", commandType: "BL", movePower:160, moveCost:36, skillName: "", skillDetail: "2人", category: "DF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "最強さん召喚", moveElement: "無", commandType: "BL", movePower:160, moveCost:40, skillName: "", skillDetail: "", category: "DF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ディープミスト", moveElement: "林", commandType: "BB", movePower:140, moveCost:40, skillName: "", skillDetail: "", category: "DF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ディメンションカット", moveElement: "林", commandType: "BL", movePower:140, moveCost:40, skillName: "", skillDetail: "", category: "DF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ハンターズネット", moveElement: "林", commandType: "BB", movePower:140, moveCost:40, skillName: "", skillDetail: "", category: "DF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "かっとびディフェンス", moveElement: "山", commandType: "BB", movePower:140, moveCost:36, skillName: "", skillDetail: "2人", category: "DF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "サルガッソー", moveElement: "風", commandType: "BL", movePower:140, moveCost:36, skillName: "", skillDetail: "2人(自分のレベル-3以上)", category: "DF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "アイスグランド", moveElement: "風", commandType: "BL", movePower:120, moveCost:36, skillName: "", skillDetail: "", category: "DF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ツインミキサー", moveElement: "火", commandType: "BL", movePower:120, moveCost:32, skillName: "", skillDetail: "2人", category: "DF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "旋風陣", moveElement: "風", commandType: "BB", movePower:100, moveCost:32, skillName: "", skillDetail: "", category: "DF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ビバ！万里の長城", moveElement: "山", commandType: "BB", movePower:100, moveCost:32, skillName: "", skillDetail: "", category: "DF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "キラーホエール", moveElement: "風", commandType: "BL", movePower:100, moveCost:32, skillName: "", skillDetail: "", category: "DF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ザ・ミスト", moveElement: "林", commandType: "BL", movePower:100, moveCost:32, skillName: "", skillDetail: "", category: "DF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "カードスプラッシュ", moveElement: "火", commandType: "BL", movePower:100, moveCost:32, skillName: "", skillDetail: "", category: "DF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "エレファントプレス", moveElement: "山", commandType: "BL", movePower:100, moveCost:24, skillName: "", skillDetail: "2人", category: "DF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ザ・ウォール", moveElement: "山", commandType: "BB", movePower:80, moveCost:28, skillName: "", skillDetail: "", category: "DF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "スパイラルドロー", moveElement: "風", commandType: "BL", movePower:80, moveCost:28, skillName: "", skillDetail: "", category: "DF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ダッシュトレイン", moveElement: "火", commandType: "BL", movePower:60, moveCost:20, skillName: "", skillDetail: "", category: "DF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "シーフ・アイ", moveElement: "林", commandType: "BL", movePower:40, moveCost:20, skillName: "", skillDetail: "", category: "DF" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "キルブリッジ", moveElement: "風", commandType: "CA", movePower:180, moveCost:55, skillName: "", skillDetail: "", category: "GK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "グラビティポイント", moveElement: "林", commandType: "CA", movePower:180, moveCost:55, skillName: "", skillDetail: "", category: "GK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "無頼ハンド", moveElement: "火", commandType: "CA", movePower:180, moveCost:55, skillName: "", skillDetail: "", category: "GK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ゴッドハンドV", moveElement: "山", commandType: "CA", movePower:180, moveCost:55, skillName: "", skillDetail: "", category: "GK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "サーペントファング", moveElement: "山", commandType: "CA", movePower:160, moveCost:50, skillName: "", skillDetail: "", category: "GK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "かげつかみ", moveElement: "林", commandType: "CA", movePower:140, moveCost:45, skillName: "", skillDetail: "", category: "GK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "スターリフレクション", moveElement: "風", commandType: "P2", movePower:140, moveCost:40, skillName: "", skillDetail: "", category: "GK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "フェンス・オブ・ガイア", moveElement: "山", commandType: "P2", movePower:140, moveCost:40, skillName: "", skillDetail: "", category: "GK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "シュートブレイク", moveElement: "火", commandType: "P1", movePower:140, moveCost:45, skillName: "", skillDetail: "", category: "GK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "クリスタルバリア", moveElement: "風", commandType: "CA", movePower:120, moveCost:40, skillName: "", skillDetail: "", category: "GK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "カウンタードライブ", moveElement: "火", commandType: "CA", movePower:120, moveCost:40, skillName: "", skillDetail: "", category: "GK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "パワースパイク", moveElement: "火", commandType: "CA", movePower:100, moveCost:35, skillName: "", skillDetail: "", category: "GK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ハイドロアンカー", moveElement: "風", commandType: "P1", movePower:100, moveCost:30, skillName: "", skillDetail: "", category: "GK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "バットアタック", moveElement: "林", commandType: "CA", movePower:80, moveCost:30, skillName: "", skillDetail: "", category: "GK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ゴッドハンド", moveElement: "山", commandType: "CA", movePower:80, moveCost:30, skillName: "", skillDetail: "", category: "GK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "バーニングキャッチ", moveElement: "火", commandType: "CA", movePower:60, moveCost:25, skillName: "", skillDetail: "", category: "GK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ラピッドウィップ", moveElement: "風", commandType: "P1", movePower:60, moveCost:20, skillName: "", skillDetail: "", category: "GK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ムーンサルトスタンプ", moveElement: "風", commandType: "CA", movePower:40, moveCost:20, skillName: "", skillDetail: "", category: "GK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "こんしん！", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "こんしん！", skillDetail: "コマンド技の威力が強化されるが、試合中にGPが減りやすくなる", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "風の心得", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "風の心得", skillDetail: "風属性の必殺技の威力がちょっとだけ強くなる", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "林の心得", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "林の心得", skillDetail: "林属性の必殺技の威力がちょっとだけ強くなる", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "火の心得", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "火の心得", skillDetail: "火属性の必殺技の威力がちょっとだけ強くなる", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "山の心得", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "山の心得", skillDetail: "山属性の必殺技の威力がちょっとだけ強くなる", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "無の心得", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "無の心得", skillDetail: "無属性の必殺技の威力がちょっとだけ強くなる", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "属性強化", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "属性強化", skillDetail: "得意な属性の相手に対して有利になる", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "クリティカル！", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "クリティカル！", skillDetail: "たまにコマンド技の威力があがる", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ちょうわざ！", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "ちょうわざ！", skillDetail: "TPと引き換えに技を強化できる(消費TP1.5倍)", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "やくびょうがみ", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "やくびょうがみ", skillDetail: "たまにコマンド技の威力がさがるが、あがる事もある", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "イケメンUP！", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "イケメンUP！", skillDetail: "相手の選手が女の子のときコマンドバトルで有利になる", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "おいろけUP！", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "おいろけUP！", skillDetail: "相手の選手が男の子のときコマンドバトルで有利になる", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "アシスト！", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "アシスト！", skillDetail: "仲間のコマンドバトルに参加すると有利になる", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ノーペナルティ！", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "ノーペナルティ！", skillDetail: "自分のファウルがとられにくくなる", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "イカサマ！", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "イカサマ！", skillDetail: "相手のファウルをさそいやすくなる", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "リカバリー", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "リカバリー", skillDetail: "体勢が崩れたときの立て直しが早くなる", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "セツヤク！", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "セツヤク！", skillDetail: "必殺技を使うときに必要なTPが少なくなる(消費TP4/5になる)", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "GPプラス20", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "GPプラス20", skillDetail: "GPが20アップ", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "TPプラス20", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "TPプラス20", skillDetail: "TPが20アップ", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "キックプラス20", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "キックプラス20", skillDetail: "キックのステータス値が20アップ", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ドリブルプラス20", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "ドリブルプラス20", skillDetail: "ドリブルのステータス値が20アップ", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ブロックプラス20", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "ブロックプラス20", skillDetail: "ブロックのステータス値が20アップ", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "キャッチプラス20", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "キャッチプラス20", skillDetail: "キャッチのステータス値が20アップ", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "テクニックプラス20", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "テクニックプラス20", skillDetail: "テクニックのステータス値が20アップ", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ラッキープラス20", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "ラッキープラス20", skillDetail: "ラッキーのステータス値が20アップ", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "スピードプラス20", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "スピードプラス20", skillDetail: "スピードのステータス値が20アップ", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "GPプラス10", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "GPプラス10", skillDetail: "GPが10アップ", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "TPプラス10", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "TPプラス10", skillDetail: "TPが10アップ", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "キックプラス10", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "キックプラス10", skillDetail: "キックのステータス値が10アップ", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ドリブルプラス10", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "ドリブルプラス10", skillDetail: "ドリブルのステータス値が10アップ", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ブロックプラス10", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "ブロックプラス10", skillDetail: "ブロックのステータス値が10アップ", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "キャッチプラス10", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "キャッチプラス10", skillDetail: "キャッチのステータス値が10アップ", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "テクニックプラス10", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "テクニックプラス10", skillDetail: "テクニックのステータス値が10アップ", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ラッキープラス10", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "ラッキープラス10", skillDetail: "ラッキーのステータス値が10アップ", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "スピードプラス10", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "スピードプラス10", skillDetail: "スピードのステータス値が10アップ", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "がくしゅう", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "がくしゅう", skillDetail: "取得できる経験値が2倍になる", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "なまける", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "なまける", skillDetail: "試合やミニバトルに参加した場合に自身の取得分の経験値を他の選手に分配する(詳しい効果と自力習得者)", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "かねもち", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "かねもち", skillDetail: "ねっけつポイントが２倍はいる(詳しい効果と自力習得者)", category: "SK" },
+  { keshinName: "なし", keshinElement: "なし", KP:0, KA:0, moveName: "ゆうじょう", moveElement: "なし", commandType: "SK", movePower:0, moveCost:0, skillName: "ゆうじょう", skillDetail: "ゆうじょうポイントが２倍入る(詳しい効果と自力習得者)", category: "SK" }
+];
 
+// コマンドごとの表示設定
+const COMMAND_DISP_CONFIG = {
+  FW: { label: "キック",   placeholder: "キック値入力",   title: "化身スキルによる補正を加えた選手のキック値です", shotEnabled: true,  defenseEnabled: false, defenseIndex: 0 },
+  MF: { label: "ドリブル", placeholder: "ドリブル値入力", title: "化身スキルによる補正を加えたドリブル値です",     shotEnabled: false, defenseEnabled: false, defenseIndex: 0 },
+  DF: { label: "ブロック", placeholder: "ブロック値入力", title: "化身スキルによる補正を加えたブロック値です",     shotEnabled: false, defenseEnabled: true,  defenseIndex: 1 },
+  GK: { label: "キャッチ", placeholder: "キャッチ値入力", title: "化身スキルによる補正を加えたキャッチ値です",     shotEnabled: false, defenseEnabled: true,  defenseIndex: 1 }
+};
+
+// 頻出選手プリセット
+const QUICK_ENTRIES = {
+  "なし": { PlayerName: "", PlayerGender: "男", PlayerPhysique: "普通", PlayerElementList: "風", MainPara: 1, TechVal: 1, LuckVal: 1, CommandList: "FW", SkillList1: "なし", SkillList2: "なし", PlayersKeshinList: "なし" },
+  "剣城": { PlayerName: "剣城(FTDD)", PlayerGender: "男", PlayerPhysique: "普通", PlayerElementList: "火", MainPara: 384, TechVal: 39, LuckVal: 207, CommandList: "FW", SkillList1: "こんしん！", SkillList2: "属性強化", PlayersKeshinList: "なし", UseMoveList: "ファイアトルネードDD" },
+  "白竜": { PlayerName: "白竜(WH)", PlayerGender: "男", PlayerPhysique: "普通", PlayerElementList: "風", MainPara: 492, TechVal: 39, LuckVal: 174, CommandList: "FW", SkillList1: "こんしん！", SkillList2: "属性強化", PlayersKeshinList: "なし", UseMoveList: "ホワイトハリケーン" },
+  "シュウ": { PlayerName: "シュウ(BA)", PlayerGender: "男", PlayerPhysique: "普通", PlayerElementList: "林", MainPara: 477, TechVal: 39, LuckVal: 204, CommandList: "FW", SkillList1: "こんしん！", SkillList2: "属性強化", PlayersKeshinList: "なし", UseMoveList: "ブラックアッシュ" },
+  "ランスロット剣城": { PlayerName: "剣城(ランスロット)", PlayerGender: "男", PlayerPhysique: "普通", PlayerElementList: "火", MainPara: 384, TechVal: 39, LuckVal: 207, CommandList: "FW", SkillList1: "クリティカル！", SkillList2: "属性強化", PlayersKeshinList: "剣聖ランスロット", UseMoveList: "ロストエンジェル"  },
+  "シャイニングドラゴン白竜": { PlayerName: "白竜(Sドラゴン)", PlayerGender: "男", PlayerPhysique: "普通", PlayerElementList: "風", MainPara: 492, TechVal: 39, LuckVal: 174, CommandList: "FW", SkillList1: "クリティカル！", SkillList2: "属性強化", PlayersKeshinList: "聖獣シャイニングドラゴン", UseMoveList: "ホワイトブレス"  },
+  "ダークエクソダスシュウ": { PlayerName: "シュウ(Dエクソダス)", PlayerGender: "男", PlayerPhysique: "普通", PlayerElementList: "林", MainPara: 477, TechVal: 39, LuckVal: 204, CommandList: "FW", SkillList1: "クリティカル！", SkillList2: "属性強化", PlayersKeshinList: "暗黒神ダークエクソダス", UseMoveList: "魔王の斧"  },
+  "ムサシ御門": { PlayerName: "御門(ムサシ)", PlayerGender: "男", PlayerPhysique: "大柄", PlayerElementList: "山", MainPara: 443, TechVal: 39, LuckVal: 202, CommandList: "FW", SkillList1: "クリティカル！", SkillList2: "属性強化", PlayersKeshinList: "戦国武神ムサシ", UseMoveList: "武神連斬"  },
+  "ダークエクソダス吉良": { PlayerName: "吉良(Dエクソダス)", PlayerGender: "男", PlayerPhysique: "普通", PlayerElementList: "火", MainPara: 457, TechVal: 39, LuckVal: 195, CommandList: "FW", SkillList1: "クリティカル！", SkillList2: "属性強化", PlayersKeshinList: "暗黒神ダークエクソダス", UseMoveList: "魔王の斧"  },
+  "グレイトゴンガン": { PlayerName: "ゴンガン(グレイト)", PlayerGender: "女", PlayerPhysique: "大柄", PlayerElementList: "風", MainPara: 460, TechVal: 39, LuckVal: 158, CommandList: "GK", SkillList1: "クリティカル！", SkillList2: "山の心得", PlayersKeshinList: "魔神グレイト", UseMoveList: "グレイト・ザ・ハンド"  },
+  "グレイトカズマ": { PlayerName: "カズマ(グレイト)", PlayerGender: "男", PlayerPhysique: "普通", PlayerElementList: "林", MainPara: 450, TechVal: 39, LuckVal: 192, CommandList: "GK", SkillList1: "クリティカル！", SkillList2: "山の心得", PlayersKeshinList: "魔神グレイト", UseMoveList: "グレイト・ザ・ハンド"  },
+  "グレイトテンタクル": { PlayerName: "テンタクル(グレイト)", PlayerGender: "男", PlayerPhysique: "大柄", PlayerElementList: "火", MainPara: 460, TechVal: 39, LuckVal: 177, CommandList: "GK", SkillList1: "クリティカル！", SkillList2: "山の心得", PlayersKeshinList: "魔神グレイト", UseMoveList: "グレイト・ザ・ハンド"  },
+  "キングバーンテンタクル": { PlayerName: "テンタクル(キングBW)", PlayerGender: "男", PlayerPhysique: "大柄", PlayerElementList: "火", MainPara: 460, TechVal: 39, LuckVal: 177, CommandList: "GK", SkillList1: "クリティカル！", SkillList2: "属性強化", PlayersKeshinList: "賢王キングバーンW", UseMoveList: "キングファイア"  },
+  "グレイト円堂": { PlayerName: "円堂(グレイト)", PlayerGender: "男", PlayerPhysique: "普通", PlayerElementList: "山", MainPara: 480, TechVal: 39, LuckVal: 169, CommandList: "GK", SkillList1: "クリティカル！", SkillList2: "属性強化", PlayersKeshinList: "魔神グレイト", UseMoveList: "グレイト・ザ・ハンド"  }
+};
+
+// 化身データ初期値
+const createDefaultKeshin = () => (
+  { keshinName: "なし", keshinElement: "なし", KP: 0, KA: 0, moveName: "なし", moveElement: "なし", commandType: "なし", movePower: 20, moveCost: 0, skillName: "", skillMoveNote: "" }
+);
+
+// 発動中の化身
 const selectedKeshin = [createDefaultKeshin(), createDefaultKeshin(), createDefaultKeshin()];
+// 定数、グローバル変数-----------------------------------------------------------------------------------------
 
-// 必殺技選択による値変更
+// pngファイル出力処理------------------------------------------------------------------------------------------
+/**
+ * テーブル部をpngファイル化して出力する
+ **/
+function exportTable() {
+  const table = document.querySelector("table");
+
+  html2canvas(table, {
+    backgroundColor: "#000",
+    scale: 1   // 等倍
+  }).then(canvas => {
+
+    // 縮小用canvas(scaleを0.5にすれば0.5倍)
+    const scale = 1;
+    const smallCanvas = document.createElement("canvas");
+    smallCanvas.width = canvas.width * scale;
+    smallCanvas.height = canvas.height * scale;
+
+    const ctx = smallCanvas.getContext("2d");
+    ctx.drawImage(
+      canvas,
+      0, 0, canvas.width, canvas.height,
+      0, 0, smallCanvas.width, smallCanvas.height
+    );
+
+    const link = document.createElement("a");
+    link.download = "result.png";
+    link.href = smallCanvas.toDataURL("image/png");
+    link.click();
+  });
+}
+// pngファイル出力処理------------------------------------------------------------------------------------------
+
+// 画面構成部品作成処理-----------------------------------------------------------------------------------------
+/**
+ * 対象のセレクトボックスにデータを登録する
+ * selectEl       : 対象のセレクトボックス
+ * dataArray      : 登録対象データ配列
+ * filterCategory : 絞り込みたいカテゴリ(nullならオールイン)
+ * valueBuilder   : optionのvalueを作る関数
+ */
+function insertSelectBox(selectEl, dataArray, filterCategory = null, valueBuilder) {
+  // 初期化
+  selectEl.innerHTML = "";  
+  // 登録対象データ配列から条件に合致するデータを登録
+  dataArray
+    // "なし"は全ての条件で登録対象
+    .filter(item =>  !filterCategory ||  !item.category || item.category === "なし" ||  item.category === filterCategory)
+    .forEach(item => {
+      const opt = document.createElement("option");
+      opt.value = valueBuilder(item);
+      opt.textContent = valueBuilder(item);
+      if (item.category) {
+        opt.dataset.category = item.category;
+      }
+      selectEl.appendChild(opt);
+    });
+}
+/**
+ * 必殺技セレクトボックスにデータを登録する
+ * selectEl : 対象のセレクトボックス
+ * command  : 登録する必殺技のコマンド
+ */
+function updateMoveList(selectEl, command) {
+  insertSelectBox(
+    selectEl,
+    MOVE_DATA,
+    command,
+    // 必殺技名を設定
+    item => `${item.moveName}`
+  );
+}
+
+/**
+ * 化身セレクトボックスにデータを登録する
+ * selectEl : 対象のセレクトボックス
+ * command  : 登録する化身のコマンド
+ */
+function updateKeshinList(selectEl, command) {
+  // コマンドに一致するものを優先して並べる
+  const sortedKeshinData = [...KESHIN_DATA].sort((a, b) => {
+    // category = "なし"は最優先
+    const aIsNone = !a.category || a.category === "なし";
+    const bIsNone = !b.category || b.category === "なし";
+
+    if (aIsNone && !bIsNone) return -1;
+    if (!aIsNone && bIsNone) return 1;
+
+    // 指定コマンドに一致するものを優先
+    const aMatch = a.category === command;
+    const bMatch = b.category === command;
+
+    if (aMatch && !bMatch) return -1;
+    if (!aMatch && bMatch) return 1;
+
+    // その他は登録順通り
+    return 0;
+  });
+  
+  insertSelectBox(
+    selectEl,
+    sortedKeshinData,
+    null,
+    // 化身名を設定
+    item => `${item.keshinName}`
+  );
+}
+// 画面構成部品作成処理-----------------------------------------------------------------------------------------
+
+// 画面起動時処理-----------------------------------------------------------------------------------------------
+/**
+ * 画面起動時処理
+ */
+window.addEventListener('DOMContentLoaded', () => {
+  // スキルリストを設定
+  updateMoveList(document.getElementById("SkillList1"), "SK");
+  updateMoveList(document.getElementById("SkillList2"), "SK");
+  // 化身リストを設定
+  updateKeshinList(document.getElementById("OtherKeshinList1"));
+  updateKeshinList(document.getElementById("OtherKeshinList2"));
+
+  // 先頭を選択状態にする
+  document.getElementById("SkillList1").selectedIndex = 0;
+  document.getElementById("SkillList2").selectedIndex = 0;
+  document.getElementById("OtherKeshinList1").selectedIndex = 0;
+  document.getElementById("OtherKeshinList2").selectedIndex = 0;
+
+  // コマンドリストの初期発火
+  document.getElementById("CommandList").dispatchEvent(new Event('change'));
+});
+// 画面起動時処理-----------------------------------------------------------------------------------------------
+
+// その他処理---------------------------------------------------------------------------------------------------
+/**
+ * コマンド選択による値変更
+ */
+document.getElementById("CommandList").addEventListener("change", function() {
+  // 表示データ取得
+  const config = COMMAND_DISP_CONFIG[this.value];
+
+  // メインパラメータ関連
+  document.getElementById("MainParaLabel").textContent = config.label;
+  document.getElementById("MainPara").placeholder = config.placeholder;
+  document.getElementById("cMainPara").textContent = config.label;
+  document.getElementById("cMainPara").title = config.title;
+
+  // 距離補正
+  const shotLabel = document.getElementById("ShotCorrectionLabel");
+  const shotSelect = document.getElementById("ShotCorrectionList");
+  shotLabel.style.textDecoration = config.shotEnabled ? "none" : "line-through";
+  shotSelect.disabled = !config.shotEnabled;
+  shotSelect.selectedIndex = 0;
+
+  // 守備補正
+  const defenceLabel = document.getElementById("DefenseCorrectionLabel");
+  const defenceSelect = document.getElementById("DefenseCorrectionList");
+  defenceLabel.style.textDecoration = config.defenseEnabled ? "none" : "line-through";
+  defenceSelect.disabled = !config.defenseEnabled;
+  defenceSelect.selectedIndex = config.defenseIndex;
+
+  // 化身リストの再設定
+  updateKeshinList(document.getElementById("PlayersKeshinList"), this.value);
+  // changeイベントを発火
+  document.getElementById("PlayersKeshinList").dispatchEvent(new Event("change"));
+
+  // 必殺技リストの再設定  
+  updateMoveList(document.getElementById("UseMoveList"), this.value);
+  document.getElementById("UseMoveList").dispatchEvent(new Event("change"));
+});
+
+/**
+ * 必殺技選択による値変更
+ */
 document.getElementById("UseMoveList").addEventListener("change", function(e) {
   // 必殺技情報取得
-  const [keshinName, keshinElement, keshinPoint, keshinAttack, 
-         moveName, moveElement, moveType, movePower, moveCost, 
-         keshinSkillName, keshinSkillMoveNote, keshinCorrection] = e.target.value.split('|');
-
+  let moveData = MOVE_DATA.find(item => item.moveName === this.value);
+  // 化身必殺技選択時は上記条件では見つからないので化身必殺技を対象に再検索
+  if (!moveData) {
+    moveData = KESHIN_DATA.find(item => item.moveName === this.value);
+  }
   // 必殺技情報設定
-  document.getElementById("MoveElement").value = moveElement;
-  document.getElementById("MovePower").value = movePower;
-  document.getElementById("MoveCost").value = moveCost;
+  setFormValues({
+    MoveElement: moveData.moveElement,
+    MovePower  : moveData.movePower,
+    MoveCost   : moveData.moveCost,
+  });
 });
 
-// 化身選択による値変更
+/**
+ * 選手の化身選択による値変更
+ */
 document.getElementById("PlayersKeshinList").addEventListener("change", function(e) {
+  // 化身情報取得
+  const keshinData = KESHIN_DATA.find(item => item.keshinName === this.value);
   // 化身情報設定
-  const [keshinName, keshinElement, keshinPoint, keshinAttack, 
-         keshinMove, keshinMoveElement, keshinMoveType, keshinMovePower, keshinMoveCost, 
-         keshinSkillName, keshinSkillMoveNote, keshinCorrection] = e.target.value.split('|');
+  setFormValues({
+    KeshinSkillName1: keshinData.keshinSkillName,
+    KpVal    : keshinData.KP,
+    KaVal    : keshinData.KA,
+    MoveCost : keshinData.moveCost
+  });
+  // 選択した化身情報を発動中の化身に登録
   selectedKeshin[0] = {
-      name: keshinName,
-      element: keshinElement,
-      point: keshinPoint,
-      attack: keshinAttack,
-      move: keshinMove,
-      moveElement: keshinMoveElement,
-      moveType: keshinMoveType,
-      movePower: keshinMovePower,
-      moveCost: keshinMoveCost,
-      skillName: keshinSkillName,
-      skillMoveNote: keshinSkillMoveNote,
-      collect: keshinCorrection
-    };
-  document.getElementById("KeshinSkillName1").value = keshinSkillName;
-  document.getElementById("KpVal").value = keshinPoint;
-  document.getElementById("KaVal").value = keshinAttack;
-  document.getElementById("MoveCost").value = keshinMoveCost;
-
-  const moveList = document.getElementById("UseMoveList");
-  const sel = document.getElementById('CommandList');
+    keshinName: keshinData.keshinName,
+    keshinElement: keshinData.keshinElement,
+    KP: keshinData.KP,
+    KA: keshinData.KA,
+    moveName: keshinData.moveName,
+    moveElement: keshinData.moveElement,
+    commandType: keshinData.commandType,
+    moveType: keshinData.moveType,
+    movePower: keshinData.movePower,
+    moveCost: keshinData.moveCost,
+    skillName: keshinData.skillName,
+    skillMoveNote: keshinData.skillMoveNote
+  };
+  // 化身スキル名を設定
+  setFormValues({ KeshinSkillName1: keshinData.skillName });
   
-  if ( selectedKeshin[0].move == "なし" ) {
-    // 化身を選択していない場合
-    // AllSpecialMoveから要素を毎回復製してソート用配列を作成
-    const moveArray = Array.from(AllSpecialMove.options)
-      .filter(opt => opt.dataset.category === sel.value || !opt.dataset.category)
-      .map(opt => opt.cloneNode(true));
-    
+  // 必殺技リスト
+  const moveList = document.getElementById("UseMoveList");
+  
+  if ( "なし" == keshinData.keshinName ) {
+    // 化身非選択時
+    // 必殺技リストを通常必殺技のものに設定
+    // コマンドリストの設定を取得
+    commandList = document.getElementById("CommandList");
+    // 必殺技リストを設定
+    updateMoveList(document.getElementById("UseMoveList"), commandList.value);
     // 体調補正を有効化
-    document.getElementById("ConditionList").disabled = false;
-    document.getElementById("ConditionList").selectedIndex = 0;
-    
-    // 必殺技の成否を選択可能にする
-    document.getElementById("MoveFailure").disabled = false;
-    document.getElementById("MoveFailure").selectedIndex = 0;
-
-    // UseMoveListの初期化
-    moveList.innerHTML = '';
-    moveArray.forEach(option => moveList.appendChild(option));
+    setFormDisabled({ConditionList: false});
+    // 必殺技の成否を有効化
+    setFormDisabled({MoveFailure: false});
   } else {
-    // 化身を選択している場合
-    // 選択した化身のカテゴリと選択中のコマンドが一致する場合、必殺技データに選択した化身の必殺技を設定
-    const selectedOption = e.target.selectedOptions[0];  
-    const category = selectedOption ? selectedOption.dataset.category : undefined;
-
-    // UseMoveListの初期化
+    // 化身選択時
+    // 必殺技リストの初期化
     moveList.innerHTML = '';
-    if ( sel.value == category ) {
+
+    // 選択コマンドと化身のカテゴリーが一致するとき
+    if ( document.getElementById('CommandList').value == keshinData.category ) {
       // 化身必殺技使用可能
       const moveOption = document.createElement("option");
-      moveOption.value = "なし|なし|0|0|" + 
-        selectedKeshin[0].move + "|" + selectedKeshin[0].moveElement + "|" + 
-        selectedKeshin[0].moveType + "|" + selectedKeshin[0].movePower + "|" + 
-        selectedKeshin[0].moveCost + "|なし|なし|なし";
-      moveOption.textContent = selectedKeshin[0].move;
+      moveOption.value = keshinData.moveName;
+      moveOption.textContent = keshinData.moveName;
       moveList.appendChild(moveOption);
     }
-    
-    // 体調補正を有効化
-    document.getElementById("ConditionList").disabled = true;
-    document.getElementById("ConditionList").selectedIndex = 0;
-    
-    // 必殺技の成否を選択不可にする
-    document.getElementById("MoveFailure").disabled = true;
-    document.getElementById("MoveFailure").selectedIndex = 0;
 
     // 必殺技未使用設定
     const option = document.createElement("option");
-    option.value = "なし|なし|0|0|なし|無|なし|20|0|なし|なし|なし";
+    option.value = "なし";
     option.textContent = "なし";
     moveList.appendChild(option);
+
+    // 体調補正を無効化
+    setFormDisabled({ConditionList: true});
+    // 必殺技の成否を無効化
+    setFormDisabled({MoveFailure: true});
   }
   
-  // UseMoveListの選択状態を先頭に戻す
+  // UseMoveListの先頭を選択
   moveList.selectedIndex = 0;
   
   // UseMoveListの初期発火
   moveList.dispatchEvent(new Event('change'));
 });
 
+/**
+ * 味方が発動中の化身(1)選択による値変更
+ */
 document.getElementById("OtherKeshinList1").addEventListener("change", function(e) {
-  const [keshinName, keshinElement, keshinPoint, keshinAttack, 
-         keshinMove, keshinMoveElement, keshinMoveType, keshinMovePower, keshinMoveCost, 
-         keshinSkillName, keshinSkillMoveNote, keshinCorrection] = e.target.value.split('|');
+  // 化身情報取得
+  const keshinData = KESHIN_DATA.find(item => item.keshinName === this.value);
+  // 選択した化身情報を味方が発動中の化身(1)に登録
   selectedKeshin[1] = {
-      name: keshinName,
-      element: keshinElement,
-      point: keshinPoint,
-      attack: keshinAttack,
-      move: keshinMove,
-      moveElement: keshinMoveElement,
-      moveType: keshinMoveType,
-      movePower: keshinMovePower,
-      moveCost: keshinMoveCost,
-      skillName: keshinSkillName,
-      skillMoveNote: keshinSkillMoveNote,
-      collect: keshinCorrection
-    };
-  document.getElementById("KeshinSkillName2").value = keshinSkillName;
+    keshinName: keshinData.keshinName,
+    keshinElement: keshinData.keshinElement,
+    KP: keshinData.KP,
+    KA: keshinData.KA,
+    moveName: keshinData.moveName,
+    moveElement: keshinData.moveElement,
+    commandType: keshinData.commandType,
+    moveType: keshinData.moveType,
+    movePower: keshinData.movePower,
+    moveCost: keshinData.moveCost,
+    skillName: keshinData.skillName,
+    skillMoveNote: keshinData.skillMoveNote
+  };
+  // 化身スキル名を設定
+  setFormValues({ KeshinSkillName2: keshinData.skillName });
 });
 
+/**
+ * 味方が発動中の化身(2)選択による値変更
+ */
 document.getElementById("OtherKeshinList2").addEventListener("change", function(e) {
-  const [keshinName, keshinElement, keshinPoint, keshinAttack, 
-         keshinMove, keshinMoveElement, keshinMoveType, keshinMovePower, keshinMoveCost, 
-         keshinSkillName, keshinSkillMoveNote, keshinCorrection] = e.target.value.split('|');
+  // 化身情報取得
+  const keshinData = KESHIN_DATA.find(item => item.keshinName === this.value);
+  // 選択した化身情報を味方が発動中の化身(1)に登録
   selectedKeshin[2] = {
-      name: keshinName,
-      element: keshinElement,
-      point: keshinPoint,
-      attack: keshinAttack,
-      move: keshinMove,
-      moveElement: keshinMoveElement,
-      moveType: keshinMoveType,
-      movePower: keshinMovePower,
-      moveCost: keshinMoveCost,
-      skillName: keshinSkillName,
-      skillMoveNote: keshinSkillMoveNote,
-      collect: keshinCorrection
-    };
-  document.getElementById("KeshinSkillName3").value = keshinSkillName;
+    keshinName: keshinData.keshinName,
+    keshinElement: keshinData.keshinElement,
+    KP: keshinData.KP,
+    KA: keshinData.KA,
+    moveName: keshinData.moveName,
+    moveElement: keshinData.moveElement,
+    commandType: keshinData.commandType,
+    moveType: keshinData.moveType,
+    movePower: keshinData.movePower,
+    moveCost: keshinData.moveCost,
+    skillName: keshinData.skillName,
+    skillMoveNote: keshinData.skillMoveNote
+  };
+  // 化身スキル名を設定
+  setFormValues({ KeshinSkillName3: keshinData.skillName });
 });
 
-// 実行コマンド選択による値変更
-document.getElementById("CommandList").addEventListener("change", function() {
-  
-  const shotSelectLabel = document.getElementById("ShotCorrectionLabel");
-  const shotSelect = document.getElementById("ShotCorrectionList");
-  const defenceSelectLabel = document.getElementById("DefenseCorrectionLabel");
-  const defenceSelect = document.getElementById("DefenseCorrectionList");
-  
-  if ("FW" == this.value) {
-    document.getElementById("MainParaLabel").textContent  = "キック";
-    document.getElementById("MainPara").placeholder = "キック値入力";
-    document.getElementById("cMainPara").textContent  = "キック";
-    document.getElementById("cMainPara").title = "選手のスキル、化身スキルを加味したキック値です";
-    
-    // 距離補正表示、守備補正非表示
-    shotSelectLabel.style.textDecoration = 'none';
-    shotSelect.disabled = false;
-    shotSelect.selectedIndex = 0;
-    defenceSelectLabel.style.textDecoration = 'line-through';
-    defenceSelect.disabled = true;
-    defenceSelect.selectedIndex = 0;
+/**
+ * 要素のidと設定する値を引数にデータを設定する
+ * @param {Object} map  { 要素のid: 設定する値 }
+ */
+function setFormValues(map) {
+  Object.entries(map).forEach(([id, value]) => {
+    const el = document.getElementById(id);
+    if (el) el.value = value;
+  });
+}
+
+/**
+ * 要素のidと設定する値を引数にデータを設定する
+ * @param {Object} map  { 要素のid: 設定する値(true,false) }
+ */
+function setFormDisabled(map) {
+  Object.entries(map).forEach(([id, isDisabled]) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.selectedIndex = 0;
+      el.disabled = isDisabled;
+    }
+  });
+}
+
+/**
+ * 要素のidと設定する値を引数にデータを設定する
+ * @param {Object} map  { 要素のid: 設定する値 }
+ */
+function setCalcValues(map) {
+  Object.entries(map).forEach(([id, value]) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  });
+}
+
+/**
+ * 要素のidと設定する値を引数にデータを設定する
+ * @param {Object} map  { 要素のid: 設定する値 }
+ */
+function setSelectByValue(id, value) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.value = value;
+}
+
+/**
+ * フォントの設定用
+ */
+function autoShrinkCell(cell) {
+  const max = 20;
+  const min = 10;
+
+  let size = 15;
+  cell.style.fontSize = size + "px";
+
+  // はみ出している間フォントを下げる
+  while (cell.scrollWidth > cell.clientWidth && size > min) {
+    size -= 1;
+    cell.style.fontSize = size + "px";
   }
-  if ("MF" == this.value) {
-    document.getElementById("MainParaLabel").textContent  = "ドリブル";
-    document.getElementById("MainPara").placeholder = "ドリブル値入力";
-    document.getElementById("cMainPara").textContent  = "ドリブル";
-    document.getElementById("cMainPara").title = "選手のスキル、化身スキルを加味したドリブル値です";
-    // 距離補正非表示、守備補正非表示
-    shotSelectLabel.style.textDecoration = 'line-through';
-    shotSelect.disabled = true;
-    shotSelect.selectedIndex = 0;
-    defenceSelectLabel.style.textDecoration = 'line-through';
-    defenceSelect.disabled = true;
-    defenceSelect.selectedIndex = 0;
+}
+
+/**
+ * テーブル部のフォントをリサイズ
+ */
+function resizeTableFonts() {
+  document.querySelectorAll("td, th").forEach(autoShrinkCell);
+}
+
+/**
+ * 数値入力欄には整数しか受け付けないようにしておく
+ */
+document.addEventListener('keydown', (e) => {
+  // data-integer 属性を持つ input 要素のみ対象
+  if (!e.target.matches('input[type="number"][data-integer]')) return;
+
+  // 小数点、E表記、マイナスの入力をブロック
+  if (['.', ',', 'e', 'E','-','－'].includes(e.key)) {
+    e.preventDefault();
   }
-  if ("DF" == this.value) {
-    document.getElementById("MainParaLabel").textContent  = "ブロック";
-    document.getElementById("MainPara").placeholder = "ブロック値入力";
-    document.getElementById("cMainPara").textContent  = "ブロック";
-    document.getElementById("cMainPara").title = "選手のスキル、化身スキルを加味したブロック値です";
-    // 距離補正非表示、守備補正表示
-    shotSelectLabel.style.textDecoration = 'line-through';
-    shotSelect.disabled = true;
-    shotSelect.selectedIndex = 0;
-    defenceSelectLabel.style.textDecoration = 'none';
-    defenceSelect.disabled = false;
-    defenceSelect.selectedIndex = 1;
-  }
-  if ("GK" == this.value) {
-    document.getElementById("MainParaLabel").textContent  = "キャッチ";
-    document.getElementById("MainPara").placeholder = "キャッチ値入力";
-    document.getElementById("cMainPara").textContent  = "キャッチ";
-    document.getElementById("cMainPara").title = "選手のスキル、化身スキルを加味したキャッチ値です";
-    // 距離補正非表示、守備補正表示
-    shotSelectLabel.style.textDecoration = 'line-through';
-    shotSelect.disabled = true;
-    shotSelect.selectedIndex = 0;
-    defenceSelectLabel.style.textDecoration = 'none';
-    defenceSelect.disabled = false;
-    defenceSelect.selectedIndex = 1;
-  }
+});
+// その他処理---------------------------------------------------------------------------------------------------
 
-  // 必殺技リストにコマンドに合致するもののみ設定
-  const moveList = document.getElementById("UseMoveList");
-  // AllSpecialMoveから要素を毎回復製してソート用配列を作成
-  const moveArray = Array.from(AllSpecialMove.options)
-    .filter(opt => opt.dataset.category === this.value || !opt.dataset.category)
-    .map(opt => opt.cloneNode(true));
+// 選手リスト選択による値変更
+document.getElementById("QuickEntryPlayerList").addEventListener("change", function() {
+  const preset = QUICK_ENTRIES[this.value];
 
-  // UseMoveListの初期化
-  UseMoveList.innerHTML = '';
-  moveArray.forEach(option => UseMoveList.appendChild(option));
-
-  // UseMoveListの選択状態を先頭に戻す
-  UseMoveList.selectedIndex = 0;
-
-  // 化身リスト
-  const playersKeshinList = document.getElementById("PlayersKeshinList");
-  const keshinList = document.getElementById("AllKeshinDataList");
-
-  // AllKeshinDataListから要素を毎回復製してソート用配列を作成
-  const keshinArray = Array.from(keshinList.options).map(opt => opt.cloneNode(true));
-
-  // 全選択肢をソートする
-  const sortedKeshin = keshinArray.sort((a, b) => {
-    const categoryA = a.dataset.category;
-    const categoryB = b.dataset.category;
-
-    // デフォルト項目（category属性がないもの）は常に一番上
-    if (!categoryA) return -1;
-    if (!categoryB) return 1;
-
-    // 選択された条件に一致するものを上に優先配置
-    const isMatchA = categoryA === this.value;
-    const isMatchB = categoryB === this.value;
-
-    if (isMatchA && !isMatchB) return -1; // Aを優先
-    if (!isMatchA && isMatchB) return 1;  // Bを優先
-
-    return 0;
+  // ステータス
+  setFormValues({
+    PlayerName: preset.PlayerName,
+    MainPara:   preset.MainPara,
+    TechVal:    preset.TechVal,
+    LuckVal:    preset.LuckVal,
   });
 
-  // 並び替えたoptionをリストに再配置
-  playersKeshinList.innerHTML = '';
-  sortedKeshin.forEach(option => playersKeshinList.appendChild(option));
+  // select系
+  setSelectByValue("PlayerGender",      preset.PlayerGender);
+  setSelectByValue("PlayerPhysique",    preset.PlayerPhysique);
+  setSelectByValue("PlayerElementList", preset.PlayerElementList);
+  setSelectByValue("SkillList1",        preset.SkillList1);
+  setSelectByValue("SkillList2",        preset.SkillList2);
+  
+  // 発火を要するselect系
+  setSelectByValue("CommandList",       preset.CommandList);
+  document.getElementById("CommandList").dispatchEvent(new Event("change"));
 
-  // playersKeshinListの選択状態を先頭に戻す
-  playersKeshinList.selectedIndex = 0;
+  setSelectByValue("PlayersKeshinList", preset.PlayersKeshinList);
+  document.getElementById("PlayersKeshinList").dispatchEvent(new Event("change"));
+
+  setSelectByValue("UseMoveList", preset.UseMoveList);
+  document.getElementById("UseMoveList").dispatchEvent(new Event("change"));
+
 });
 
-// 推定トータルテクニック計算
-function calc() {
+// 推定トータルテクニック簡易計算
+function calcTotalForm() {
   // ---------------------------------------------------------------------------------------------- //
-  // ベーステクニック basePower算出
+  // ベーステクニック
   const selectUseMoveList = document.getElementById('UseMoveList');
-  const textselectUseMoveList = selectUseMoveList.options[selectUseMoveList.selectedIndex].text;
 
   const selectSkillList1 = document.getElementById('SkillList1');
   const textSkillList1 = selectSkillList1.options[selectSkillList1.selectedIndex].text;
@@ -1219,15 +1185,16 @@ function calc() {
   let calcSkillList = [selectedKeshin[0].skillName, selectedKeshin[1].skillName, selectedKeshin[2].skillName, 
                        textSkillList1, textSkillList2 ];
 
-  // スキルの重複は効果がないので削除
+  // スキルの重複を除去(GO1では重複は処理しない)
   calcSkillList = Array.from(new Set(calcSkillList));
+
   // 実行コマンド
-  const selectedCommand = document.getElementById("CommandList");
+  const selectedCommand = document.getElementById("CommandList").value;
 
   // ベースパワー計算に用いるステータス取得
-  let mainPara = Number(document.getElementById("MainPara").value) || 0;
-  let tech = Number(document.getElementById("TechVal").value) || 0;
-  let luck = (Number(document.getElementById("LuckVal").value) || 0);
+  let mainPara = Number(document.getElementById("MainPara").value) || 1;
+  let tech = Number(document.getElementById("TechVal").value) || 1;
+  let luck = (Number(document.getElementById("LuckVal").value) || 1);
 
   // パラメータ強化系スキルが参照する情報取得(性別と体格)
   const playersGendr = document.getElementById('PlayerGender').value;
@@ -1235,44 +1202,27 @@ function calc() {
 
   // パラメータ強化系の習得スキルを反映
   calcSkillList.forEach(skill => {
-    if ( ( skill.includes("キックプラス20") && "FW" == selectedCommand.value ) || 
-         ( skill.includes("ドリブルプラス20") && "MF" == selectedCommand.value ) || 
-         ( skill.includes("ブロックプラス20") && "DF" == selectedCommand.value ) || 
-         ( skill.includes("キャッチプラス20") && "GK" == selectedCommand.value )
-       ) {
-      mainPara += 20;
-    }
-    if ( skill.includes("テクニックプラス20") ) {
-      tech += 20;
-    }
-    if ( ( skill.includes("キックプラス10") && "FW" == selectedCommand.value ) || 
-         ( skill.includes("ドリブルプラス10") && "MF" == selectedCommand.value ) || 
-         ( skill.includes("ブロックプラス10") && "DF" == selectedCommand.value ) || 
-         ( skill.includes("キャッチプラス10") && "GK" == selectedCommand.value ) || 
-         ( skill.includes("キックフォース10") && "FW" == selectedCommand.value ) || 
-         ( skill.includes("ドリブルフォース10") && "MF" == selectedCommand.value ) || 
-         ( skill.includes("ブロックフォース10") && "DF" == selectedCommand.value ) || 
-         ( skill.includes("キャッチフォース10") && "GK" == selectedCommand.value )
+    if ( ( skill.includes("キックフォース10") && "FW" == selectedCommand ) || 
+         ( skill.includes("ドリブルフォース10") && "MF" == selectedCommand ) || 
+         ( skill.includes("ブロックフォース10") && "DF" == selectedCommand ) || 
+         ( skill.includes("キャッチフォース10") && "GK" == selectedCommand )
        ) {
       mainPara += 10;
     }
     if ( skill.includes("テクニックプラス10") || skill.includes("テクニックフォース10") ) {
       tech += 10;
     }
-    if ( ( skill.includes("キックフォース5") && "FW" == selectedCommand.value ) || 
-         ( skill.includes("ドリブルフォース5") && "MF" == selectedCommand.value ) || 
-         ( skill.includes("ブロックフォース5") && "DF" == selectedCommand.value ) || 
-         ( skill.includes("キャッチフォース5") && "GK" == selectedCommand.value )
+    if ( ( skill.includes("キックフォース5") && "FW" == selectedCommand ) || 
+         ( skill.includes("ドリブルフォース5") && "MF" == selectedCommand ) || 
+         ( skill.includes("ブロックフォース5") && "DF" == selectedCommand ) || 
+         ( skill.includes("キャッチフォース5") && "GK" == selectedCommand )
        ) {
       mainPara += 5;
     }
     if ( skill.includes("テクニックフォース5") ) {
       tech += 5;
     }
-    if ( skill.includes("ラッキープラス20") ) {
-      luck += 20;
-    }
-    if ( skill.includes("ラッキープラス10") || skill.includes("ラッキーフォース10") ) {
+    if ( skill.includes("ラッキーフォース10") ) {
       luck += 10;
     }
     if ( skill.includes("ラッキーフォース5") ) {
@@ -1294,39 +1244,33 @@ function calc() {
       tech += 5;
       luck += 5;
     }
-    if ( skill.includes("聖なる剣") && "FW" == selectedCommand.value ) {
+    if ( skill.includes("聖なる剣") && "FW" == selectedCommand ) {
       // キック+100
       mainPara += 100;
     }
   });
-
-  // 表示用ベーステクニック
-  const displayBaseTechnique = Math.floor(calcBaseTechnique(mainPara, tech));
-
-  // ベーステクニック basePower算出
+  // ベーステクニック
   // ---------------------------------------------------------------------------------------------- //
 
   // ---------------------------------------------------------------------------------------------- //
-  // 必殺技威力 movePower算出
+  // 必殺技威力
   let movePower = Number(document.getElementById("MovePower").value) || 0;
-  document.getElementById("rMoveBasePower").textContent = "1.0";
+
+  let growthCorrection = "1.0";
   // 技の基本威力
-  if ( "なし" == selectedKeshin[0].name && !( "なし" == textselectUseMoveList ) ) {
-    // 化身必殺技でない場合のみ最終進化次補正で1.5倍
+  if ( "なし" == selectedKeshin[0].name && !( "なし" == selectUseMoveList.options[selectUseMoveList.selectedIndex].text ) ) {
+    // 化身必殺技でない場合のみ最終進化補正で計算する
+    growthCorrection = "1.5";
     movePower *= 1.5;
-    document.getElementById("rMoveBasePower").textContent = "1.5";
   }
-  
+
   // 守備補正
   // 1.0倍、1.2倍、1.44倍、1.8倍のいずれか(小数点以下切り捨て)
   const defenceCorrection = document.getElementById("DefenseCorrectionList").value;
-  document.getElementById("rDFCorrection").textContent = defenceCorrection;
   movePower = movePower * defenceCorrection;
-  
+
   // 選手との属性取得
   const playersElement = document.getElementById('PlayerElementList').value;
-  // 技の属性取得
-  document.getElementById("rMoveElement").textContent = document.getElementById("MoveElement").value;
 
   // スキルとの属性相性
   // パラメータ強化系の習得スキルを反映
@@ -1359,15 +1303,17 @@ function calc() {
   if (hasOtakebi) {
     skillAddValue += 20;
   }
+
+  // 技威力に反映
   movePower += skillAddValue;
-  // スキル補正を含めた技威力
-  document.getElementById("rPowerElement").textContent = skillAddValue;
   
   // 属性相性
+  let elementMatchStr  = "不一致";
+  let elementMatch = 0;
   if ( playersElement == document.getElementById("MoveElement").value ) {
     movePower += 5;
-    document.getElementById("rMoveElementMatch").textContent = "一致";
-    document.getElementById("rElementMatch").textContent = "+5";
+    elementMatchStr = "一致";
+    elementMatch = "+5";
   }
   // 苦手
   else if ( "風" == playersElement && "林" == document.getElementById("MoveElement").value || 
@@ -1375,16 +1321,10 @@ function calc() {
             "火" == playersElement && "山" == document.getElementById("MoveElement").value || 
             "山" == playersElement && "風" == document.getElementById("MoveElement").value ) {
     movePower -= 5;
-    document.getElementById("rMoveElementMatch").textContent = "苦手";
-    document.getElementById("rElementMatch").textContent = "-5";
+    elementMatchStr = "苦手";
+    elementMatch = "-5";
   }
-  else {
-    document.getElementById("rMoveElementMatch").textContent = "不一致";
-    document.getElementById("rElementMatch").textContent = 0;
-  }
-  
-  document.getElementById("rTotalMovePower").textContent = movePower;
-  // 必殺技威力 movePower算出
+  // 必殺技威力
   // ---------------------------------------------------------------------------------------------- //
 
   // こんしん！補正
@@ -1431,10 +1371,10 @@ function calc() {
   // 属性勝負補正(守備側のみの処理)
   // 攻守補正[互角,有利,不利]
   let elementCorrection = [1.0, 1.0, 1.0];
-  document.getElementById("rElementBattle").textContent = "なし";
-  if ( "DF" == selectedCommand.value || "GK" == selectedCommand.value ) {
+  let elementCorrectionStr = "なし";
+  if ( /DF|GK/.test(selectedCommand) ) {
     // ディフェンスの場合、属性勝負補正ありであることを記載
-    document.getElementById("rElementBattle").textContent = "あり";
+    elementCorrectionStr = "あり";
     elementCorrection = [1.0, 1.2, 0.8];
   }
 
@@ -1446,7 +1386,6 @@ function calc() {
   if ( 0 < ka + kp ) {
     kpkaStr = "+" + (ka + kp);
   }
-  document.getElementById("rKPKA").textContent = kpkaStr;
 
   // Lv差補正(対戦では補正なしを想定)
   let lvCorrection = 1.0;
@@ -1473,9 +1412,9 @@ function calc() {
   function calcBasePower(mainPara, tech) {
     // ベーステクニックに補正を付与
     const basePower = calcBaseTechnique(mainPara, tech) * 2 / 3;
-    // 減衰項
-    const damping = ((basePower * basePower) / 1480) + basePower * (40 / 197) - (8 / 17)
-    // ベースパワー = ベーステクニック - 減衰項
+    // 減衰補正
+    const damping = ((basePower * basePower) / 1480) + basePower * (25 / 123) - (8 / 17)
+    // ベースパワー = ベーステクニック - 減衰補正
     return basePower - damping;
   }
 
@@ -1541,7 +1480,7 @@ function calc() {
   // トータルテクニック計算共通ロジック
   // ---------------------------------------------------------------------------------------------- //
 
-  // 5. 各出力用トータルテクニックの算出
+  // トータルテクニック計算に必要な情報
   const baseParams = {
     mainPara: mainPara,
     tech: tech,
@@ -1580,132 +1519,56 @@ function calc() {
   baseParams.isCritical = true;
   const disadvantageTotalCritical = calcTotalTech({ ...baseParams, elemCorr: elementCorrection[2] });
 
-  // ---------------------------------------------------------------------------------------------- //
-  // 情報出力
-  // 選手名
-  document.getElementById("rName").textContent = document.getElementById("PlayerName").value;
-  // ステータス
-  document.getElementById("rMainPara").textContent = mainPara;
-  document.getElementById("rTech").textContent = tech;
-  document.getElementById("rLuck").textContent = luck;
-  // ベーステクニック
-  document.getElementById("rBaseTech").textContent = displayBaseTechnique;
-  // ベースパワー
-  document.getElementById("rBasePower").textContent = (calcBaseTechnique(mainPara, tech) * 2 / 3).toFixed(6);
-  // 必殺技名
-  document.getElementById("rMoveName").textContent = textselectUseMoveList;
-  // 化身名
-  document.getElementById("rKeshinName").textContent = selectedKeshin[0].name;
-  document.getElementById("rKeshinSkill1").textContent = selectedKeshin[0].skillName;
-  document.getElementById("rKeshinSkill2").textContent = selectedKeshin[1].skillName;
-  document.getElementById("rKeshinSkill3").textContent = selectedKeshin[2].skillName;
-  // こんしん！補正
-  document.getElementById("rKonshin").textContent = konshinPower.toFixed(1);
-  // 失敗補正
-  document.getElementById("rSuccessCorrection").textContent = failureVal;
-  // 乱数上振れ
-  document.getElementById("rRandom").textContent = randomValue;
-  // 距離補正
-  document.getElementById("rDistance").textContent = shotCorrection;
-  // Lv差補正
-  document.getElementById("rLvCorrection").textContent = lvCorrection.toFixed(1);
-  // 体調補正
-  document.getElementById("rConditionCorrection").textContent = GpCorrection;
-  // クリティカル率
-  document.getElementById("rCritical").textContent = rCriValue + "%"
-  // 攻撃側の場合、「トータルテクニック(クリティカル)」を表示
-  if ( "なし" == document.getElementById("rElementBattle").textContent ) {
-    document.getElementById("rTotal").textContent = 
-      totalTech + " ( " + totalCritical + " ) ";
-  } else {
-  // 守備側の場合、「トータルテクニック(クリティカル)：属性有利時(クリティカル)：属性不利時(クリティカル)」を表示
-    document.getElementById("rTotal").textContent = 
-      totalTech + " ( " + totalCritical + " ) " + 
+  // 「トータルテクニック(クリティカル)」
+  let totalFormStr = totalTech + " ( " + totalCritical + " ) ";
+  // 守備側の場合、「属性有利時(クリティカル)：属性不利時(クリティカル)」を追加
+  if ( /DF|GK/.test(selectedCommand) ) {
+    totalFormStr += 
       " : 属性有利時 " + advantageousTotalTech + " ( " + advantageousTotalTechCritical + " ) " +
       " : 属性不利時 " + disadvantageTtotalTech + " ( " + disadvantageTotalCritical + " )";
   }
+
+  // ----------------------------------------------------------------------------------------------
   // 情報出力
-  // ---------------------------------------------------------------------------------------------- //
-
-}
-
-function autoShrinkCell(cell) {
-  const max = 20;
-  const min = 10;
-
-  let size = 15;
-  cell.style.fontSize = size + "px";
-
-  // はみ出している間フォントを下げる
-  while (cell.scrollWidth > cell.clientWidth && size > min) {
-    size -= 1;
-    cell.style.fontSize = size + "px";
-  }
-}
-
-function resizeTableFonts() {
-  document.querySelectorAll("td, th").forEach(autoShrinkCell);
-}
-
-document.addEventListener('keydown', (e) => {
-  // data-integer 属性を持つ input 要素のみ対象
-  if (!e.target.matches('input[type="number"][data-integer]')) return;
-
-  // 小数点、E表記、マイナスの入力をブロック
-  if (['.', ',', 'e', 'E','-','－'].includes(e.key)) {
-    e.preventDefault();
-  }
-});
-
-// ページロード時の処理
-window.addEventListener('DOMContentLoaded', () => {
-
-  // CommandListの初期発火
-  const commandList = document.getElementById("CommandList");
-  commandList.value = 'FW';
-  commandList.dispatchEvent(new Event('change'));
-
-  // 必殺技リストにコマンドに合致するもののみ設定
-  const moveList = document.getElementById("AllSpecialMove");
-  // AllSpecialMoveから要素を毎回復製してソート用配列を作成
-  const skillArray = Array.from(moveList.options)
-    .filter(opt => opt.dataset.category === "SK" || !opt.dataset.category)
-    .map(opt => opt.cloneNode(true));
-
-  const skillList1 = document.getElementById("SkillList1");
-  const skillList2 = document.getElementById("SkillList2");
-
-  skillList1.innerHTML = '';
-  skillList2.innerHTML = '';
-
-  // option要素を複製してそれぞれに追加
-  skillArray.forEach(option => {
-    skillList1.appendChild(option.cloneNode(true));
-    skillList2.appendChild(option.cloneNode(true));
+  // テーブルに値を設定
+  setCalcValues({
+    rName                : document.getElementById("PlayerName").value,            // 選手名
+    rMainPara            : mainPara,                                               // メインパラメータ
+    rTech                : tech,                                                   // テクニック
+    rLuck                : luck,                                                   // ラッキー
+    rBaseTech            : Math.floor(calcBaseTechnique(mainPara, tech)),          // ベーステクニック(表示用)
+    rBasePower           : (calcBaseTechnique(mainPara, tech) * 2 / 3).toFixed(6), // ベースパワー
+    rMoveBasePower       : growthCorrection,                                       // 進化補正
+    rDFCorrection        : defenceCorrection,                                      // 守備補正
+    rMoveElement         : document.getElementById("MoveElement").value,           // 技の属性
+    rPowerElement        : skillAddValue,                                          // 属性強化、心得、雄叫び補正
+    rMoveElementMatch    : elementMatchStr,                                        // 属性相性
+    rElementMatch        : elementMatch,                                           // 属性相性補正値
+    rTotalMovePower      : movePower,                                              // 必殺技威力
+    rElementBattle       : elementCorrectionStr,                                   // 相手との属性相性勝負
+    rKPKA                : kpkaStr,                                                // 化身補正(KP+KA)
+    rMoveName            : document.getElementById("UseMoveList").value,           // 必殺技名
+    rKeshinName          : selectedKeshin[0].keshinName,                           // 化身名
+    rKeshinSkill1        : selectedKeshin[0].skillName,                            // 化身スキル名1
+    rKeshinSkill2        : selectedKeshin[1].skillName,                            // 化身スキル名2
+    rKeshinSkill3        : selectedKeshin[2].skillName,                            // 化身スキル名3
+    rKonshin             : konshinPower.toFixed(1),                                // こんしん！補正
+    rSuccessCorrection   : failureVal,                                             // 失敗補正
+    rRandom              : randomValue,                                            // 乱数
+    rDistance            : shotCorrection,                                         // 距離補正
+    rLvCorrection        : lvCorrection.toFixed(1),                                // Lv差補正
+    rConditionCorrection : GpCorrection,                                           // 体調補正
+    rCritical            : rCriValue + "%",                                        // クリティカル率
+    rLvCorrection        : lvCorrection.toFixed(1),                                // Lv差補正
+    rTotal               : totalFormStr                                            // トータルテクニック(表示)
   });
-  
-  // AllKeshinDataListからoptionを取得
-  const keshinList1 = document.getElementById("AllKeshinDataList");
-  const keshinList2 = document.getElementById("OtherKeshinList1");
-  const keshinList3 = document.getElementById("OtherKeshinList2");
-
-  if (keshinList1) {
-    // 既存のHTML側の<option>をクリア（重複防止）
-    keshinList2.innerHTML = '';
-    keshinList3.innerHTML = '';
-
-    // option要素を複製してそれぞれに追加
-    Array.from(keshinList1.options).forEach(option => {
-      keshinList2.appendChild(option.cloneNode(true));
-      keshinList3.appendChild(option.cloneNode(true));
-    });
-  }
-});
+  // 情報出力
+  // ----------------------------------------------------------------------------------------------
+}
 
 window.addEventListener("load", resizeTableFonts);
 window.addEventListener("resize", resizeTableFonts);
 </script>
-
 </body>
 </html>
 
