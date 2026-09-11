@@ -8,6 +8,7 @@
     font-family: sans-serif;
     padding: 20px;
   }
+  /* 選手情報 */
   .playerData {
     display: inline-grid; 
     grid-template-columns: 100px 150px 100px 150px 100px 150px;
@@ -18,6 +19,10 @@
     padding: 10px;
     font-weight: bold;
   }
+  /* 選手情報の先頭行 */
+  .playerData .new-row {
+    grid-column: 1;
+  }
   /* 最後の行を補足説明用に使う */
   .playerData .full-row {
     grid-column: 1 / -1;
@@ -26,6 +31,7 @@
     align-items: center;
     font-size: 12px;
   }
+  /* 化身情報 */
   .keshiAndMoveData {
     display: inline-grid; 
     grid-template-columns: 200px 200px 120px 200px 50px;
@@ -36,9 +42,14 @@
     padding: 10px;
     font-weight: bold;
   }
+  /* 先頭行 */
+  .keshiAndMoveData .new-row {
+    grid-column: 1;
+  }
+  /* 必殺技情報 */
   .moveData {
     display: inline-grid; 
-    grid-template-columns: 170px 70px 170px 40px 40px 40px 60px 60px 60px 20px;
+    grid-template-columns: 170px 70px 170px 40px 60px 40px 60px 60px 60px 10px;
     gap: 8px 6px;
     align-items: center;
     border: 2px solid black;
@@ -48,32 +59,14 @@
     width: fit-content;
     font-weight: bold;
   }
-  .checks {
-    display: grid;
-    grid-template-columns: repeat(6, max-content);
-    gap: 8px;
-    align-items: center;
-  }
-  #PlayerName, #CommandList {
-    width: 140px;
-  }
-  #PlayerGender, #PlayerPhysique, #PlayerElementList,
-  #ShotCorrectionList, #DefenseCorrectionList, #MoveFailure ,#RandomValue {
-    width: 80px;
-  }
+  /* 出力情報表示テーブル */
+  .input-number { width: 50px; }  /* 数値入力欄(数値) */
+  .input-small  { width: 80px; }  /* 項目入力欄(小)   */
+  .input-middle { width: 140px; } /* 項目入力欄(中)   */
+  .input-large  { width: 150px; } /* 項目入力欄(大)   */
+  .input-huge   { width: 190px; } /* 項目入力欄(特大) */
   
-  #MainPara, #TechVal, #LuckVal, #KpVal, #KaVal {
-    width: 120px;
-  }
-  #SkillList1, #SkillList2 {
-    width: 150px;
-  }
-  #PlayersKeshinList, #KeshinSkillName1, 
-  #OtherKeshinList1, #KeshinSkillName2, 
-  #OtherKeshinList2, #KeshinSkillName3 {
-    width: 190px;
-  }
-  
+  /* 配色設定 */
   :root {
     --main-bg:  #000;
     --sub-bg:   #111;
@@ -81,24 +74,24 @@
     --text2:    #fff;
     --border:   #fff;
     --row1:     #B4FFB4;
-    --row3:     #B4FFB4;
-    --row5:     #B4FFB4;
     --row7:     #FFD6D6;
     --row9:     #DDEBF7;
-    --row11:     #CCCCFF;
+    --row11:    #CCCCFF;
   }
+  /* テーブル */
   table {
     border-collapse: collapse;
     margin-top: 15px;
     width: 900px;
     table-layout: fixed;
     background-color: var(--main-bg);
+    outline: 4px solid #000;
   }
   th, td {
-    border: 3pt solid var(--border);   /* 枠線 */
+    border: 3pt solid var(--border);
     padding: 6px;
     text-align: center;
-    width: 200px;
+    width: 900px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -113,36 +106,22 @@
     background-color: var(--sub-bg);
     color: var(--text2); 
   }
-  /* 奇数段 */
-  table tr:nth-child(1) th {
-    font-weight: bold;
-    background-color: var(--row1);
+  .row-green th  { background-color: var(--row1);  } /* 緑枠 */
+  .row-red th    { background-color: var(--row7);  } /* 赤枠 */
+  .row-blue th   { background-color: var(--row9);  } /* 青枠 */
+  .row-purple th { background-color: var(--row11); } /* 紫枠 */
+  /* 説明欄 */
+  .formula-box {
+    background: #f8f9fa;
+    border-left: 4px solid #0d6efd;
+    padding: 1px 1px;
+    margin: 1px 0;
+    width: 900px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.95em;
+    line-height: 1.6;
+    white-space: pre-wrap;
   }
-  table tr:nth-child(3) th {
-    font-weight: bold;
-    background-color: var(--row1);
-  }
-  table tr:nth-child(5) th {
-    font-weight: bold;
-    background-color: var(--row5);
-  }
-  table tr:nth-child(7) th {
-    font-weight: bold;
-    background-color: var(--row7);
-  }
-  table tr:nth-child(9) th {
-    font-weight: bold;
-    background-color: var(--row9);
-  }
-  table tr:nth-child(11) th {
-    font-weight: bold;
-    background-color: var(--row11);
-  }
-  /* 偶数段 */
-  table tr:nth-child(even) th {
-    color: var(--text2);
-  }
-
 </style>
 </head>
 <body>
@@ -159,9 +138,11 @@
       <option value="白竜">白竜(ホワイトハリケーン)</option>
       <option value="シュウ">シュウ(ブラックアッシュ)</option>
       <option value="ランスロット剣城">剣城(ランスロット)</option>
+      <option value="ペンドラゴン剣城">剣城(ペンドラゴン)</option>
       <option value="シャイニングドラゴン白竜">白竜(シャイニングドラゴン)</option>
       <option value="ダークエクソダスシュウ">シュウ(ダークエクソダス)</option>
       <option value="ムサシ御門">御門(ムサシ)</option>
+      <option value="ペガサスアーク天馬">天馬(ペガサスアーク)</option>
       <option value="ダークエクソダス吉良">吉良(ダークエクソダス)</option>
       <option value="グレイトゴンガン">ゴンガン(グレイト)</option>
       <option value="グレイトカズマ">カズマ(グレイト)</option>
@@ -176,52 +157,51 @@
 <!-- テキストボックス -->
 <label><b>■選手情報入力欄</b></label><br>
 <div class="playerData">
-  <label>選手名</label><input type="text" id="PlayerName" placeholder="選手名を入力" value="">
-  <div></div><div></div><div></div><div></div>
-  <label>性別</label>
-  <select id="PlayerGender">
+  <label>選手</label><input type="text" id="PlayerName" placeholder="選手名などを入力" value="" class="input-middle">
+  <label class="new-row">性別</label>
+  <select id="PlayerGender" class="input-small">
     <option value="男">男</option>
     <option value="女">女</option>
     <option value="無">無</option>
   </select>
   <label>体格</label>
-  <select id="PlayerPhysique">
+  <select id="PlayerPhysique" class="input-small">
     <option value="普通">普通</option>
     <option value="小柄">小柄</option>
     <option value="大柄">大柄</option>
   </select>
   <label>属性</label>
-  <select id="PlayerElementList">
+  <select id="PlayerElementList" class="input-small">
     <option value="風">風</option>
     <option value="林">林</option>
     <option value="火">火</option>
     <option value="山">山</option>
   </select>
-  <label>実行コマンド</label>
-  <select id="CommandList">
+  <label class="new-row">実行コマンド</label>
+  <select id="CommandList" class="input-middle">
     <option value="FW" selected>シュート</option>
     <option value="MF">ドリブル</option>
     <option value="DF">ブロック</option>
     <option value="GK">キャッチ</option>
   </select>
   <label id="ShotCorrectionLabel">距離補正</label>
-  <select id="ShotCorrectionList">
+  <select id="ShotCorrectionList" class="input-small">
     <option value="1.0" selected>1.0倍</option>
     <option value="0.8">0.8倍</option>
     <option value="0.5">0.5倍</option>
   </select>
-  <label id="DefenseCorrectionLabel">守備補正</label>
-  <select id="DefenseCorrectionList">
+  <label id="CommandCorrectionLabel">守備補正</label>
+  <select id="CommandCorrectionList" class="input-middle">
     <option value="1.0">1倍</option>
     <option value="1.2" selected>1.2倍</option>
     <option value="1.44">1.44倍</option>
     <option value="1.8">1.8倍</option>
   </select>
-  <label id="MainParaLabel">キック</label><input type="number" data-integer id="MainPara" placeholder="キック値入力" value="1" min="1" step="1">
-  <label>テクニック</label><input type="number" data-integer id="TechVal" placeholder="テクニック値入力" value="1" min="1" step="1">
-  <label>ラッキー</label><input type="number" data-integer id="LuckVal" placeholder="ラッキー値入力" value="1" min="1" step="1">
-  <label>習得スキル1</label><select id="SkillList1"></select>
-  <label>習得スキル2</label><select id="SkillList2"></select>
+  <label id="MainParaLabel" class="new-row">キック</label><input type="number" data-integer id="MainPara" placeholder="キック値入力" value="1" min="1" step="1" class="input-number">
+  <label>テクニック</label><input type="number" data-integer id="TechVal" placeholder="テクニック値入力" value="1" min="1" step="1" class="input-number">
+  <label>ラッキー</label><input type="number" data-integer id="LuckVal" placeholder="ラッキー値入力" value="1" min="1" step="1" class="input-number">
+  <label class="new-row">習得スキル1</label><select id="SkillList1" class="input-large"></select>
+  <label>習得スキル2</label><select id="SkillList2" class="input-large"></select>
   <label>体調</label>
   <select id="ConditionList">
     <option value="1.0" selected>残GPが0でない</option>
@@ -236,43 +216,41 @@
 <label><b>■化身・使用必殺技入力欄</b></label><br>
 <div class="keshiAndMoveData">
   <label>選手の発動化身(零式)</label>
-  <select id="PlayersKeshinList"></select>
+  <select id="PlayersKeshinList" class="input-huge"></select>
   <label>化身スキル</label>
-  <input type="text" id="KeshinSkillName1" value="なし">
-  <div></div>
-  <label>発動化身のKP</label>
-  <input type="number" data-integer id="KpVal" placeholder="KpVal" value="0" min="0" step="1">
+  <input type="text" id="KeshinSkillName1" value="なし" class="input-large">
+  <label class="new-row">発動化身のKP</label>
+  <input type="number" data-integer id="KpVal" placeholder="KpVal" value="0" min="0" step="1" class="input-number">
   <label>発動化身のKA</label>
-  <input type="number" data-integer id="KaVal" placeholder="KaVal" value="0" min="0" step="1">
-  <div></div>
+  <input type="number" data-integer id="KaVal" placeholder="KaVal" value="0" min="0" step="1" class="input-number">
+  <!-- 必殺技欄 -->
     <div class="moveData">
       <label>選手が使用する必殺技</label>
       <label>必殺技名</label>
       <select id="UseMoveList"></select>
       <label>属性</label>
-      <input type="text" id="MoveElement" placeholder="必殺技の属性" value="無" readonly>
+      <input type="text" id="MoveElement" placeholder="必殺技の属性" value="無" readonly class="input-number">
       <label>威力</label>
-      <input type="number" data-integer id="MovePower" placeholder="必殺技威力" value="20" readonly>
+      <input type="number" data-integer id="MovePower" placeholder="必殺技威力" value="20" readonly class="input-number">
       <label>コスト</label>
-      <input type="number" data-integer id="MoveCost" placeholder="必殺技のコスト" value="0" readonly>
+      <input type="number" data-integer id="MoveCost" placeholder="必殺技のコスト" value="0" readonly class="input-number">
     </div>
-  <label>味方が発動中の化身1</label>
-  <select id="OtherKeshinList1"></select>
+  <!-- 必殺技欄 -->
+  <label class="new-row">味方が発動中の化身1</label>
+  <select id="OtherKeshinList1" class="input-huge"></select>
   <label>化身スキル</label>
-  <input type="text" id="KeshinSkillName2" value="なし">
-  <div></div>
-  <label>味方が発動中の化身2</label>
-  <select id="OtherKeshinList2"></select>
+  <input type="text" id="KeshinSkillName2" value="なし" class="input-large">
+  <label class="new-row">味方が発動中の化身2</label>
+  <select id="OtherKeshinList2" class="input-huge"></select>
   <label>化身スキル</label>
-  <input type="text" id="KeshinSkillName3" value="なし">
-  <div></div>
-  <label>必殺技の成否</label>
-  <select id="MoveFailure">
+  <input type="text" id="KeshinSkillName3" value="なし" class="input-large">
+  <label class="new-row">必殺技の成否</label>
+  <select id="MoveFailure" class="input-small">
     <option value="1.0" selected>成功</option>
     <option value="0.8">失敗</option>
   </select>
   <label>上振れ</label>
-  <select id="RandomValue">
+  <select id="RandomValue" class="input-small">
     <option value="1.0">下振れ</option>
     <option value="1.2" selected>上振れ</option>
   </select>
@@ -295,11 +273,11 @@
     <col style="width: 70px;">
   </colgroup>
   <!-- 選手データ項目（前半） -->
-  <tr>
-    <th colspan="2" title="計算対象となった選手の名前です">選手名</th>
-    <th id="cMainPara" title="選手のスキル、化身スキルを加味したキック値です">キック</th>
-    <th title="選手のスキル、化身スキルを加味したテクニック値です">テクニック</th>
-    <th title="選手のスキル、化身スキルを加味したラッキー値です">ラッキー</th>
+  <tr class="header-row row-green">
+    <th colspan="2" title="計算対象となった選手です">選手</th>
+    <th id="cMainPara" title="化身スキルを加味したキック値です">キック</th>
+    <th title="化身スキルを加味したテクニック値です">テクニック</th>
+    <th title="化身スキルを加味したラッキー値です">ラッキー</th>
     <th colspan="2" title="選手の習得スキルです">習得スキル1</th>
     <th colspan="2" title="選手の習得スキルです">習得スキル2</th>
   </tr>
@@ -313,7 +291,7 @@
     <td id="rSkill2" colspan="2"></td>
   </tr>
   <!-- 選手データ項目（中段） -->
-  <tr>
+  <tr class="header-row row-green">
     <th colspan="3" title="コマンドバトル前に確認できるベーステクニック値です">テクニック(表示値)</th>
     <th colspan="4" title="コマンドバトルに用いるベースパワーです&#13;&#10;小数点第6位まで表示していますが、実際の処理では小数点以下は全てそのまま扱います">ベースパワー</th>
   </tr>
@@ -323,7 +301,7 @@
     <td id="rBasePower" colspan="4"></td>
   </tr>
   <!-- 選手データ項目（後半） -->
-  <tr>
+  <tr class="header-row row-red">
     <th id="colKeshinName" colspan="3">化身名</th>
     <th id="colKeshinSkill1" colspan="2">発動化身のスキル</th>
     <th id="colKeshinSkill2" colspan="2">発動中の化身スキル1</th>
@@ -336,159 +314,209 @@
     <td id="rKeshinSkill2" colspan="2"></td>
     <td id="rKeshinSkill3" colspan="2"></td>
   </tr>
+<!--<!-- デバッグ用 -->
+<!--  <!-- 技データ項目 -->
+<!--  <tr class="header-row row-blue" hidden> -->
+<!--    <th id="moveName" title="使用する必殺技名です" colspan="2">必殺技名</th> -->
+<!--    <th id="moveElementType" title="必殺技の属性です">属性</th> -->
+<!--    <th id="moveElementMatch" title="必殺技の属性と使用者の属性の相性です">使用相性</th> -->
+<!--    <th id="movePower" title="最終進化まで成長した際の補正値です">進化補正</th> -->
+<!--    <th id="commandCorrection" title="守備側にのみかかる補正で、ランダムで1.0倍、1.2倍、1.44倍、1.8倍になります&#13;&#10;最も発生率が高いのは1.2倍です">守備補正</th> -->
+<!--    <th id="skillCorrection" title="必殺技を直接強化するスキルによる補正です">スキル補正</th> -->
+<!--    <th id="elementMatchCorrection" title="属性相性による補正値です">属性相性</th> -->
+<!--    <th id="totalMovePower" title="最終的な必殺技威力です">必殺技威力</th> -->
+<!--  </tr> -->
+<!--  <!-- 技データ値 -->
+<!--  <tr hidden> -->
+<!--    <td id="rMoveName" colspan="2"></td> -->
+<!--    <td id="rMoveElement"></td> -->
+<!--    <td id="rMoveElementMatch"></td> -->
+<!--    <td id="rMoveBasePower"></td> -->
+<!--    <td id="rDFCorrection"></td> -->
+<!--    <td id="rPowerElement"></td> -->
+<!--    <td id="rElementMatch"></td> -->
+<!--    <td id="rTotalMovePower"></td> -->
+<!--  </tr> -->
+<!--  <!-- 各種補正項目 -->
+<!--  <tr class="header-row row-blue" hidden> -->
+<!--    <th id="konshinCorrection" title="スキル「ちょうわざ！」、「こんしん！」による補正です&#13;&#10;これらは重複しません" colspan="2">こんしん！補正</th> -->
+<!--    <th id="successCorrection" -->
+<!--     title="テクニック値による必殺技の成功、失敗判定によって生じる補正です&#13;&#10;選手のテクニック値を上げれば失敗判定になる確率は下がりますが、GO2以降と異なり失敗する確率を0にすることはできません">失敗補正</th> -->
+<!--    <th id="elementBattle" title="相手選手との属性相性の優劣判定です&#13;&#10;守備側にのみ発生します">相性判定</th> -->
+<!--    <th id="keshinCorrection" title="選手の発動化身の現在KPとKAの合計値です&#13;&#10;通常必殺技であれば0です">化身補正</th> -->
+<!--    <th id="shootCorrection" -->
+<!--     title="シュートの場合のみ、ゴールとの距離によって1.0倍、0.8倍、0.5倍の補正が与えられます">距離補正</th> -->
+<!--    <th id="lvCorrection"  -->
+<!--     title="相手とのレベル差があった場合の補正です&#13;&#10;同レベルでの対戦を想定し、1.0倍固定としています">Lv差補正</th> -->
+<!--    <th id="conditionCorrection" -->
+<!--     title="GPが0の場合、全てのコマンドバトルに0.5倍の補正がかかります">体調補正</th> -->
+<!--    <th id="randomCorrection" -->
+<!--     title="乱数によって1.0倍か1.2倍の補正がかかります&#13;&#10;最も発生率が高いのは1.2倍です">上振れ</th> -->
+<!--  </tr> -->
+<!--  <!-- 各種補正値 -->
+<!--  <tr hidden> -->
+<!--    <td id="rKonshin" colspan="2"></td> -->
+<!--    <td id="rSuccessCorrection"></td> -->
+<!--    <td id="rElementBattle"></td> -->
+<!--    <td id="rKPKA"></td> -->
+<!--    <td id="rDistance"></td> -->
+<!--    <td id="rLvCorrection"></td> -->
+<!--    <td id="rConditionCorrection"></td> -->
+<!--    <td id="rRandom"></td> -->
+<!--  </tr> -->
+<!--  <!-- 結果項目 -->
+<!--  <tr class="header-row row-purple" hidden> -->
+<!--    <th id="totalTech" colspan="7" -->
+<!--     title="トータルテクニックです&#13;&#10;()内の数値はクリティカル発生時のものです" >推定トータルテクニック</th> -->
+<!--    <th colspan="2" -->
+<!--     title="クリティカルが発生するおおよその確率です">クリティカル発生率</th> -->
+<!--  </tr> -->
+<!--  <!-- 結果値 -->
+<!--  <tr hidden> -->
+<!--    <td id="rTotal" colspan="7"></td> -->
+<!--    <td id="rCritical" colspan="2"></td> -->
+<!--  </tr> -->
+<!--  <!-- デバッグ用 -->
+  <!-- 表示用 -->
   <!-- 技データ項目 -->
-  <tr>
+  <tr class="header-row row-blue">
     <th id="moveName" title="使用する必殺技名です" colspan="2">必殺技名</th>
     <th id="moveElementType" title="必殺技の属性です">属性</th>
-    <th id="moveElementMatch" title="必殺技の属性と使用者の属性の相性です">使用相性</th>
-    <th id="movePower" title="最終進化まで成長した際の補正値です">進化補正</th>
-    <th id="defCorrection" title="守備側にのみかかる補正で、ランダムで1.0倍、1.2倍、1.44倍、1.8倍になります&#13;&#10;最も発生率が高いのは1.2倍です">守備補正</th>
-    <th id="skillCorrection" title="必殺技を直接強化するスキルによる補正です">スキル補正</th>
-    <th id="elementMatchCorrection" title="属性相性による補正値です">属性相性</th>
-    <th id="totalMovePower" title="最終的な必殺技威力です">必殺技威力</th>
+    <th id="totalMovePower" title="最終的な必殺技威力です">技威力</th>
+    <th id="totalTech" colspan="4"
+     title="トータルテクニックです&#13;&#10;()内の数値はクリティカル発生時のものです" >推定トータルテクニック</th>
+    <th title="クリティカルが発生するおおよその確率です">Cri率</th>
   </tr>
   <!-- 技データ値 -->
   <tr>
     <td id="rMoveName" colspan="2"></td>
     <td id="rMoveElement"></td>
-    <td id="rMoveElementMatch"></td>
-    <td id="rMoveBasePower"></td>
-    <td id="rDFCorrection"></td>
-    <td id="rPowerElement"></td>
-    <td id="rElementMatch"></td>
     <td id="rTotalMovePower"></td>
+    <td id="rTotal" colspan="4"></td>
+    <td id="rCritical" colspan="1"></td>
   </tr>
-  <!-- 各種補正項目 -->
-  <tr>
-    <th id="konshinCorrection" title="スキル「ちょうわざ！」、「こんしん！」による補正です&#13;&#10;これらは重複しません" colspan="2">こんしん！補正</th>
-    <th id="successCorrection"
-     title="テクニック値による必殺技の成功、失敗判定によって生じる補正です&#13;&#10;選手のテクニック値を上げれば失敗判定になる確率は下がりますが、GO2以降と異なり失敗する確率を0にすることはできません">失敗補正</th>
-    <th id="elementBattle" title="相手選手との属性相性の優劣判定です&#13;&#10;守備側にのみ発生します">相性判定</th>
-    <th id="keshinCorrection" title="選手の発動化身の現在KPとKAの合計値です&#13;&#10;通常必殺技であれば0です">化身補正</th>
-    <th id="shootCorrection"
-     title="シュートの場合のみ、ゴールとの距離によって1.0倍、0.8倍、0.5倍の補正が与えられます">距離補正</th>
-    <th id="lvCorrection" 
-     title="相手とのレベル差があった場合の補正です&#13;&#10;同レベルでの対戦を想定し、1.0倍固定としています">Lv差補正</th>
-    <th id="conditionCorrection"
-     title="GPが0の場合、全てのコマンドバトルに0.5倍の補正がかかります">体調補正</th>
-    <th id="randomCorrection"
-     title="乱数によって1.0倍か1.2倍の補正がかかります&#13;&#10;最も発生率が高いのは1.2倍です">上振れ</th>
-  </tr>
-  <!-- 各種補正値 -->
-  <tr>
-    <td id="rKonshin" colspan="2"></td>
-    <td id="rSuccessCorrection"></td>
-    <td id="rElementBattle"></td>
-    <td id="rKPKA"></td>
-    <td id="rDistance"></td>
-    <td id="rLvCorrection"></td>
-    <td id="rConditionCorrection"></td>
-    <td id="rRandom"></td>
-  </tr>
-  <!-- 結果項目 -->
-  <tr>
-    <th id="totalTech" colspan="7"
-     title="トータルテクニックです&#13;&#10;()内の数値はクリティカル発生時のものです" >推定トータルテクニック</th>
-    <th colspan="2"
-     title="クリティカルが発生するおおよその確率です">クリティカル発生率</th>
-  </tr>
-  <!-- 結果値 -->
-  <tr>
-    <td id="rTotal" colspan="7"></td>
-    <td id="rCritical" colspan="2"></td>
-  </tr>
+  <!-- 表示用 -->
 </table>
 <br>
 <p>
+<details>
+  <summary><strong>推定トータルテクニック計算式</strong></summary>
+  <div class="formula-box">  推定トータルテクニック ＝ 
+      ( ( ベースパワー ＋ 必殺技威力 ) × こんしん！補正 × 失敗補正 × 相手の技との属性相性補正 ＋ 化身補正 )
+      × ダイレクトシュート補正) × クリティカル補正 × 体調補正 × 距離補正 × Lv差補正 × 乱数補正</div>
   <details>
-    <summary>推定トータルテクニック計算式の詳細について</summary>
-大きく6段階に分かれているものとして計算。<br>
-<br>
-> 推定トータルテクニック = ( ( 必殺技のパワー + ベースパワー ) * 各種補正 + 化身補正 ) * 体調補正 * クリティカル補正 * 距離補正 * レベル差補正<br>
-<br>
-■必殺技のパワー<br>
+  <summary><strong>ベースパワー</strong></summary>
+  <div class="formula-box">  ベースパワー ＝
+      ベーステクニック － ( ベーステクニック × ベーステクニック / 1480) + ( ベーステクニック × 25 / 123 ) － ( 8 / 17 )</div>
+GO2以降のコマンドバトルで行動を選択する際に表示される値。<br>
+GO1で表示するのはベーステクニック。計算式が若干異なる。<br>
+  <details>
+  <summary><strong>ベーステクニック</strong></summary>
+  <div class="formula-box">  ベーステクニック ＝ ( メインステータス × 8 + テクニック × 2 ) / 10 × 2 / 3</div>
+GO1のコマンドバトルで行動を選択する際に表示される値にさらに補正を与えたもの。<br>
+ベーステクニック(表示用)とは異なる。<br>
+  </details>
+  <details>
+  <summary><strong>ベーステクニック(表示用)</strong></summary>
+  <div class="formula-box">  ベーステクニック(表示用) ＝ ( メインステータス × 8 + テクニック × 2 ) / 10 (小数点以下切り捨て)</div>
+GO1のコマンドバトルで行動を選択する際に表示される値。<br>
+小数点を切り捨てて表示しているが、実際の計算では小数点は乱数補正を行うまで切り捨てない。<br>
+  </details>
+  </details>
+  <details>
+  <summary><strong>必殺技威力</strong></summary>
+  <div class="formula-box">  必殺技威力 ＝ (必殺技の基本威力 × 進化補正 ＋ 属性相性（使用者と技）) × 守備補正 ＋ スキル補正（必殺技強化）</div>
 必殺技やそれを強化するスキルによる強化。<br>
 GOシリーズではほとんどの自力習得技を秘伝書で上書きできてしまうため、この部分は固定化されやすい。<br>
-<br>
-> 必殺技のパワー = (必殺技威力 * 進化補正) * 守備補正 + スキル補正（必殺技強化） + 属性相性（選手と技）<br>
-<br>
-■必殺技威力<br>
-必殺技ごとに決まっている基本威力。<br>
-とっぱやスライディングのような非必殺技のコマンドも低威力必殺技扱い。<br>
-<br>
-■進化補正<br>
-進化系統に関わらず、全ての必殺技は最終進化で1.5倍となる。<br>
-対戦が前提であれば1.5固定と考えてOK。<br>
-<br>
-■守備補正<br>
-必殺技が守備(ブロック、キャッチ)の場合にのみ有効となる。<br>
-1倍、 1.2倍、1.44倍、1.8倍のいずれかの倍率をとる。<br>
-必殺技が攻撃(シュート、ドリブル)の場合は対象外。<br>
-1.2倍になる確率が最も高い。<br>
-<br>
-■スキル補正（必殺技強化）<br>
-必殺技威力を直接強化するスキル<br>
-属性の心得、属性強化：+10<br>
-属性の雄叫び：+20<br>
-<br>
-■属性相性（選手と技）<br>
-一致：+5<br>
-不利：-5<br>
-他：0<br>
-<br>
-■ベースパワー<br>
-<br>
-> ベーステクニック * 2 / 3 - ( ベーステクニックの2乗 / 1480) + ( ベーステクニック * 25 / 123 ) - (8/17)<br>
-<br>
-■ベーステクニック<br>
-<br>
-> ( メインステータス * 8 + テクニック * 2 ) / 10 <br>
-コマンド選択時に表示する際には小数点以下を切り捨てるが、トータルテクニック計算時には小数点以下もそのまま扱う。<br>
-<br>
-■各種補正<br>
-ベースパワーに対してかかる様々な補正。<br>
-各種補正はトータルパワーに対して順番に補正を与えていく。<br>
-<br>
-> 上振れ * スキル補正(トータルテクニック強化) * 失敗判定 * 属性相性（選手と選手）<br>
-<br>
-■上振れ<br>
-1.0倍か1.2倍になる。1.2倍になる確率の方が高い。<br>
-<br>
-■スキル補正(トータルテクニック強化)<br>
-トータルテクニック全体を強化するスキル(ちょうわざ！、こんしん！)のいずれかを習得し、なおかつ化身必殺技の計算でない場合、1.2倍になる。<br>
-上記条件を満たしていない場合は1.0倍。<br>
-<br>
-■失敗判定<br>
-1.0倍か0.8倍になる。テクニック値が高いほど0.8倍にはなりにくくなる。<br>
-次回作以降の必殺技に存在する難易度は存在せず、必殺技を使用する際はどれだけテクニック値が高くても0.8倍になるケースは発生する。<br>
-ただし、化身必殺技使用時は1固定。<br>
-<br>
-■属性相性（選手と選手）<br>
-必殺技が守備(ブロック、キャッチ)の場合にのみ有効となる。<br>
-属性有利なら1.2倍、不利なら0.8倍。それ以外は1.0倍。<br>
-必殺技が攻撃(シュート、ドリブル)の場合には1固定と考えてOK。<br>
-<br>
-■化身補正<br>
-コマンドバトルを行っている選手自身が化身を発動させている場合、自身が発動中の化身の現在化身ポイントと化身アタックを合算した値を加算する。<br>
-化身を発動させていない場合は0。<br>
-<br>
-■体調補正<br>
-GPが0のとき、0.5倍の補正がかかる。<br>
-化身発動中は1固定と考えてよく、とりあえず対戦で枯渇することもないので1固定。<br>
-<br>
-■クリティカル補正<br>
-1.0倍か2.0倍になる。やくびょうがみ習得者は4.0倍。<br>
-2.0倍になる確率は推定で「ラッキー値 / 25 (%)」。<br>
-<br>
-■距離補正<br>
-計算対象のコマンドがシュートの場合のみ、シュート実行者からゴールまでの距離を参考にして0.5倍、0.8倍、1.0倍の補正を与える。<br>
-ペナルティエリア内かつゴールの前ならだいたい1.0倍。<br>
-<br>
-■レベル差補正<br>
-コマンドバトルの相手が自身より高レベルの場合、弱体化する。<br>
-対戦ではレベル99同士であることが想定されるため、1固定と考えてOK。<br>
+  <details>
+  <summary><strong>必殺技の基本威力</strong></summary>
+wikiなどに威力として記載されている値。<br>
   </details>
-
+  <details>
+  <summary><strong>進化補正</strong></summary>
+通常必殺技は進化系統に関わらず、全ての通常必殺技は最終進化で1.5倍となる。<br>
+ここでは育て切っての対戦を前提として1.5で固定している。<br>
+化身必殺技は進化しないので1.0で固定。<br>
+  </details>
+  <details>
+  <summary><strong>属性相性（使用者と技）</strong></summary>
+必殺技の使用者と属性が一致する必殺技を使用した場合、一致補正として+5。<br>
+必殺技の使用者の弱点となる属性の必殺技を使用した場合、苦手補正として-5。<br>
+どちらでもない場合、0。<br>
+化身の属性は無関係。<br>
+  </details>
+  <details>
+  <summary><strong>守備補正</strong></summary>
+必殺技が守備(ブロック、キャッチ)の場合にのみ有効となる。<br>
+1倍、 1.2倍、1.44倍、1.8倍のいずれかの倍率をとる。1.2倍になる確率が最も高い。<br>
+必殺技が攻撃(シュート、ドリブル)の場合は対象外。ここでは攻撃時は1倍で処理。<br>
+  </details>
+  <details>
+  <summary><strong>スキル補正（必殺技強化）</strong></summary>
+属性強化、属性の心得、属性の雄叫びはここで処理する。<br>
+必殺技と一致する属性の心得を習得している場合、+10。<br>
+属性強化を習得している選手の属性と一致する属性の必殺技を使用している場合、+10。<br>
+必殺技と一致する属性の雄叫びが発動中の場合、+20。<br>
+  </details>
+  </details>
+  <details>
+  <summary><strong>こんしん！補正</strong></summary>
+こんしん！あるいはちょうわざ！を習得している場合、1.2倍。重複はしない。<br>
+「かわす」「とっぱ」のようなコマンドもGOシリーズでは必殺技として扱われる。<br>
+化身必殺技は対象外なので1.0倍。<br>
+  </details>
+  <details>
+  <summary><strong>失敗補正</strong></summary>
+選択した必殺技に対し、テクニックが不足している場合に0.8倍の補正がついてしまう。<br>
+テクニック値を高めると失敗する確率が下がる。おそらく、GO2以降と違って必ず成功するラインは存在しない。<br>
+おいろけUP！、イケメンUP！は相手の必殺技が成功する確率を下げる効果。<br>
+化身必殺技は失敗しない。1.0倍。<br>
+  </details>
+  <details>
+  <summary><strong>相手の技との属性相性補正</strong></summary>
+いわゆる属性じゃんけん処理。守備側のみを計算対象とする。ここでは攻撃側は常に1.0倍として扱う。<br>
+相手の必殺技に対して有利な属性の必殺技を使用した場合、1.2倍。<br>
+相手の必殺技に対して不利な属性の必殺技を使用した場合、0.8倍。<br>
+  </details>
+  <details>
+  <summary><strong>化身補正</strong></summary>
+コマンドバトルを行っている選手が発動中の化身の現在KP値とKA値を合算した値を加算する。<br>
+化身を発動させていない場合は0。<br>
+  </details>
+  <details>
+  <summary><strong>ダイレクトシュート補正</strong></summary>
+ダイレクトシュートに成功した場合、1.1倍の補正を得る。<br>
+ダイレクトシュートでなかった場合、ダイレクトシュートが存在しない行動の場合は1.0倍として扱う。<br>
+  </details>
+  <details>
+  <summary><strong>クリティカル補正</strong></summary>
+クリティカル発生時、2.0倍。<br>
+やくびょうがみ習得者の場合はクリティカル発生時には、4.0倍。<br>
+クリティカルの発生確率は推定で「ラッキー値 / 25 (%)」。<br>
+スキル「クリティカル！」の補正はGO2、GO3を参考に「クリティカルの発生確率を1.2倍」として扱っている。<br>
+  </details>
+  <details>
+  <summary><strong>体調補正</strong></summary>
+GPが0のとき、0.5倍の補正がかかる。<br>
+化身発動中はGPは減らないし、とりあえず対戦で枯渇することもないので、ここでは1.0倍で固定。<br>
+  </details>
+  <details>
+  <summary><strong>距離補正</strong></summary>
+必殺技の使用者とゴールの間の距離を参考にして0.5倍、0.8倍、1.0倍の補正を与える。<br>
+無印シリーズと違い、プラスの補正を得られるわけではない。<br>
+  </details>
+  <details>
+  <summary><strong>Lv差補正</strong></summary>
+コマンドバトルの相手が自身より高レベルの場合、弱体化する。<br>
+ここではレベル99同士であることを想定し、1.0倍で個性。<br>
+  </details>
+  <details>
+  <summary><strong>乱数補正</strong></summary>
+小数点以下切り捨て後、1.0倍または1.2倍の補正を与える。<br>
+1.2倍になる確率の方が高い。<br>
+  </details>
+  </details>
+  </details>
 <br>
 参考文献<br>
 <a href="https://daisukeemoto0629.livedoor.blog/archives/9683610.html">イナズマイレブンGO1 調べたことまとめ - 問わず語り</a>
@@ -703,10 +731,10 @@ const MOVE_DATA = [
 
 // コマンドごとの表示設定
 const COMMAND_DISP_CONFIG = {
-  FW: { label: "キック",   placeholder: "キック値入力",   title: "化身スキルによる補正を加えた選手のキック値です", shotEnabled: true,  defenseEnabled: false, defenseIndex: 0 },
-  MF: { label: "ドリブル", placeholder: "ドリブル値入力", title: "化身スキルによる補正を加えたドリブル値です",     shotEnabled: false, defenseEnabled: false, defenseIndex: 0 },
-  DF: { label: "ブロック", placeholder: "ブロック値入力", title: "化身スキルによる補正を加えたブロック値です",     shotEnabled: false, defenseEnabled: true,  defenseIndex: 1 },
-  GK: { label: "キャッチ", placeholder: "キャッチ値入力", title: "化身スキルによる補正を加えたキャッチ値です",     shotEnabled: false, defenseEnabled: true,  defenseIndex: 1 }
+  FW: { label: "キック",   placeholder: "キック値入力",   title: "化身スキルによる補正を加えた選手のキック値です", shotEnabled: true,  commandEnabled: true,  defenseIndex: 0 },
+  MF: { label: "ドリブル", placeholder: "ドリブル値入力", title: "化身スキルによる補正を加えたドリブル値です",     shotEnabled: false, commandEnabled: false, defenseIndex: 0 },
+  DF: { label: "ブロック", placeholder: "ブロック値入力", title: "化身スキルによる補正を加えたブロック値です",     shotEnabled: false, commandEnabled: true,  defenseIndex: 1 },
+  GK: { label: "キャッチ", placeholder: "キャッチ値入力", title: "化身スキルによる補正を加えたキャッチ値です",     shotEnabled: false, commandEnabled: true,  defenseIndex: 1 }
 };
 
 // 頻出選手プリセット
@@ -716,10 +744,12 @@ const QUICK_ENTRIES = {
   "白竜": { PlayerName: "白竜(WH)", PlayerGender: "男", PlayerPhysique: "普通", PlayerElementList: "風", MainPara: 492, TechVal: 39, LuckVal: 174, CommandList: "FW", SkillList1: "こんしん！", SkillList2: "属性強化", PlayersKeshinList: "なし", UseMoveList: "ホワイトハリケーン" },
   "シュウ": { PlayerName: "シュウ(BA)", PlayerGender: "男", PlayerPhysique: "普通", PlayerElementList: "林", MainPara: 477, TechVal: 39, LuckVal: 204, CommandList: "FW", SkillList1: "こんしん！", SkillList2: "属性強化", PlayersKeshinList: "なし", UseMoveList: "ブラックアッシュ" },
   "ランスロット剣城": { PlayerName: "剣城(ランスロット)", PlayerGender: "男", PlayerPhysique: "普通", PlayerElementList: "火", MainPara: 384, TechVal: 39, LuckVal: 207, CommandList: "FW", SkillList1: "クリティカル！", SkillList2: "属性強化", PlayersKeshinList: "剣聖ランスロット", UseMoveList: "ロストエンジェル"  },
-  "シャイニングドラゴン白竜": { PlayerName: "白竜(Sドラゴン)", PlayerGender: "男", PlayerPhysique: "普通", PlayerElementList: "風", MainPara: 492, TechVal: 39, LuckVal: 174, CommandList: "FW", SkillList1: "クリティカル！", SkillList2: "属性強化", PlayersKeshinList: "聖獣シャイニングドラゴン", UseMoveList: "ホワイトブレス"  },
+  "ペンドラゴン剣城": { PlayerName: "剣城(ペンドラゴン)", PlayerGender: "男", PlayerPhysique: "普通", PlayerElementList: "火", MainPara: 384, TechVal: 39, LuckVal: 207, CommandList: "FW", SkillList1: "クリティカル！", SkillList2: "無の心得", PlayersKeshinList: "魔戦士ペンドラゴン", UseMoveList: "ソウル・ブリンガー"  },
+  "シャイニングドラゴン白竜": { PlayerName: "白竜(Dドラゴン)", PlayerGender: "男", PlayerPhysique: "普通", PlayerElementList: "風", MainPara: 492, TechVal: 39, LuckVal: 174, CommandList: "FW", SkillList1: "クリティカル！", SkillList2: "属性強化", PlayersKeshinList: "聖獣シャイニングドラゴン", UseMoveList: "ホワイトブレス"  },
   "ダークエクソダスシュウ": { PlayerName: "シュウ(Dエクソダス)", PlayerGender: "男", PlayerPhysique: "普通", PlayerElementList: "林", MainPara: 477, TechVal: 39, LuckVal: 204, CommandList: "FW", SkillList1: "クリティカル！", SkillList2: "属性強化", PlayersKeshinList: "暗黒神ダークエクソダス", UseMoveList: "魔王の斧"  },
   "ムサシ御門": { PlayerName: "御門(ムサシ)", PlayerGender: "男", PlayerPhysique: "大柄", PlayerElementList: "山", MainPara: 443, TechVal: 39, LuckVal: 202, CommandList: "FW", SkillList1: "クリティカル！", SkillList2: "属性強化", PlayersKeshinList: "戦国武神ムサシ", UseMoveList: "武神連斬"  },
-  "ダークエクソダス吉良": { PlayerName: "吉良(Dエクソダス)", PlayerGender: "男", PlayerPhysique: "普通", PlayerElementList: "火", MainPara: 457, TechVal: 39, LuckVal: 195, CommandList: "FW", SkillList1: "クリティカル！", SkillList2: "属性強化", PlayersKeshinList: "暗黒神ダークエクソダス", UseMoveList: "魔王の斧"  },
+  "ペガサスアーク天馬": { PlayerName: "天馬(ペガサスA)", PlayerGender: "男", PlayerPhysique: "普通", PlayerElementList: "風", MainPara: 334, TechVal: 302, LuckVal: 1, CommandList: "FW", SkillList1: "クリティカル！", SkillList2: "属性強化", PlayersKeshinList: "魔神ペガサスアーク", UseMoveList: "ジャスティスウィング"  },
+  "ダークエクソダス吉良": { PlayerName: "吉良(Dエクソダス)", PlayerGender: "男", PlayerPhysique: "普通", PlayerElementList: "火", MainPara: 457, TechVal: 39, LuckVal: 195, CommandList: "FW", SkillList1: "クリティカル！", SkillList2: "火の心得", PlayersKeshinList: "暗黒神ダークエクソダス", UseMoveList: "魔王の斧"  },
   "グレイトゴンガン": { PlayerName: "ゴンガン(グレイト)", PlayerGender: "女", PlayerPhysique: "大柄", PlayerElementList: "風", MainPara: 460, TechVal: 39, LuckVal: 158, CommandList: "GK", SkillList1: "クリティカル！", SkillList2: "山の心得", PlayersKeshinList: "魔神グレイト", UseMoveList: "グレイト・ザ・ハンド"  },
   "グレイトカズマ": { PlayerName: "カズマ(グレイト)", PlayerGender: "男", PlayerPhysique: "普通", PlayerElementList: "林", MainPara: 450, TechVal: 39, LuckVal: 192, CommandList: "GK", SkillList1: "クリティカル！", SkillList2: "山の心得", PlayersKeshinList: "魔神グレイト", UseMoveList: "グレイト・ザ・ハンド"  },
   "グレイトテンタクル": { PlayerName: "テンタクル(グレイト)", PlayerGender: "男", PlayerPhysique: "大柄", PlayerElementList: "火", MainPara: 460, TechVal: 39, LuckVal: 177, CommandList: "GK", SkillList1: "クリティカル！", SkillList2: "山の心得", PlayersKeshinList: "魔神グレイト", UseMoveList: "グレイト・ザ・ハンド"  },
@@ -729,7 +759,7 @@ const QUICK_ENTRIES = {
 
 // 化身データ初期値
 const createDefaultKeshin = () => (
-  { keshinName: "なし", keshinElement: "なし", KP: 0, KA: 0, moveName: "なし", moveElement: "なし", commandType: "なし", movePower: 20, moveCost: 0, skillName: "", skillMoveNote: "" }
+  { keshinName: "なし", keshinElement: "なし", KP: 0, KA: 0, moveName: "なし", moveElement: "なし", commandType: "なし", movePower: 20, moveCost: 0, skillName: "なし", skillMoveNote: "" }
 );
 
 // 発動中の化身
@@ -889,19 +919,45 @@ document.getElementById("CommandList").addEventListener("change", function() {
   shotSelect.disabled = !config.shotEnabled;
   shotSelect.selectedIndex = 0;
 
-  // 守備補正
-  const defenceLabel = document.getElementById("DefenseCorrectionLabel");
-  const defenceSelect = document.getElementById("DefenseCorrectionList");
-  defenceLabel.style.textDecoration = config.defenseEnabled ? "none" : "line-through";
-  defenceSelect.disabled = !config.defenseEnabled;
-  defenceSelect.selectedIndex = config.defenseIndex;
+  // 守備補正 / シュート補正
+  const commandLabel = document.getElementById("CommandCorrectionLabel");
+  const commandSelect = document.getElementById("CommandCorrectionList");
+  if (["FW","MF"].includes(this.value)) {
+    // シュート補正
+    commandLabel.textContent = "シュート補正";
+    commandLabel.style.textDecoration = config.commandEnabled ? "none" : "line-through";
+    commandSelect.disabled = !config.commandEnabled;
+// デバッグ用
+//    commandCorrection.textContent = "攻撃補正";
+//    commandCorrection.title="シュートの場合にかかる補正で、ダイレクトシュートのときにトータルテクニックが1.1倍になります";
+
+    // ダイレクト補正用option
+    commandSelect.innerHTML = `
+      <option value="1.0" selected>ノーマルシュート</option>
+      <option value="1.1">ダイレクトシュート</option>`;
+  } else {
+    // 守備補正
+    commandLabel.textContent = "守備補正";
+    commandLabel.style.textDecoration = config.commandEnabled ? "none" : "line-through";
+    commandSelect.disabled = !config.commandEnabled;
+// デバッグ用
+//    commandCorrection.textContent = "守備補正";
+//    commandCorrection.title="守備側にのみかかる補正で、ランダムで1.0倍、1.2倍、1.44倍、1.8倍になります\n最も発生率が高いのは1.2倍です";
+
+    // 守備補正用optionを設定
+    commandSelect.innerHTML = `
+      <option value="1.0">1倍</option>
+      <option value="1.2">1.2倍</option>
+      <option value="1.44">1.44倍</option>
+      <option value="1.8">1.8倍</option>`;
+    commandSelect.selectedIndex = config.defenseIndex;
+  }
 
   // 化身リストの再設定
   updateKeshinList(document.getElementById("PlayersKeshinList"), this.value);
-  // changeイベントを発火
   document.getElementById("PlayersKeshinList").dispatchEvent(new Event("change"));
 
-  // 必殺技リストの再設定  
+  // 必殺技リストの再設定
   updateMoveList(document.getElementById("UseMoveList"), this.value);
   document.getElementById("UseMoveList").dispatchEvent(new Event("change"));
 });
@@ -932,7 +988,7 @@ document.getElementById("PlayersKeshinList").addEventListener("change", function
   const keshinData = KESHIN_DATA.find(item => item.keshinName === this.value);
   // 化身情報設定
   setFormValues({
-    KeshinSkillName1: keshinData.keshinSkillName,
+    KeshinSkillName1: keshinData.skillName,
     KpVal    : keshinData.KP,
     KaVal    : keshinData.KA,
     MoveCost : keshinData.moveCost
@@ -1171,17 +1227,24 @@ document.getElementById("QuickEntryPlayerList").addEventListener("change", funct
 function calcTotalForm() {
   // ---------------------------------------------------------------------------------------------- //
   // ベーステクニック
-  const selectUseMoveList = document.getElementById('UseMoveList');
+  const selectUseMoveList = document.getElementById('UseMoveList').value;
 
-  const selectSkillList1 = document.getElementById('SkillList1');
-  const textSkillList1 = selectSkillList1.options[selectSkillList1.selectedIndex].text;
-  document.getElementById("rSkill1").textContent = textSkillList1;
+  // 選手スキル情報
+  const textSkillList1 = document.getElementById('SkillList1').value;
+  const textSkillList2 = document.getElementById('SkillList2').value;
 
-  const selectSkillList2 = document.getElementById('SkillList2');
-  const textSkillList2 = selectSkillList2.options[selectSkillList2.selectedIndex].text;
-  document.getElementById("rSkill2").textContent = textSkillList2;
+  // 計算対象の化身発動状態チェック
+  let keshinUseFlg = true;
+  if ( "なし" == selectedKeshin[0].keshinName ) {
+    keshinUseFlg = false;
+  }
+  // 必殺技選択フラグ
+  let moveUseFlg = true;
+  if ( "なし" == selectUseMoveList ) {
+    moveUseFlg = false;
+  }
 
-  // 効果発動中のスキルリスト
+  // 効果発動中の化身スキルと選手スキルを1つの配列にまとめる
   let calcSkillList = [selectedKeshin[0].skillName, selectedKeshin[1].skillName, selectedKeshin[2].skillName, 
                        textSkillList1, textSkillList2 ];
 
@@ -1200,7 +1263,7 @@ function calcTotalForm() {
   const playersGendr = document.getElementById('PlayerGender').value;
   const playersPhysique = document.getElementById('PlayerPhysique').value;
 
-  // パラメータ強化系の習得スキルを反映
+  // パラメータ強化系の化身スキルを反映
   calcSkillList.forEach(skill => {
     if ( ( skill.includes("キックフォース10") && "FW" == selectedCommand ) || 
          ( skill.includes("ドリブルフォース10") && "MF" == selectedCommand ) || 
@@ -1253,24 +1316,53 @@ function calcTotalForm() {
   // ---------------------------------------------------------------------------------------------- //
 
   // ---------------------------------------------------------------------------------------------- //
-  // 必殺技威力
-  let movePower = Number(document.getElementById("MovePower").value) || 0;
+  // 必殺技威力(最低威力は10)
+  let movePower = Number(document.getElementById("MovePower").value) || 10;
 
   let growthCorrection = "1.0";
   // 技の基本威力
-  if ( "なし" == selectedKeshin[0].name && !( "なし" == selectUseMoveList.options[selectUseMoveList.selectedIndex].text ) ) {
-    // 化身必殺技でない場合のみ最終進化補正で計算する
+  if ( !keshinUseFlg && moveUseFlg ) {
+    // 化身状態ではないかつ、必殺技選択時のみ最終進化補正で計算する
     growthCorrection = "1.5";
     movePower *= 1.5;
   }
 
-  // 守備補正
-  // 1.0倍、1.2倍、1.44倍、1.8倍のいずれか(小数点以下切り捨て)
-  const defenceCorrection = document.getElementById("DefenseCorrectionList").value;
-  movePower = movePower * defenceCorrection;
+  // 守備補正またはダイレクトシュート判定
+  let commandCorrection = document.getElementById("CommandCorrectionList").value;
+  // ダイレクトシュート補正フラグ
+  let flgDirect = false;
+  if (["DF", "GK"].includes(selectedCommand)) {
+    // 守備補正の場合、movePowerに反映
+    // 1.0倍、1.2倍、1.44倍、1.8倍のいずれか(小数点以下切り捨て)
+    movePower = movePower * commandCorrection;
+  } else if (["FW"].includes(selectedCommand) && 1.0 < commandCorrection) {
+    // シュートかつダイレクトシュート選択時のみダイレクトシュートフラグをtrueに設定
+    flgDirect = true;
+  }
 
   // 選手との属性取得
   const playersElement = document.getElementById('PlayerElementList').value;
+  // 必殺技の属性取得
+  const moveElem = document.getElementById("MoveElement").value;
+
+  // 技と使用者の属性相性
+  let elementMatchStr  = "不一致";
+  let elementMatch = 0;
+  // 一致
+  if ( playersElement == moveElem ) {
+    movePower += 5;
+    elementMatchStr = "一致";
+    elementMatch = "+5";
+  }
+  // 苦手
+  else if ( "風" == playersElement && "林" == moveElem || 
+            "林" == playersElement && "火" == moveElem || 
+            "火" == playersElement && "山" == moveElem || 
+            "山" == playersElement && "風" == moveElem ) {
+    movePower -= 5;
+    elementMatchStr = "苦手";
+    elementMatch = "-5";
+  }
 
   // スキルとの属性相性
   // パラメータ強化系の習得スキルを反映
@@ -1278,21 +1370,15 @@ function calcTotalForm() {
   let hasKokoroe = false; // 心得系
   let hasOtakebi = false;  // 雄叫び系
   calcSkillList.forEach(skill => {
-    if ( ( skill.includes("風の心得") && "風" == document.getElementById("MoveElement").value ) ||
-         ( skill.includes("林の心得") && "林" == document.getElementById("MoveElement").value ) ||
-         ( skill.includes("火の心得") && "火" == document.getElementById("MoveElement").value ) ||
-         ( skill.includes("山の心得") && "山" == document.getElementById("MoveElement").value ) ||
-         ( skill.includes("無の心得") && "無" == document.getElementById("MoveElement").value ) ||
-         ( skill.includes("属性強化") &&  playersElement == document.getElementById("MoveElement").value ) 
-       ) {
-       hasKokoroe = true;
+    if (
+      // 必殺技の属性と一致する心得を所持している場合、あるいは必殺技と属性強化と選手の属性の3つが一致する場合
+      skill.includes(`${moveElem}の心得`) || (skill.includes("属性強化") && playersElement === moveElem)
+    ) {
+      hasKokoroe = true;
     }
-    if ( ( skill.includes("風の雄叫び") && "風" == document.getElementById("MoveElement").value ) ||
-         ( skill.includes("林の雄叫び") && "林" == document.getElementById("MoveElement").value ) ||
-         ( skill.includes("火の雄叫び") && "火" == document.getElementById("MoveElement").value ) ||
-         ( skill.includes("山の雄叫び") && "山" == document.getElementById("MoveElement").value )
-       ) {
-       hasOtakebi = true;
+    // 必殺技の属性と一致する雄叫びが発動中の場合
+    if (skill.includes(`${moveElem}の雄叫び`)) {
+      hasOtakebi = true;
     }
   });
   // 属性一致の心得あり
@@ -1303,30 +1389,13 @@ function calcTotalForm() {
   if (hasOtakebi) {
     skillAddValue += 20;
   }
-
   // 技威力に反映
   movePower += skillAddValue;
-  
-  // 属性相性
-  let elementMatchStr  = "不一致";
-  let elementMatch = 0;
-  if ( playersElement == document.getElementById("MoveElement").value ) {
-    movePower += 5;
-    elementMatchStr = "一致";
-    elementMatch = "+5";
-  }
-  // 苦手
-  else if ( "風" == playersElement && "林" == document.getElementById("MoveElement").value || 
-            "林" == playersElement && "火" == document.getElementById("MoveElement").value || 
-            "火" == playersElement && "山" == document.getElementById("MoveElement").value || 
-            "山" == playersElement && "風" == document.getElementById("MoveElement").value ) {
-    movePower -= 5;
-    elementMatchStr = "苦手";
-    elementMatch = "-5";
-  }
   // 必殺技威力
   // ---------------------------------------------------------------------------------------------- //
 
+  // ---------------------------------------------------------------------------------------------- //
+  // 各種補正取得
   // こんしん！補正
   let konshinPower = 1;
   // GP量から体調補正を取得
@@ -1334,8 +1403,8 @@ function calcTotalForm() {
   let flgKonshin = false;
   // 化身必殺技でなく、ちょうわざ！またはこんしんを習得している場合、こんしんフラグを立てる
   calcSkillList.forEach(skill => {
-    if ( ( skill.includes("こんしん！") && "なし" == selectedKeshin[0].name && "1.0" == GpCorrection ) ||
-         ( skill.includes("ちょうわざ！") && "なし" == selectedKeshin[0].name )
+    if ( ( skill.includes("こんしん！") && !keshinUseFlg && "1.0" == GpCorrection ) ||
+         ( skill.includes("ちょうわざ！") && !keshinUseFlg )
        ) {
       flgKonshin = true;
     }
@@ -1354,7 +1423,7 @@ function calcTotalForm() {
   let failureVal = document.getElementById("MoveFailure").value;
   let flgFailure = false;
   // 失敗選択または化身発動状態でない状態かつ、やくびょうがみフラグがtrueのとき、失敗補正を設定
-  if ( 1.0 > failureVal || ( flgYakuByouGami  && "なし" == selectedKeshin[0].name ) ) {
+  if ( 1.0 > failureVal || ( flgYakuByouGami  && "なし" == selectedKeshin[0].keshinName ) ) {
     flgFailure = true;
   }
   
@@ -1372,7 +1441,7 @@ function calcTotalForm() {
   // 攻守補正[互角,有利,不利]
   let elementCorrection = [1.0, 1.0, 1.0];
   let elementCorrectionStr = "なし";
-  if ( /DF|GK/.test(selectedCommand) ) {
+  if (["DF", "GK"].includes(selectedCommand)) {
     // ディフェンスの場合、属性勝負補正ありであることを記載
     elementCorrectionStr = "あり";
     elementCorrection = [1.0, 1.2, 0.8];
@@ -1381,15 +1450,11 @@ function calcTotalForm() {
   // 化身補正(KP+KA)
   const ka = Number(document.getElementById("KaVal").value) || 0;
   const kp = Number(document.getElementById("KpVal").value) || 0;
-  
-  let kpkaStr = "0"
-  if ( 0 < ka + kp ) {
-    kpkaStr = "+" + (ka + kp);
-  }
+  let kpka = kp + ka;
 
   // Lv差補正(対戦では補正なしを想定)
   let lvCorrection = 1.0;
-  
+
   // クリティカル率
   let rCriValue = luck / 25;
   let criticalCorrection = 1.0;
@@ -1401,85 +1466,11 @@ function calcTotalForm() {
     }
   });
   rCriValue = ( rCriValue * criticalCorrection ).toFixed(2);
-
-  // ---------------------------------------------------------------------------------------------- //
-  // ベーステクニックの計算
-  function calcBaseTechnique(mainPara, tech) {
-    return ( mainPara * 8 + tech * 2 ) / 10;
-  }
-
-  // ベースパワーの計算
-  function calcBasePower(mainPara, tech) {
-    // ベーステクニックに補正を付与
-    const basePower = calcBaseTechnique(mainPara, tech) * 2 / 3;
-    // 減衰補正
-    const damping = ((basePower * basePower) / 1480) + basePower * (25 / 123) - (8 / 17)
-    // ベースパワー = ベーステクニック - 減衰補正
-    return basePower - damping;
-  }
-
-  // トータルテクニック計算共通ロジック
-  function calcTotalTech(options = {}) {
-    const {
-      mainPara = 1.0,
-      tech = 1.0,
-      movePower = 20, // 技威力(最低値は10)
-      hasKonshin = false,
-      isRandomUp = false, // true: 上振れ(1.2), false: 下振れ(1.0)
-      isFailure = false,
-      isCritical = false,
-      isYakuByouGami = false,
-      elemCorr = 1.0,
-      ka = 0,
-      kp = 0,
-      shotCorrection = 1.0,
-      GpCorrection = 1.0
-    } = options;
-    
-    // basePower の算出
-    const basePower = calcBasePower(mainPara, tech);
-    
-    // 基本パワー (ベースパワー + 技威力)
-    let power = basePower + movePower;
-
-    // こんしん！補正 (0.2倍した値を加算)
-    if (hasKonshin) {
-      power = power * 1.2;
-    }
-    
-    // 失敗補正 (0.8倍にして切り捨て)
-    if (isFailure) {
-      power = power * 0.8;
-    }
-
-    // 化身補正
-    power += ( ka + kp );
-
-    // クリティカル (2倍)
-    if (isCritical) {
-      power = power * 2;
-      // やくびょうがみ(クリティカル)
-      if (isYakuByouGami) {
-        power = power * 2;
-      }
-    }
-  
-    // 乱数補正 (上振れ 1.2倍)
-    if (isRandomUp) {
-      power = Math.floor(power) * 1.2;
-    }
-    
-    // 属性勝負
-    power = power * Number(elemCorr) 
-    // 距離・GP補正
-    power = power * Number(shotCorrection);
-    power = power * Number(GpCorrection);
-    
-    return Math.floor(power);
-  }
-  // トータルテクニック計算共通ロジック
+  // 各種補正取得
   // ---------------------------------------------------------------------------------------------- //
 
+  // ---------------------------------------------------------------------------------------------- //
+  // トータルテクニック計算
   // トータルテクニック計算に必要な情報
   const baseParams = {
     mainPara: mainPara,
@@ -1488,10 +1479,10 @@ function calcTotalForm() {
     hasKonshin: flgKonshin,
     isRandomUp: flgRandomUp,
     isFailure: flgFailure,
-    isYakuByouGami: flgYakuByouGami,
     isCritical: false,
-    ka: ka,
-    kp: kp,
+    isDirectShot: flgDirect,
+    isYakuByouGami: flgYakuByouGami,
+    kpka: kpka,
     shotCorrection: shotCorrection,
     GpCorrection: GpCorrection
   };
@@ -1520,51 +1511,147 @@ function calcTotalForm() {
   const disadvantageTotalCritical = calcTotalTech({ ...baseParams, elemCorr: elementCorrection[2] });
 
   // 「トータルテクニック(クリティカル)」
-  let totalFormStr = totalTech + " ( " + totalCritical + " ) ";
+  let totalFormStr = totalTech + " (" + totalCritical + ")";
   // 守備側の場合、「属性有利時(クリティカル)：属性不利時(クリティカル)」を追加
-  if ( /DF|GK/.test(selectedCommand) ) {
+  if (["DF", "GK"].includes(selectedCommand)) {
     totalFormStr += 
-      " : 属性有利時 " + advantageousTotalTech + " ( " + advantageousTotalTechCritical + " ) " +
-      " : 属性不利時 " + disadvantageTtotalTech + " ( " + disadvantageTotalCritical + " )";
+      " : 有利 " + advantageousTotalTech + " (" + advantageousTotalTechCritical + ") " +
+      " : 不利 " + disadvantageTtotalTech + " (" + disadvantageTotalCritical + ")";
   }
+  // トータルテクニック計算
+  // ---------------------------------------------------------------------------------------------- //
 
   // ----------------------------------------------------------------------------------------------
   // 情報出力
   // テーブルに値を設定
   setCalcValues({
-    rName                : document.getElementById("PlayerName").value,            // 選手名
-    rMainPara            : mainPara,                                               // メインパラメータ
-    rTech                : tech,                                                   // テクニック
-    rLuck                : luck,                                                   // ラッキー
-    rBaseTech            : Math.floor(calcBaseTechnique(mainPara, tech)),          // ベーステクニック(表示用)
-    rBasePower           : (calcBaseTechnique(mainPara, tech) * 2 / 3).toFixed(6), // ベースパワー
-    rMoveBasePower       : growthCorrection,                                       // 進化補正
-    rDFCorrection        : defenceCorrection,                                      // 守備補正
-    rMoveElement         : document.getElementById("MoveElement").value,           // 技の属性
-    rPowerElement        : skillAddValue,                                          // 属性強化、心得、雄叫び補正
-    rMoveElementMatch    : elementMatchStr,                                        // 属性相性
-    rElementMatch        : elementMatch,                                           // 属性相性補正値
-    rTotalMovePower      : movePower,                                              // 必殺技威力
-    rElementBattle       : elementCorrectionStr,                                   // 相手との属性相性勝負
-    rKPKA                : kpkaStr,                                                // 化身補正(KP+KA)
-    rMoveName            : document.getElementById("UseMoveList").value,           // 必殺技名
-    rKeshinName          : selectedKeshin[0].keshinName,                           // 化身名
-    rKeshinSkill1        : selectedKeshin[0].skillName,                            // 化身スキル名1
-    rKeshinSkill2        : selectedKeshin[1].skillName,                            // 化身スキル名2
-    rKeshinSkill3        : selectedKeshin[2].skillName,                            // 化身スキル名3
-    rKonshin             : konshinPower.toFixed(1),                                // こんしん！補正
-    rSuccessCorrection   : failureVal,                                             // 失敗補正
-    rRandom              : randomValue,                                            // 乱数
-    rDistance            : shotCorrection,                                         // 距離補正
-    rLvCorrection        : lvCorrection.toFixed(1),                                // Lv差補正
-    rConditionCorrection : GpCorrection,                                           // 体調補正
-    rCritical            : rCriValue + "%",                                        // クリティカル率
-    rLvCorrection        : lvCorrection.toFixed(1),                                // Lv差補正
-    rTotal               : totalFormStr                                            // トータルテクニック(表示)
+    rName                : document.getElementById("PlayerName").value,             // 選手名
+    rMainPara            : mainPara,                                                // メインパラメータ
+    rTech                : tech,                                                    // テクニック
+    rLuck                : luck,                                                    // ラッキー
+    rSkill1              : textSkillList1,                                          // 選手スキル名1
+    rSkill2              : textSkillList2,                                          // 選手スキル名2
+    rBaseTech            : Math.floor(calcBaseTechnique(mainPara, tech)),           // ベーステクニック(表示用)
+    rBasePower           : (calcBasePower(mainPara, tech)).toFixed(6),              // ベースパワー
+    rMoveBasePower       : growthCorrection,                                        // 進化補正
+    rDFCorrection        : commandCorrection,                                       // 守備補正
+    rMoveElement         : moveElem,                                                // 技の属性
+    rPowerElement        : skillAddValue > 0 ? "+" + skillAddValue : skillAddValue, // 属性強化、心得、雄叫び補正
+    rMoveElementMatch    : elementMatchStr,                                         // 属性相性
+    rElementMatch        : elementMatch,                                            // 属性相性補正値
+    rTotalMovePower      : movePower,                                               // 必殺技威力
+    rElementBattle       : elementCorrectionStr,                                    // 相手との属性相性勝負
+    rKPKA                : kpka > 0 ? "+" + kpka : kpka,                            // 化身補正(KP+KA)
+    rMoveName            : document.getElementById("UseMoveList").value,            // 必殺技名
+    rKeshinName          : selectedKeshin[0].keshinName,                            // 化身名
+    rKeshinSkill1        : selectedKeshin[0].skillName,                             // 化身スキル名1
+    rKeshinSkill2        : selectedKeshin[1].skillName,                             // 化身スキル名2
+    rKeshinSkill3        : selectedKeshin[2].skillName,                             // 化身スキル名3
+    rKonshin             : konshinPower.toFixed(1),                                 // こんしん！補正
+    rSuccessCorrection   : failureVal,                                              // 失敗補正
+    rRandom              : randomValue,                                             // 乱数
+    rDistance            : shotCorrection,                                          // 距離補正
+    rLvCorrection        : lvCorrection.toFixed(1),                                 // Lv差補正
+    rConditionCorrection : GpCorrection,                                            // 体調補正
+    rCritical            : rCriValue + "%",                                         // クリティカル率
+    rLvCorrection        : lvCorrection.toFixed(1),                                 // Lv差補正
+    rTotal               : totalFormStr                                             // トータルテクニック(表示)
   });
   // 情報出力
   // ----------------------------------------------------------------------------------------------
 }
+
+// ----------------------------------------------------------------------------------------------
+// トータルテクニック計算共通ロジック
+// ベーステクニックの計算
+function calcBaseTechnique(mainPara, tech) {
+  return ( mainPara * 8 + tech * 2 ) / 10;
+}
+
+// ベースパワーの計算
+function calcBasePower(mainPara, tech) {
+  // ベーステクニックに補正を付与
+  const basePower = calcBaseTechnique(mainPara, tech) * 2 / 3;
+  // 減衰補正
+  const damping = ((basePower * basePower) / 1480) + basePower * (25 / 123) - (8 / 17)
+  // ベースパワー = ベーステクニック - 減衰補正
+  return basePower - damping;
+}
+
+// トータルテクニックの計算
+function calcTotalTech(options = {}) {
+  const {
+    mainPara = 1,               // メインパラメータの最低値は1
+    tech = 1,                   // テクニックの最低値は1
+    movePower = 10,             // 「かわす」選択時の技威力(「とっぱ」は20)
+    hasKonshin = false,         // こんしん！補正(true:習得者、false:未取得者)
+    isRandomUp = false,         // 乱数の上振れ(true:1.2倍、false:1.0倍)
+    isFailure = false,          // 必殺技の失敗判定(true:失敗による減衰補正あり、false:成功)
+    isCritical = false,         // クリティカル判定(true:クリティカル発生、false:クリティカル不発)
+    isDirectShot = false,       // ダイレクトシュート補正
+    isYakuByouGami = false,     // クリティカル(やくびょうがみ)判定(true:クリティカル発生、false:クリティカル不発)
+    elemCorr = 1.0,
+    kpka = 0,
+    shotCorrection = 1.0,
+    GpCorrection = 1.0
+  } = options;
+
+  // ベースパワーの算出
+  const basePower = calcBasePower(mainPara, tech);
+  
+  // ベースパワー + 技威力
+  let power = basePower + movePower;
+
+  // こんしん！補正
+  if (hasKonshin) {
+    power *= 1.2;
+  }
+  
+  // 失敗補正
+  if (isFailure) {
+    // GO1では0.8倍
+    power *= 0.8;
+  }
+
+  // 属性勝負
+  power *= Number(elemCorr) 
+
+  // 化身補正
+  power += kpka;
+
+  // ダイレクトシュート補正
+  if (isDirectShot) {
+    // 1.1倍
+    power *= 1.1;
+  }
+
+  // クリティカル (2倍)
+  if (isCritical) {
+    power *= 2;
+    // やくびょうがみ(クリティカル)
+    if (isYakuByouGami) {
+      power *= 2;
+    }
+  }
+
+  // 体調補正
+  power *= GpCorrection;
+
+  // 距離補正
+  power *= shotCorrection;
+
+  // Lv差補正
+  power *= 1.0;
+
+  // 乱数補正 (上振れ時1.2倍)
+  if (isRandomUp) {
+    power = Math.floor(power) * 1.2;
+  }
+
+  return Math.floor(power);
+}
+// トータルテクニック計算共通ロジック
+// ----------------------------------------------------------------------------------------------
 
 window.addEventListener("load", resizeTableFonts);
 window.addEventListener("resize", resizeTableFonts);
