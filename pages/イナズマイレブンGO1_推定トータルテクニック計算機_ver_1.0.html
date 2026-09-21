@@ -406,14 +406,14 @@
       × ダイレクトシュート補正 × クリティカル補正 × 体調補正 × 距離補正 × Lv差補正 × 乱数補正</div>
   <details>
   <summary><strong>ベースパワー</strong></summary>
-  <div class="formula-box">  ベースパワー ＝ ベーステクニック － 減衰補正</div>
+  <div class="formula-box">  ベースパワー ＝ ベーステクニック × 2 / 3 － 減衰補正</div>
 GO2以降のコマンドバトルで行動を選択する際に表示される値。<br>
 GO1で表示するのはベーステクニック。計算式が若干異なる。
 　<details>
   <summary><strong>ベーステクニック</strong></summary>
-  <div class="formula-box">  ベーステクニック ＝ ( メインステータス × 8 + テクニック × 2 ) / 10 × 2 / 3</div>
+  <div class="formula-box">  ベーステクニック ＝ ( メインステータス × 8 + テクニック × 2 ) / 10</div>
 GO1のコマンドバトルで行動を選択する際に表示される値にさらに補正を与えたもの。<br>
-ベーステクニック(表示用)とは異なる。<br>
+ベーステクニック(表示用)とは違い、以降の計算にも小数点以下もそのまま。<br>
   </details>
   <details>
   <summary><strong>ベーステクニック(表示用)</strong></summary>
