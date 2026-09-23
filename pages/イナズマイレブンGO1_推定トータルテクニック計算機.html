@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>イナズマイレブンGO1 推定トータルテクニック簡易計算機 ver 1.1</title>
+<title>イナズマイレブンGO1 推定トータルテクニック簡易計算機 ver 1.0</title>
 <style>
   body {
     font-family: sans-serif;
@@ -1664,7 +1664,7 @@ function calcTotalTech(options = {}) {
   // 距離補正
   power *= shotCorrection;
 
-  // Lv差補正
+  // Lv差補正(ストーリーを想定していないので1.0固定)
   power *= 1.0;
 
   // 乱数補正 (上振れ時1.2倍)
