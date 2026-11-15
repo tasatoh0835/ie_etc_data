@@ -1388,16 +1388,19 @@ tr:nth-child(even) { background-color: #f9f9f9; }
  r += (unitcalc.shoot_power * 必殺技じゃないシュートの4段階の強さ(0～3))
  r += ダブルやトリプルによる補正を計算(unitcalc)
  ; コマンドがシュートまたはキャッチの場合、属性有利時は+10、属性不利時は-10が返される。互角時は0。
- ; コマンドがドリブルまたはブロックの場合、属性有利時は+16、属性不利時は-16が返される。互角時は0。
- r += 属性の相性による補正を計算(unit, opponent_unit)
- if (技の属性 == 選手の属性) {
-  ; +10
- 	r += 属性一致による補正
+ if(flagsが5の場合) {
+  ; コマンドがドリブルまたはブロックの場合、属性有利時は+16、属性不利時は-16が返される。互角時は0。
+  r += 属性の相性による補正を計算(unit, opponent_unit)
+ } 
+ if(flagsが6の場合) {
+  ; コマンドがドリブルまたはブロックの場合、属性有利時は+16、属性不利時は-16が返される。互角時は0。
+  ; ダブルやトリプルによる補正も対象
+  r += ダブルやトリプルによる補正と属性の相性による補正を計算(unit, opponent_unit)
  }
- if (unitcalc.limit > 0) {
- 	return min(r, unitcalc.limit)
- } else {
- 	return max(r, unitcalc.limit)
+ ; 属性一致補正に該当する処理が見当たらない
+ ; limitが設定されており、計算結果がlimitより高くなる場合、limitを返す
+ if (unitcalc.limit > 0かつ、unitcalc.limit < r) {
+ 	r = unitcalc.limit
  }
 </div>
 </p>
